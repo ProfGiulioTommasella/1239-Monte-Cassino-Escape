@@ -324,6 +324,21 @@ button {
   text-shadow: 2px 2px 4px #000, 0 0 12px #000;
 }
 
+/* ---------- Firma ---------- */
+#firma {
+  position: absolute;
+  right: 14px;
+  bottom: 8px;
+  z-index: 30;
+  font-family: var(--libro);
+  font-size: 17px;
+  font-style: italic;
+  font-weight: 700;
+  color: rgba(255, 240, 210, 0.85);
+  text-shadow: 1px 1px 2px #000, 0 0 6px #000;
+  pointer-events: none;
+}
+
 /* ---------- Orientamento ---------- */
 #ruota {
   display: none;
