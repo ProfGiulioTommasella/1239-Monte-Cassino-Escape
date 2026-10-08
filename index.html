@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#1b130d">
+  <title>1239: Montecassino Escape</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/stile.css">
+</head>
+<body>
+  <div id="schermo">
+    <canvas id="scena" width="1280" height="720"></canvas>
+
+    <!-- HUD della corsa -->
+    <div id="hud" class="nascosto">
+      <div class="hud-box" id="hud-domanda">DOMANDA <span id="n-domanda">1</span>/<span id="tot-domande">11</span></div>
+      <div id="hud-distacco">
+        <div class="etichetta">DISTACCO</div>
+        <div id="barra"><div id="barra-pieno"></div><div id="barra-segno"></div></div>
+        <div class="estremi"><span>⚔ SOLDATI</span><span>ABATE ✝</span></div>
+      </div>
+      <div class="hud-box" id="hud-libri">📖 <span id="n-libri">11</span></div>
+    </div>
+
+    <!-- Pulsanti sempre visibili -->
+    <div id="comandi">
+      <button id="btn-audio" class="tondo" aria-label="Audio">🔊</button>
+      <button id="btn-schermo" class="tondo" aria-label="Schermo intero">⛶</button>
+    </div>
+
+    <!-- Schermata titolo -->
+    <div id="titolo" class="pannello-pieno">
+      <div class="anno">1239</div>
+      <h1>MONTECASSINO<br>ESCAPE</h1>
+      <p class="trama">I soldati di Federico II di Svevia devastano l'Abbazia di Montecassino.
+        Aiutate l'Abate Stefano II a raggiungere una vicina abbazia per mettere in salvo
+        i preziosi inni gregoriani, creati nel famoso scriptorium dell'Abbazia.</p>
+      <button id="btn-inizia" class="grande">▶ INIZIA</button>
+      <p class="nota">Si gioca con il mouse, con il dito o con la tastiera (A, B, C · Invio)</p>
+    </div>
+
+    <!-- Banner (tappe, esiti) -->
+    <div id="banner" class="nascosto"><div id="banner-piccolo"></div><div id="banner-grande"></div></div>
+
+    <!-- Pergamena: dialoghi e domande -->
+    <div id="pergamena" class="nascosto">
+      <div id="ritratto"><img id="ritratto-img" src="assets/img/abate.svg" alt="Abate Stefano II"></div>
+      <div id="contenuto">
+        <div id="intestazione">Abate Stefano II</div>
+        <div id="testo"></div>
+        <div id="opzioni"></div>
+      </div>
+    </div>
+
+    <!-- Finale -->
+    <div id="finale" class="nascosto">
+      <h2 id="finale-titolo"></h2>
+      <p id="finale-punteggio"></p>
+      <button id="btn-rigioca" class="grande">↻ GIOCA ANCORA</button>
+    </div>
+
+  </div>
+
+  <div id="ruota">
+    <div class="icona">📱↻</div>
+    <p>Ruota il dispositivo in orizzontale per giocare</p>
+  </div>
+
+  <script src="js/domande.js"></script>
+  <script src="js/gioco.js"></script>
+</body>
+</html>
