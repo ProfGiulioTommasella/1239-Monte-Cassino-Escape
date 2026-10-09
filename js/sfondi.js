@@ -87,18 +87,13 @@ function creaSfondi(ctx, W, hash) {
     ctx.fillStyle = "#ffd34d";
     ctx.fill();
   }
-  // Fiamma che esce da un tetto: la base segue la falda (o il colmo) e brucia dentro le tegole,
-  // con un bagliore sul tetto e lingue di fuoco di altezze diverse.
+  // Fiamma che esce da un tetto: va disegnata prima del tetto, che ne copre la base,
+  // con lingue di fuoco di altezze diverse.
   // base(dx) = scostamento verticale della falda rispetto a (x, y), in unità della fiamma
   function fiammaTetto(x, y, s, t, seme, base) {
     const f = (k) => 1 + Math.sin(t * (11 + k * 2) + seme * 3 + k * 1.7) * 0.14;
     const sway = Math.sin(t * 9 + seme) * 2.5;
-    const by = (dx) => y + base(dx) * s + 3 * s;
-    // bagliore sul tetto
-    const g = ctx.createRadialGradient(x, y, 2, x, y, 46 * s);
-    g.addColorStop(0, "rgba(255,170,60,0.6)"); g.addColorStop(1, "rgba(255,120,30,0)");
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(x, y, 46 * s, 0, Math.PI * 2); ctx.fill();
+    const by = (dx) => y + base(dx) * s + 10 * s;
     // lingue: [dx, altezza, larghezza]
     const lingue = [[-11, 24 * f(1), 8], [0, 48 * f(0), 11], [12, 30 * f(2), 8]];
     const sagoma = (scala, colore) => {
@@ -134,11 +129,13 @@ function creaSfondi(ctx, W, hash) {
     ctx.restore();
     sagoma(1, "#ff7a1a");
     sagoma(0.55, "#ffd34d");
-    // braci lungo la falda
-    ctx.strokeStyle = "rgba(255,200,80,0.9)"; ctx.lineWidth = 2.5 * s; ctx.lineCap = "round";
-    ctx.beginPath();
-    for (let dx = -22; dx <= 22; dx += 4) ctx[dx === -22 ? "moveTo" : "lineTo"](x + dx * s, by(dx) - 1 * s);
-    ctx.stroke();
+  }
+  // Bagliore arancione sul tetto sotto una fiamma (da disegnare sopra il tetto)
+  function bagliore(x, y, s) {
+    const g = ctx.createRadialGradient(x, y, 2, x, y, 46 * s);
+    g.addColorStop(0, "rgba(255,170,60,0.55)"); g.addColorStop(1, "rgba(255,120,30,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(x, y, 46 * s, 0, Math.PI * 2); ctx.fill();
   }
   function stelle(n, seme, alpha = 1) {
     for (let i = 0; i < n; i++) {
@@ -207,32 +204,60 @@ function creaSfondi(ctx, W, hash) {
     ctx.save();
     ctx.translate(x, base);
     ctx.scale(s, s);
+    // opz.fuoco(parte) disegna le fiamme di una parte prima di lei, così i tetti ne coprono la base
+    const fuoco = (parte) => {
+      if (!opz.fuoco) return;
+      ctx.restore(); opz.fuoco(parte); ctx.save();
+      ctx.translate(x, base); ctx.scale(s, s);
+    };
+    // campanile (dietro il tetto dell'ala sinistra)
+    fuoco("campanile");
+    poli([[-130, -150], [-130, -320], [-80, -320], [-80, -150]], muro);
+    poli([[-140, -320], [-105, -380], [-70, -320]], tetto);
+    poli([[-118, -290], [-118, -260], [-92, -260], [-92, -290]], fin, 2.5);
+    ctx.beginPath(); ctx.arc(-105, -290, 13, Math.PI, 0); contorno(fin, 2.5);
     // mura basse
     poli([[-230, 0], [-230, -60], [230, -60], [230, 0]], ombra);
     for (let i = -230; i < 230; i += 30) poli([[i, -60], [i, -74], [i + 16, -74], [i + 16, -60]], ombra, 2.5);
     // ala sinistra
+    fuoco("sinistra");
     poli([[-200, -60], [-200, -150], [-60, -150], [-60, -60]], muro);
     poli([[-210, -150], [-130, -190], [-50, -150]], tetto);
     // chiesa
+    fuoco("chiesa");
     poli([[-60, -60], [-60, -200], [90, -200], [90, -60]], muro);
     poli([[-72, -200], [15, -270], [102, -200]], tetto);
     ctx.beginPath(); ctx.arc(15, -165, 20, 0, Math.PI * 2); contorno(fin, 3);
     for (let a = 0; a < 8; a++) { ctx.beginPath(); ctx.moveTo(15, -165); ctx.lineTo(15 + Math.cos(a * Math.PI / 4) * 20, -165 + Math.sin(a * Math.PI / 4) * 20); ctx.strokeStyle = muro; ctx.lineWidth = 2; ctx.stroke(); }
     ctx.beginPath(); ctx.moveTo(-5, -60); ctx.lineTo(-5, -110); ctx.arc(15, -110, 20, Math.PI, 0); ctx.lineTo(35, -60); ctx.closePath(); contorno("#4a2f1b", 3);
     // ala destra
+    fuoco("destra");
     poli([[90, -60], [90, -130], [210, -130], [210, -60]], muro);
     poli([[80, -130], [150, -165], [220, -130]], tetto);
-    // campanile
-    poli([[-130, -150], [-130, -320], [-80, -320], [-80, -150]], muro);
-    poli([[-140, -320], [-105, -380], [-70, -320]], tetto);
-    poli([[-118, -290], [-118, -260], [-92, -260], [-92, -290]], fin, 2.5);
-    ctx.beginPath(); ctx.arc(-105, -290, 13, Math.PI, 0); contorno(fin, 2.5);
     // finestre
     const fx = [[-185, -125], [-155, -125], [-110, -125], [110, -105], [140, -105], [170, -105]];
     for (const [wx, wy] of fx) {
       poli([[wx, wy], [wx, wy - 22], [wx + 14, wy - 22], [wx + 14, wy]], opz.luce ? opz.luce : fin, 2);
     }
     ctx.restore();
+  }
+
+  // L'abbazia con le fiamme che escono da dietro i tetti.
+  // [parte, x, y sulla falda, scala, forma]: "colmo" con la pendenza delle due falde, oppure pendenza di una sola falda
+  const colmo = (k) => (dx) => Math.abs(dx) * k;
+  const falda = (m) => (dx) => dx * m;
+  const TETTI_IN_FIAMME = [
+    ["campanile", -105, -372, 1.0, colmo(1.4)], ["sinistra", -130, -186, 1.1, colmo(0.5)], ["sinistra", -165, -172, 0.85, falda(-0.5)],
+    ["chiesa", 15, -264, 1.4, colmo(0.8)], ["chiesa", -24, -234, 0.95, falda(-0.8)], ["chiesa", 54, -236, 1.0, falda(0.8)],
+    ["destra", 150, -162, 1.1, colmo(0.5)], ["destra", 184, -148, 0.85, falda(0.5)],
+  ];
+  function abbaziaInFiamme(AX, AB, AS, t, colori, scala) {
+    // le fiamme di ogni parte si disegnano prima della parte stessa, così escono da dietro i tetti
+    const fuoco = (parte) => TETTI_IN_FIAMME.forEach(([p, px, py, sc, forma], i) => {
+      if (p === parte) fiammaTetto(AX + px * AS, AB + py * AS, sc * scala, t, i, forma);
+    });
+    abbazia(AX, AB, AS, { ...colori, fuoco });
+    TETTI_IN_FIAMME.forEach(([, px, py, sc]) => bagliore(AX + px * AS, AB + py * AS + 6 * scala, sc * scala));
   }
 
   // ------------------------------------------------------------ tappe
@@ -344,17 +369,7 @@ function creaSfondi(ctx, W, hash) {
       ctx.beginPath(); ctx.moveTo(x, y - h); ctx.quadraticCurveTo(x + 11, y - h * 0.4, x + 6, y); ctx.lineTo(x - 6, y); ctx.quadraticCurveTo(x - 11, y - h * 0.4, x, y - h);
       contorno("#1f2a1a", 2.5);
     }
-    abbazia(AX, AB, AS, { muro: "#8c7563", ombra: "#6e5a4b", tetto: "#6b3022", luce: "#ffb347" });
-    // fiamme sui tetti (punti presi dal disegno dell'abbazia)
-    // [x, y sulla falda, scala, forma]: "colmo" con la pendenza delle due falde, oppure pendenza di una sola falda
-    const colmo = (k) => (dx) => Math.abs(dx) * k;
-    const falda = (m) => (dx) => dx * m;
-    const tetti = [
-      [-105, -372, 1.0, colmo(1.4)], [-130, -186, 1.1, colmo(0.5)], [-178, -166, 0.85, falda(-0.5)],
-      [15, -264, 1.4, colmo(0.8)], [-38, -222, 0.95, falda(-0.8)], [68, -224, 1.0, falda(0.8)],
-      [150, -162, 1.1, colmo(0.5)], [196, -142, 0.85, falda(0.5)],
-    ];
-    tetti.forEach(([px, py, sc, forma], i) => fiammaTetto(AX + px * AS, AB + py * AS, sc, t, i, forma));
+    abbaziaInFiamme(AX, AB, AS, t, { muro: "#8c7563", ombra: "#6e5a4b", tetto: "#6b3022", luce: "#ffb347" }, 1.25);
     // colline scure in primo piano
     profilo(60, 650, 22, 260, "#1d1210", 3, 760);
   }
@@ -476,8 +491,7 @@ function creaSfondi(ctx, W, hash) {
     profilo(0, 520, 40, 220, "#2a1714", 3, 760);
     // monte su cui poggia l'abbazia lontana
     poli([[760, 720], [830, 560], [880, 500], [893, 470], [1107, 470], [1122, 500], [1180, 560], [1260, 720]], "#3a211b");
-    abbazia(1000, 470, 0.45, { muro: "#5e4a3e", ombra: "#4a3a30", tetto: "#3e1c14", luce: "#ff9a3a" });
-    [[930, 380], [970, 350], [1040, 340], [1080, 410]].forEach(([x, y], i) => fiamma(x, y, 0.9, t, i + 20));
+    abbaziaInFiamme(1000, 470, 0.45, t, { muro: "#5e4a3e", ombra: "#4a3a30", tetto: "#3e1c14", luce: "#ff9a3a" }, 0.7);
     ctx.fillStyle = "#1c120e"; ctx.fillRect(0, 610, W, 110);
   }
 
