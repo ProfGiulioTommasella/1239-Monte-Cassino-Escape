@@ -1667,6 +1667,25 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     banner("TAPPA " + n, TAPPE[n - 1].nome.toUpperCase());
   }
 
+  // A ogni partita le risposte cambiano posto rispetto alla partita precedente
+  // (Vero/Falso resta in quest'ordine)
+  const ordiniPrecedenti = new Map();
+  function mescola(q) {
+    let indici = q.opzioni.map((_, i) => i);
+    const fisse = q.opzioni.join("|").toLowerCase() === "vero|falso";
+    if (!fisse && indici.length > 1) {
+      const prima = ordiniPrecedenti.get(q) || indici.join();
+      do {
+        for (let i = indici.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [indici[i], indici[j]] = [indici[j], indici[i]];
+        }
+      } while (indici.join() === prima);
+      ordiniPrecedenti.set(q, indici.join());
+    }
+    return { opzioni: indici.map((i) => q.opzioni[i]), giustaOra: indici.indexOf(q.giusta) };
+  }
+
   async function minigioco(mg) {
     await attendi(1200);
     await dialogo(mg.istruzioni, "normale", ["Pronti! ▶"]);
@@ -1751,14 +1770,15 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
 
       mondo.inseguimento = true;
       mondo.prossimaRimonta = 4 + Math.random() * 3;
-      const scelta = await dialogo(q.testo, "normale", q.opzioni, {
+      const { opzioni, giustaOra } = mescola(q);
+      const scelta = await dialogo(q.testo, "normale", opzioni, {
         risposte: true,
         intestazione: `Domanda ${i + 1} di ${DOMANDE.length}`,
       });
       mondo.inseguimento = false;
       const bottoni = $("opzioni").querySelectorAll("button");
-      const giusta = scelta === q.giusta;
-      bottoni[q.giusta].classList.add("corretta");
+      const giusta = scelta === giustaOra;
+      bottoni[giustaOra].classList.add("corretta");
       if (!giusta) bottoni[scelta].classList.add("errata");
 
       if (giusta) {

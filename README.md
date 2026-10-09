@@ -15,6 +15,7 @@ La corsa non si ferma mai, nemmeno mentre si risponde alle domande:
 - **risposta sbagliata**: i soldati si avvicinano e un libro cade dal carretto.
 
 Le 11 domande sono divise in tre tappe (bosco, palude, sentiero di pietra).
+A ogni partita le risposte cambiano posto (Vero/Falso resta in quest'ordine).
 Alla fine delle prime due tappe c'è un breve minigioco d'azione: prima bisogna **saltare**
 sassi e tronchi con il carretto, poi **abbassarsi** per schivare le lance dei soldati.
 Ogni ostacolo evitato fa guadagnare un po' di terreno, ogni colpo preso lo fa perdere.
