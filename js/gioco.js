@@ -67,26 +67,37 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   // ---------------------------------------------------------------
   //  Suoni
   // ---------------------------------------------------------------
-  const NOMI_SUONI = ["campana", "giusto", "sbagliato", "musica", "esplosione", "vittoria", "magia", "russare", "risata"];
+  const NOMI_SUONI = ["giusto", "sbagliato", "esplosione", "vittoria", "magia", "russare", "risata"];
   const suoni = {};
   NOMI_SUONI.forEach((n) => {
     const a = new Audio(`assets/audio/${n}.mp3`);
     a.preload = "auto";
     suoni[n] = a;
   });
-  suoni.musica.loop = true;
+  // musiche di sottofondo: una per l'introduzione e una per ogni tappa
+  const VOLUME_MUSICA = 0.4;
+  const musiche = {};
+  [["intro", MUSICA_INTRO], ...TAPPE.map((t, i) => ["tappa" + (i + 1), t.musica])].forEach(([nome, src]) => {
+    if (!src) return;
+    const a = new Audio(src);
+    a.preload = "auto";
+    a.loop = true;
+    musiche[nome] = a;
+  });
+  const tuttiGliAudio = () => [...Object.values(suoni), ...Object.values(musiche)];
   let muto = false;
   let audioSbloccato = false;
+  let musicaCorrente = null;
 
   function sbloccaAudio() {
     if (audioSbloccato) return;
     audioSbloccato = true;
-    NOMI_SUONI.forEach((n) => {
-      const a = suoni[n];
+    tuttiGliAudio().forEach((a) => {
       a.muted = true;
       const p = a.play();
-      if (p && p.then) p.then(() => { a.pause(); a.currentTime = 0; a.muted = muto; }).catch(() => { a.muted = muto; });
-      else { a.pause(); a.muted = muto; }
+      const ferma = () => { if (a !== musicaCorrente) { a.pause(); a.currentTime = 0; } a.muted = muto; };
+      if (p && p.then) p.then(ferma).catch(() => { a.muted = muto; });
+      else ferma();
     });
   }
   function suona(nome, volume = 1) {
@@ -101,14 +112,34 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       if (p && p.catch) p.catch(() => {});
     } catch (e) { /* audio non disponibile */ }
   }
-  function musica(accesa) {
-    const a = suoni.musica;
-    if (accesa) { a.volume = 0.35; a.muted = muto; const p = a.play(); if (p && p.catch) p.catch(() => {}); }
-    else a.pause();
+  // Dissolvenza dolce da un brano all'altro (null = silenzio)
+  function sfuma(a, da, a_, ms, poi) {
+    const inizio = performance.now();
+    const passo = () => {
+      const k = Math.min(1, (performance.now() - inizio) / ms);
+      try { a.volume = Math.max(0, Math.min(1, da + (a_ - da) * k)); } catch (e) { /* iOS */ }
+      if (k < 1) requestAnimationFrame(passo); else if (poi) poi();
+    };
+    passo();
+  }
+  function musica(nome) {
+    const nuova = nome ? musiche[nome] : null;
+    if (nuova === musicaCorrente) return;
+    const vecchia = musicaCorrente;
+    musicaCorrente = nuova;
+    if (vecchia) sfuma(vecchia, vecchia.volume, 0, 1200, () => { if (vecchia !== musicaCorrente) vecchia.pause(); });
+    if (nuova) {
+      nuova.currentTime = 0;
+      nuova.muted = muto;
+      nuova.volume = 0;
+      const p = nuova.play();
+      if (p && p.catch) p.catch(() => {});
+      sfuma(nuova, 0, VOLUME_MUSICA, 1500);
+    }
   }
   $("btn-audio").addEventListener("click", () => {
     muto = !muto;
-    NOMI_SUONI.forEach((n) => { suoni[n].muted = muto; });
+    tuttiGliAudio().forEach((a) => { a.muted = muto; });
     $("btn-audio").textContent = muto ? "🔇" : "🔊";
   });
   $("btn-schermo").addEventListener("click", () => {
@@ -122,8 +153,9 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     }
   });
   document.addEventListener("visibilitychange", () => {
-    if (document.hidden) suoni.musica.pause();
-    else if (mondo.stato === "corsa") musica(true);
+    if (!musicaCorrente) return;
+    if (document.hidden) musicaCorrente.pause();
+    else { const p = musicaCorrente.play(); if (p && p.catch) p.catch(() => {}); }
   });
 
   // ---------------------------------------------------------------
@@ -887,6 +919,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     mondo.tappaPrec = mondo.tappa;
     mondo.tappa = n;
     mondo.dissolvenza = 0;
+    musica("tappa" + n);
     banner("TAPPA " + n, TAPPE[n - 1].nome.toUpperCase());
   }
 
@@ -896,6 +929,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     $("hud").classList.add("nascosto");
     mondo.stato = "intro";
     mondo.particelle = [];
+    musica("intro");
     await velo(0, 300);
 
     for (const riga of INTRO) await dialogo(riga, "normale", ["Avanti ▶"]);
@@ -917,7 +951,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     mondo.tappaPrec = mondo.tappa;
     $("hud").classList.remove("nascosto");
     $("n-domanda").textContent = 1;
-    musica(true);
+    musica("tappa" + mondo.tappa);
     await velo(0, 400);
     mondo.grido = 2.2;
     mondo.testoGrido = "PRENDETELI!";
@@ -1015,7 +1049,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     }
 
     await velo(1, 700);
-    musica(false);
+    musica(null);
     mondo.stato = "finale";
     mondo.finale = fin;
     mondo.particelle = [];
@@ -1043,7 +1077,6 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   btnInizia.addEventListener("click", () => {
     if (btnInizia.disabled) return;
     sbloccaAudio();
-    setTimeout(() => suona("campana", 0.7), 60);
     $("titolo").classList.add("nascosto");
     partita();
   });
@@ -1054,4 +1087,5 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
 
   // Modalità di prova per l'insegnante: index.html?prova=finale-vittoria
   window.__mondo = mondo;
+  window.__musica = () => (musicaCorrente ? musicaCorrente.src.split("/").pop() + (musicaCorrente.paused ? " (ferma)" : "") : "nessuna");
 })();

@@ -37,6 +37,21 @@ Tutti i contenuti stanno in [`js/domande.js`](js/domande.js): domande, opzioni,
 risposta corretta, commenti dell'Abate, nomi delle tappe e testi dei finali.
 Non serve toccare altri file.
 
+## Musiche
+
+Le quattro musiche di sottofondo (introduzione e una per ogni tappa) sono brani originali
+in stile medievale, composti e sintetizzati apposta per questo gioco con lo script
+[`strumenti/musica.py`](strumenti/musica.py), senza campioni esterni. Sono libere da diritti
+e rilasciate in pubblico dominio (CC0).
+
+- **Introduzione**: canto monodico in modo dorico, organo e campane (66 bpm, circa 2 minuti).
+- **Tappa 1, il bosco**: danza vivace in Re dorico, flauto, liuto e tamburello (132 bpm).
+- **Tappa 2, la palude**: brano cupo in modo frigio, bordone di ghironda (108 bpm).
+- **Tappa 3, il sentiero di pietra**: corsa finale in Sol misolidio (150 bpm).
+
+Per sostituirle basta mettere altri file mp3 in `assets/audio/` e cambiare i percorsi
+in `js/domande.js`.
+
 ## Struttura
 
 ```
@@ -45,5 +60,6 @@ css/stile.css       grafica dell'interfaccia
 js/domande.js       contenuti (da modificare liberamente)
 js/gioco.js         motore di gioco (scena, personaggi, inseguimento)
 assets/img/         sfondi e ritratti dell'Abate dal progetto Scratch
-assets/audio/       suoni dal progetto Scratch
+assets/audio/       effetti sonori dal progetto Scratch e musiche originali
+strumenti/musica.py generatore delle musiche (Python, numpy, scipy, ffmpeg)
 ```

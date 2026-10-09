@@ -7,11 +7,14 @@
 //  - "suono" (facoltativo) è un suono in più dopo una risposta sbagliata.
 // ================================================================
 
+// Ogni tappa ha il suo sfondo e la sua musica.
 const TAPPE = [
-  { nome: "Il bosco delle nebbie", sfondo: "assets/img/bosco.jpg" },
-  { nome: "La palude oscura", sfondo: "assets/img/palude.jpg" },
-  { nome: "Il sentiero di pietra", sfondo: "assets/img/rocce.jpg" },
+  { nome: "Il bosco delle nebbie", sfondo: "assets/img/bosco.jpg", musica: "assets/audio/musica-tappa1.mp3" },
+  { nome: "La palude oscura", sfondo: "assets/img/palude.jpg", musica: "assets/audio/musica-tappa2.mp3" },
+  { nome: "Il sentiero di pietra", sfondo: "assets/img/rocce.jpg", musica: "assets/audio/musica-tappa3.mp3" },
 ];
+// Musica della schermata iniziale e del dialogo con l'Abate.
+const MUSICA_INTRO = "assets/audio/musica-intro.mp3";
 
 const INTRO = [
   "Benvenuti, miei fidati novizi! Come potete vedere, i soldati hanno devastato il nostro povero monastero...",
