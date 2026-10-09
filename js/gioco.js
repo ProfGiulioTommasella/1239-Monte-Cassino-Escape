@@ -1347,7 +1347,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
 
   // ---------------------------------------------------------------
   //  Ritratto dell'Abate nella pergamena (stesso stile dei personaggi)
-  //  umore: "normale" (regge un libro), "felice" (occhi stellati), "arrabbiato" (viso rosso)
+  //  umore: "normale", "felice" (occhi sorridenti), "arrabbiato" (viso rosso)
   // ---------------------------------------------------------------
   const rCanvas = $("ritratto-canvas");
   const rctx = rCanvas.getContext("2d");
@@ -1362,6 +1362,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     c.clearRect(0, 0, RW, RH);
     const u = umoreRitratto;
     const linea = "#24160c";
+    const BIANCO = "#f4f1ea";
     const forma = (fn, riempi, sp = 3) => {
       c.beginPath(); fn(); c.closePath();
       if (riempi) { c.fillStyle = riempi; c.fill(); }
@@ -1383,139 +1384,84 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     if (u === "arrabbiato") dx = Math.sin(t * 45) * 1.5 * Math.max(0.25, 1 - dt / 1.2);
     c.translate(dx, dy);
 
-    // cappuccio dietro la testa
-    ell(75, 112, 50, 24, SAIO_SCURO);
-    // saio e spalle
+    // cappuccio, saio e stola
+    ell(75, 114, 50, 22, SAIO_SCURO);
     forma(() => {
-      c.moveTo(-4, RH + 4); c.lineTo(8, 136); c.quadraticCurveTo(20, 116, 46, 112);
-      c.lineTo(104, 112); c.quadraticCurveTo(130, 116, 142, 136); c.lineTo(154, RH + 4);
+      c.moveTo(-4, RH + 4); c.lineTo(8, 138); c.quadraticCurveTo(20, 118, 46, 114);
+      c.lineTo(104, 114); c.quadraticCurveTo(130, 118, 142, 138); c.lineTo(154, RH + 4);
     }, SAIO);
-    // pieghe
-    tratto([[34, 140], [30, 168]], SAIO_SCURO, 2);
-    tratto([[116, 140], [120, 168]], SAIO_SCURO, 2);
-    // stola viola con croci d'oro
-    for (const sx of [48, 90]) {
-      forma(() => { c.moveTo(sx, 114); c.lineTo(sx + 12, 114); c.lineTo(sx + 14, RH + 4); c.lineTo(sx - 2, RH + 4); }, "#6a2c8c", 2.5);
+    for (const sx of [44, 94]) {
+      forma(() => { c.moveTo(sx, 116); c.lineTo(sx + 12, 116); c.lineTo(sx + 13, RH + 4); c.lineTo(sx - 1, RH + 4); }, "#6a2c8c", 2.5);
       c.fillStyle = "#f2c94c";
-      c.fillRect(sx + 4.5, 140, 4, 15); c.fillRect(sx + 0.5, 145, 12, 4);
+      c.fillRect(sx + 4.5, 148, 3.5, 12); c.fillRect(sx + 1, 152, 10.5, 3.5);
     }
-    // orecchie
-    ell(39, 76, 7, 10, "#e2a970", 2.5);
-    ell(111, 76, 7, 10, "#e2a970", 2.5);
+
     // testa
     const pelle = u === "arrabbiato" ? "#e8735a" : PELLE;
-    ell(75, 66, 34, 39, pelle);
-    if (u === "arrabbiato") {
-      // rossore che sale
-      const g = c.createLinearGradient(0, 30, 0, 100);
-      g.addColorStop(0, "rgba(200,30,20,0.55)"); g.addColorStop(1, "rgba(200,30,20,0)");
-      c.save(); c.beginPath(); c.ellipse(75, 66, 32, 37, 0, 0, Math.PI * 2); c.clip();
-      c.fillStyle = g; c.fillRect(30, 20, 90, 90); c.restore();
-    }
-    // lucido della pelata
-    c.fillStyle = "rgba(255,255,255,0.55)";
-    c.beginPath(); c.ellipse(62, 40, 10, 5, -0.4, 0, Math.PI * 2); c.fill();
-    // corona di capelli bianchi
-    ell(44, 74, 10, 17, "#f4f1ea", 2.5, 0.15);
-    ell(106, 74, 10, 17, "#f4f1ea", 2.5, -0.15);
-    // guance
+    ell(75, 64, 33, 37, pelle);
+    c.fillStyle = "rgba(255,255,255,0.5)";
+    c.beginPath(); c.ellipse(63, 38, 9, 4.5, -0.4, 0, Math.PI * 2); c.fill();
+    // ciuffi di capelli bianchi ai lati
+    ell(44, 70, 9, 14, BIANCO, 2.5, 0.15);
+    ell(106, 70, 9, 14, BIANCO, 2.5, -0.15);
     if (u === "felice") {
-      c.fillStyle = "rgba(230,90,90,0.45)";
-      c.beginPath(); c.arc(52, 86, 7, 0, Math.PI * 2); c.arc(98, 86, 7, 0, Math.PI * 2); c.fill();
+      c.fillStyle = "rgba(230,90,90,0.4)";
+      c.beginPath(); c.arc(55, 76, 6, 0, Math.PI * 2); c.arc(95, 76, 6, 0, Math.PI * 2); c.fill();
     }
 
-    // occhi (con battito di ciglia)
-    const chiusi = u !== "arrabbiato" && (t % 3.7) < 0.12;
-    for (const [ex, lato] of [[62, -1], [88, 1]]) {
+    // occhi
+    const chiusi = u === "normale" && (t % 3.7) < 0.12;
+    for (const ex of [62, 88]) {
       if (u === "felice") {
-        // occhi stellati come nel disegno originale
-        const g = c.createRadialGradient(ex - 2, 66, 1, ex, 68, 9);
-        g.addColorStop(0, "#80f4ff"); g.addColorStop(1, "#0077ff");
-        ell(ex, 68, 8, 8.5, g, 2.5);
-        c.save(); c.translate(ex, 68); c.rotate(t * 2);
-        c.fillStyle = "#fff"; c.beginPath();
-        for (let i = 0; i < 8; i++) { const r = i % 2 ? 1.6 : 5; const a = (i * Math.PI) / 4; c.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
-        c.closePath(); c.fill(); c.restore();
+        c.beginPath(); c.arc(ex, 67, 5, Math.PI * 1.1, Math.PI * 1.9);
+        c.strokeStyle = linea; c.lineWidth = 3.5; c.lineCap = "round"; c.stroke();
       } else if (chiusi) {
-        tratto([[ex - 6, 68], [ex + 6, 68]], linea, 1);
-      } else if (u === "arrabbiato") {
-        ell(ex, 69, 6.5, 5, "#fff", 2.5);
-        c.fillStyle = linea; c.beginPath(); c.arc(ex - lato * 1.5, 70, 2.8, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.moveTo(ex - 4, 65); c.lineTo(ex + 4, 65);
+        c.strokeStyle = linea; c.lineWidth = 3; c.stroke();
       } else {
-        ell(ex, 68, 6, 7, "#fff", 2.5);
-        c.fillStyle = linea; c.beginPath(); c.arc(ex + 1, 69, 3.4, 0, Math.PI * 2); c.fill();
-        c.fillStyle = "#fff"; c.beginPath(); c.arc(ex + 2.2, 67.5, 1.2, 0, Math.PI * 2); c.fill();
+        c.fillStyle = linea;
+        c.beginPath(); c.ellipse(ex, 65, 3.6, 5, 0, 0, Math.PI * 2); c.fill();
+        c.fillStyle = "#fff";
+        c.beginPath(); c.arc(ex + 1.2, 63, 1.3, 0, Math.PI * 2); c.fill();
       }
     }
-    // sopracciglia folte
-    const sop = (x, lato) => {
-      let pts;
-      if (u === "arrabbiato") pts = [[x - 10 * lato, 61], [x + 8 * lato, 51]];
-      else if (u === "felice") pts = [[x - 9 * lato, 56], [x, 51], [x + 8 * lato, 55]];
-      else pts = [[x - 9 * lato, 57], [x + 8 * lato, 55]];
-      tratto(pts, "#f4f1ea", 5);
-    };
-    sop(62, -1);
-    sop(88, 1);
-    // naso
-    ell(75, 82, 7, 6, pelle, 2.5);
-
-    // barba lunga
-    const onda = Math.sin(t * 3) * 1.5;
-    forma(() => {
-      c.moveTo(42, 84);
-      c.quadraticCurveTo(46, 100, 58, 104);
-      c.quadraticCurveTo(75, 110, 92, 104);
-      c.quadraticCurveTo(104, 100, 108, 84);
-      c.quadraticCurveTo(116, 120, 98, 146);
-      c.quadraticCurveTo(86, 162 + onda, 75, 168 + onda);
-      c.quadraticCurveTo(64, 162 + onda, 52, 146);
-      c.quadraticCurveTo(34, 120, 42, 84);
-    }, "#f4f1ea");
-    c.strokeStyle = "#cfc8b8"; c.lineWidth = 2; c.lineCap = "round";
-    for (const [x1, y1, x2, y2] of [[64, 118, 61, 138], [86, 118, 89, 138], [75, 124, 75, 152], [54, 112, 52, 126], [96, 112, 98, 126]]) {
-      c.beginPath(); c.moveTo(x1, y1); c.quadraticCurveTo((x1 + x2) / 2 + 2, (y1 + y2) / 2, x2, y2); c.stroke();
+    // sopracciglia
+    for (const [x, lato] of [[62, -1], [88, 1]]) {
+      if (u === "arrabbiato") tratto([[x + 9 * lato, 49], [x - 6 * lato, 56]], BIANCO, 5);
+      else if (u === "felice") tratto([[x - 7, 54], [x, 50], [x + 7, 54]], BIANCO, 5);
+      else tratto([[x - 7, 54], [x + 7, 53]], BIANCO, 5);
     }
-    // bocca
+    // naso
+    ell(75, 79, 6.5, 5.5, pelle, 2.5);
+
+    // barba: una sola forma morbida
+    const onda = Math.sin(t * 3) * 1.2;
+    forma(() => {
+      c.moveTo(43, 74);
+      c.quadraticCurveTo(38, 122, 75, 152 + onda);
+      c.quadraticCurveTo(112, 122, 107, 74);
+      c.quadraticCurveTo(96, 92, 75, 89);
+      c.quadraticCurveTo(54, 92, 43, 74);
+    }, BIANCO);
+    // bocca (solo quando cambia espressione)
     if (u === "felice") {
-      forma(() => { c.moveTo(63, 98); c.quadraticCurveTo(75, 116, 87, 98); c.quadraticCurveTo(75, 102, 63, 98); }, "#5a1a10", 2.5);
-      c.fillStyle = "#e86a6a"; c.beginPath(); c.ellipse(75, 106, 5, 2.5, 0, 0, Math.PI * 2); c.fill();
+      forma(() => { c.moveTo(65, 97); c.quadraticCurveTo(75, 112, 85, 97); c.quadraticCurveTo(75, 100, 65, 97); }, "#5a1a10", 2.5);
     } else if (u === "arrabbiato") {
-      const ap = 8 + Math.abs(Math.sin(t * 9)) * 5;
-      forma(() => { c.moveTo(62, 106); c.quadraticCurveTo(75, 95, 88, 106); c.quadraticCurveTo(75, 104 + ap, 62, 106); }, "#5a1a10", 2.5);
-      c.fillStyle = "#fff"; c.fillRect(67, 99.5, 16, 3);
-    } else {
-      tratto([[68, 101], [75, 103], [82, 101]], "#8a3a2a", 1.5);
+      const ap = 3 + Math.abs(Math.sin(t * 9)) * 3;
+      forma(() => { c.moveTo(66, 102); c.quadraticCurveTo(75, 95, 84, 102); c.quadraticCurveTo(75, 98 + ap, 66, 102); }, "#5a1a10", 2.5);
     }
     // baffi
-    forma(() => {
-      c.moveTo(75, 92);
-      c.quadraticCurveTo(62, 88, 54, 98); c.quadraticCurveTo(62, 96, 75, 97);
-      c.quadraticCurveTo(88, 96, 96, 98); c.quadraticCurveTo(88, 88, 75, 92);
-    }, "#f4f1ea", 2.5);
+    ell(66, 89, 11, 5.5, BIANCO, 2.5, -0.25);
+    ell(84, 89, 11, 5.5, BIANCO, 2.5, 0.25);
 
-    // il libro (umore normale) e il fumo della rabbia
-    if (u === "normale" && img.libro && img.libro.naturalWidth) {
-      c.save(); c.translate(116, 146); c.rotate(-0.2);
-      c.drawImage(img.libro, -26, -22, 52, 44);
-      c.restore();
-      ell(98, 152, 7, 6, PELLE, 2.5);
-    }
+    // fumo dalle orecchie quando è arrabbiato
     if (u === "arrabbiato") {
       for (let i = 0; i < 2; i++) {
         const k = (t * 1.2 + i * 0.5) % 1;
         c.fillStyle = `rgba(255,255,255,${0.8 * (1 - k)})`;
-        for (const sx of [24, 126]) {
-          c.beginPath(); c.arc(sx + (sx < 75 ? -k * 10 : k * 10), 34 - k * 30, 5 + k * 8, 0, Math.PI * 2); c.fill();
+        for (const sx of [26, 124]) {
+          c.beginPath(); c.arc(sx + (sx < 75 ? -k * 10 : k * 10), 50 - k * 34, 5 + k * 8, 0, Math.PI * 2); c.fill();
         }
-      }
-    }
-    if (u === "felice") {
-      for (let i = 0; i < 3; i++) {
-        const k = (t * 0.8 + i / 3) % 1;
-        c.fillStyle = `rgba(255,230,120,${1 - k})`;
-        const sx = 20 + i * 55;
-        c.beginPath(); c.arc(sx, 40 - k * 30, 2.5, 0, Math.PI * 2); c.fill();
       }
     }
     c.setTransform(1, 0, 0, 1, 0, 0);
