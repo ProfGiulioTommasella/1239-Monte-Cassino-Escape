@@ -52,10 +52,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     });
   }
   const caricamenti = [
-    caricaImmagine("inizio", "assets/img/inizio.jpg"),
     caricaImmagine("libro", "assets/img/libro.png"),
-    ...TAPPE.map((t, i) => caricaImmagine("tappa" + (i + 1), t.sfondo)),
-    ...FINALI.map((f) => caricaImmagine("finale-" + f.tipo, f.sfondo)),
   ];
 
   // ---------------------------------------------------------------
@@ -240,34 +237,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   // ---------------------------------------------------------------
   //  Sfondi
   // ---------------------------------------------------------------
-  const TW = 1280;
-  const TH = 960;
-  function disegnaPanorama(immagine, offset, alpha) {
-    if (!immagine || !immagine.complete || !immagine.naturalWidth) return;
-    ctx.globalAlpha = alpha;
-    const y = -190;
-    const primo = Math.floor(offset / TW);
-    for (let j = primo; j <= primo + 1; j++) {
-      const x = j * TW - offset;
-      if (j % 2 === 0) {
-        ctx.drawImage(immagine, x, y, TW + 1, TH);
-      } else {
-        ctx.save();
-        ctx.translate(x + TW, y);
-        ctx.scale(-1, 1);
-        ctx.drawImage(immagine, -1, 0, TW + 1, TH);
-        ctx.restore();
-      }
-    }
-    ctx.globalAlpha = 1;
-  }
-  function disegnaFissa(immagine, zoom) {
-    if (!immagine || !immagine.naturalWidth) { ctx.fillStyle = "#1b130d"; ctx.fillRect(0, 0, W, H); return; }
-    const s = (W / immagine.naturalWidth) * zoom;
-    const w = immagine.naturalWidth * s;
-    const h = immagine.naturalHeight * s;
-    ctx.drawImage(immagine, (W - w) / 2, (H - h) / 2 - 40 * zoom, w, h);
-  }
+  const sfondi = creaSfondi(ctx, W, hash);
 
   const PALETTE_STRADA = [
     { erba: "#4f6b2a", erbaScura: "#34491a", strada: "#a07a4c", solco: "#7f5f37", bordo: "#3b2a18", sasso: "#8d8476", primo: "#2a1c10" },
@@ -703,15 +673,15 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   }
 
   function disegnaCorsa() {
-    const off = mondo.scroll * 0.18;
-    if (mondo.dissolvenza < 1) disegnaPanorama(img["tappa" + mondo.tappaPrec], off, 1);
-    disegnaPanorama(img["tappa" + mondo.tappa], off, mondo.dissolvenza < 1 ? mondo.dissolvenza : 1);
-    // leggera foschia sull'orizzonte
-    const nebbia = ctx.createLinearGradient(0, 380, 0, 590);
-    nebbia.addColorStop(0, "rgba(20,14,10,0)");
-    nebbia.addColorStop(1, "rgba(20,14,10,0.45)");
-    ctx.fillStyle = nebbia;
-    ctx.fillRect(0, 380, W, 210);
+    const disegnaTappa = (n) => sfondi.tappe[(n - 1) % sfondi.tappe.length](mondo.scroll, mondo.t, mondo.scrollTappa);
+    if (mondo.dissolvenza < 1) {
+      disegnaTappa(mondo.tappaPrec);
+      ctx.globalAlpha = mondo.dissolvenza;
+      disegnaTappa(mondo.tappa);
+      ctx.globalAlpha = 1;
+    } else {
+      disegnaTappa(mondo.tappa);
+    }
     disegnaStrada();
 
     const { gx, capo } = posizioni();
@@ -783,12 +753,28 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     ctx.fillRect(0, 0, W, H);
   }
 
+  // Personaggi nelle scene finali: il carretto con i libri rimasti
+  function disegnaScenaFinale(tipo) {
+    const gx = 330;
+    if (tipo === "fiamme") {
+      disegnaCarretto(gx, 0);
+      for (let i = 0; i < 6; i++) sfondi.fiamma(gx - 210 + i * 26, SUOLO - 80, 1 + hash(i) * 0.6, mondo.t, i);
+      disegnaSoldato(gx + 60, SUOLO, 1, 0.4, "torcia");
+      disegnaSoldato(gx - 270, SUOLO - 6, 0.95, 2.2, "lancia");
+      if (Math.random() < 0.5) particella(gx - 150 + Math.random() * 120, SUOLO - 120, "scintilla");
+    } else {
+      disegnaCarretto(gx, 0);
+      disegnaMonaco(gx, 0, tipo === "vittoria" ? "felice" : "normale", "traino", true);
+    }
+  }
+
   // Schermate fisse (titolo, intro, finale) con braci o scintille
   function disegnaFissaAnimata(dt) {
     const fin = mondo.finale;
-    const immagine = fin ? img["finale-" + fin.tipo] : img.inizio;
-    disegnaFissa(immagine, 1.02 + Math.sin(mondo.t * 0.15) * 0.02);
     const tipo = fin ? fin.tipo : "fiamme";
+    if (fin) sfondi[fin.tipo](mondo.t);
+    else sfondi.inizio(mondo.t);
+    if (fin) disegnaScenaFinale(fin.tipo);
     if (tipo === "fiamme" && Math.random() < 0.7) particella(Math.random() * W, H + 10, "scintilla");
     if (tipo === "vittoria" && Math.random() < 0.3) particella(Math.random() * W, H * 0.7, "stella");
     for (const p of mondo.particelle) if (p.tipo === "scintilla") p.vy -= 30 * dt;
@@ -1016,9 +1002,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   function disegnaScena() {
     ctx.save();
     if (scena.tremore > 0) ctx.translate((Math.random() - 0.5) * 16 * scena.tremore, (Math.random() - 0.5) * 10 * scena.tremore);
-    disegnaFissa(img.inizio, 1.05);
-    ctx.fillStyle = "rgba(10,5,2,0.35)";
-    ctx.fillRect(-20, -20, W + 40, H + 40);
+    sfondi.inizio(mondo.t);
     // cortile lastricato
     ctx.fillStyle = "#3e3730";
     ctx.fillRect(-20, SUOLO - 30, W + 40, H);
@@ -1440,6 +1424,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     mondo.tappaPrec = mondo.tappa;
     mondo.tappa = n;
     mondo.dissolvenza = 0;
+    mondo.scrollTappa = mondo.scroll;
     musica("tappa" + n);
     banner("TAPPA " + n, TAPPE[n - 1].nome.toUpperCase());
   }
@@ -1472,6 +1457,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     await velo(1, 450);
     mondo.libri = DOMANDE.length;
     mondo.scroll = 0;
+    mondo.scrollTappa = 0;
     mondo.stato = "corsa";
     mondo.particelle = [];
     mondo.tappa = DOMANDE[0].tappa;

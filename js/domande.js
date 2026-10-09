@@ -7,11 +7,11 @@
 //  - "suono" (facoltativo) è un suono in più dopo una risposta sbagliata.
 // ================================================================
 
-// Ogni tappa ha il suo sfondo e la sua musica.
+// Ogni tappa ha il suo paesaggio (disegnato in js/sfondi.js) e la sua musica.
 const TAPPE = [
-  { nome: "Il bosco delle nebbie", sfondo: "assets/img/bosco.jpg", musica: "assets/audio/musica-tappa1.mp3" },
-  { nome: "La palude oscura", sfondo: "assets/img/palude.jpg", musica: "assets/audio/musica-tappa2.mp3" },
-  { nome: "Il sentiero di pietra", sfondo: "assets/img/rocce.jpg", musica: "assets/audio/musica-tappa3.mp3" },
+  { nome: "Il bosco delle nebbie", musica: "assets/audio/musica-tappa1.mp3" },
+  { nome: "La palude oscura", musica: "assets/audio/musica-tappa2.mp3" },
+  { nome: "Il sentiero di pietra", musica: "assets/audio/musica-tappa3.mp3" },
 ];
 // Musica della schermata iniziale e del dialogo con l'Abate.
 const MUSICA_INTRO = "assets/audio/musica-intro.mp3";
@@ -130,21 +130,21 @@ const FINALI = [
   {
     tipo: "vittoria",
     minimo: DOMANDE.length,
-    sfondo: "assets/img/vittoria.jpg",
+   
     titolo: "SALVI!",
     testo: "Ottimo lavoro! Abbiamo salvato gli inni, così li potrete studiare in classe tra 1000 anni!",
   },
   {
     tipo: "quasi",
     minimo: 5,
-    sfondo: "assets/img/quasi.jpg",
+   
     titolo: "QUASI SALVI!",
     testo: "Non male, miei novizi... ma si può sempre migliorare!",
   },
   {
     tipo: "fiamme",
     minimo: 0,
-    sfondo: "assets/img/fiamme.jpg",
+   
     titolo: "PRESI!",
     testo: "Avete lasciato che i soldati incendiassero tutti i nostri inni!",
   },
