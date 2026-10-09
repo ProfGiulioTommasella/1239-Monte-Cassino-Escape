@@ -68,8 +68,9 @@ in `js/domande.js`.
 index.html          pagina del gioco
 css/stile.css       grafica dell'interfaccia
 js/domande.js       contenuti (da modificare liberamente)
-js/gioco.js         motore di gioco (scena, personaggi, inseguimento)
-assets/img/         sfondi e libro dal progetto Scratch
+js/gioco.js         motore di gioco (scena, personaggi, inseguimento, minigiochi)
+js/sfondi.js        sfondi disegnati (tappe, scena iniziale, finali)
+assets/img/         libro dal progetto Scratch
 assets/audio/       effetti sonori dal progetto Scratch e musiche originali
 strumenti/musica/   crediti, sorgenti MIDI e script delle musiche (fluidsynth, mido, ffmpeg)
 strumenti/effetti.py generatore dei suoni della scena iniziale (ariete, portone che crolla)
