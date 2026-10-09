@@ -41,7 +41,7 @@ const MINIGIOCHI = [
     dopoTappa: 1,
     tipo: "salto",
     quanti: 6,
-    istruzioni: "Attenti! Il sentiero è pieno di sassi e tronchi caduti. Premete la BARRA SPAZIATRICE (o toccate lo schermo) per saltare con il carretto!",
+    istruzioni: "Attenti! Il sentiero è pieno di sassi, tronchi caduti e botti rotolate giù. Premete la BARRA SPAZIATRICE (o toccate lo schermo) per saltare con il carretto!",
   },
   {
     dopoTappa: 2,

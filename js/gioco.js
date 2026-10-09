@@ -201,6 +201,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     mini: null, // minigioco in corso
     salto: 0, // altezza del salto del carretto
     vSalto: 0,
+    incl: 0, // inclinazione del carretto in aria
     chino: 0, // 0 = in piedi, 1 = testa abbassata
     abbassaFino: 0,
     urto: 0,
@@ -213,7 +214,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       libriVolanti: [], particelle: [], uscita: 0, cattura: false,
       inseguimento: false, prossimaRimonta: 9, scatto: 0, passoSoldati: 0,
       lampo: 0, grido: 0, finale: null, corrette: 0, sbagliate: 0,
-      mini: null, salto: 0, vSalto: 0, chino: 0, abbassaFino: 0, urto: 0,
+      mini: null, salto: 0, vSalto: 0, incl: 0, chino: 0, abbassaFino: 0, urto: 0,
     });
   }
 
@@ -738,7 +739,16 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     const scossa = mondo.urto > 0 ? Math.sin(mondo.t * 60) * 6 * mondo.urto : 0;
     ctx.save();
     ctx.translate(scossa, -mondo.salto);
-    disegnaCarretto(gx, fase);
+    // in aria il carretto ruota attorno alle stanghe: sale con il retro basso, scende con il retro alto
+    const incl = mondo.incl;
+    if (Math.abs(incl) > 0.002) {
+      ctx.save();
+      ctx.translate(gx - 40, SUOLO - 76); ctx.rotate(incl); ctx.translate(-(gx - 40), -(SUOLO - 76));
+      disegnaCarretto(gx, fase);
+      ctx.restore();
+      // anche l'Abate segue un po' la curva
+      ctx.translate(gx, SUOLO); ctx.rotate(incl * 0.35); ctx.translate(-gx, -SUOLO);
+    } else disegnaCarretto(gx, fase);
     const umore = mondo.urto > 0 || mondo.Dv < 22 ? "paura" : mondo.vel > 1.3 ? "felice" : "normale";
     if (mondo.chino > 0.01) {
       // il monaco si abbassa piegandosi in avanti
@@ -783,7 +793,13 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   // ---------------------------------------------------------------
   const SALTO_SPINTA = 820;
   const GRAVITA_SALTO = 1650;
-  const VEL_LANCIA = 760;
+  // ostacoli del sentiero: larghezza e altezza decidono quando serve saltare
+  const TIPI_OSTACOLO = [
+    { nome: "masso", w: 64, h: 46 },
+    { nome: "tronco", w: 86, h: 40 },
+    { nome: "botte", w: 48, h: 54 },
+    { nome: "sassi", w: 72, h: 32 },
+  ];
 
   function testaMonaco() {
     const { gx } = posizioni();
@@ -811,6 +827,13 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
         for (let i = 0; i < 8; i++) particella(gx - 160 + Math.random() * 180, SUOLO - 4, "polvere");
       }
     }
+    // inclinazione: muso in su salendo, in giù scendendo; la ruota non affonda mai nel terreno
+    let inclObiettivo = 0;
+    if (mondo.salto > 0) {
+      inclObiettivo = Math.max(-0.26, Math.min(0.2, -0.26 * mondo.vSalto / SALTO_SPINTA));
+      if (inclObiettivo < 0) inclObiettivo = Math.max(inclObiettivo, -mondo.salto / 115);
+    }
+    mondo.incl += (inclObiettivo - mondo.incl) * Math.min(1, dt * (mondo.salto > 0 ? 9 : 14));
     const chinoObiettivo = mondo.t < mondo.abbassaFino ? 1 : 0;
     mondo.chino += (chinoObiettivo - mondo.chino) * Math.min(1, dt * 16);
     mondo.urto = Math.max(0, mondo.urto - dt * 2.5);
@@ -823,15 +846,22 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       m.prossimo -= dt;
       if (m.prossimo <= 0) {
         m.lanciati++;
-        m.prossimo = m.tipo === "salto" ? 1.5 + Math.random() * 0.9 : 1.9 + Math.random() * 1.0;
+        const r = Math.random();
         if (m.tipo === "salto") {
-          const tronco = Math.random() < 0.5;
-          m.oggetti.push({ x: W + 60, w: tronco ? 74 : 58, h: tronco ? 38 : 46, tronco, seme: Math.random() * 100, colpito: false, superato: false });
+          // intervalli imprevedibili: a volte a raffica, a volte una lunga pausa (mai meno del tempo di un salto)
+          m.prossimo = r < 0.3 ? 1.15 + Math.random() * 0.2 : r < 0.75 ? 1.5 + Math.random() * 0.7 : 2.4 + Math.random() * 0.9;
+          let t;
+          do t = TIPI_OSTACOLO[Math.floor(Math.random() * TIPI_OSTACOLO.length)]; while (t.nome === m.ultimoTipo);
+          m.ultimoTipo = t.nome;
+          m.oggetti.push({ x: W + 60, w: t.w, h: t.h, tipo: t.nome, seme: Math.random() * 100, colpito: false, superato: false });
         } else {
-          // il lanciere grida e poi tira: c'è tempo per abbassarsi
+          // il lanciere grida e poi tira dopo un'attesa che cambia ogni volta
+          m.prossimo = r < 0.25 ? 0.9 + Math.random() * 0.3 : r < 0.7 ? 1.6 + Math.random() * 0.9 : 2.8 + Math.random() * 1.0;
+          const inAttesa = m.oggetti.filter((o) => o.stato === "pronta").map((o) => o.attesa);
+          const attesa = Math.max(0.4 + Math.random() * 0.9, inAttesa.length ? Math.max(...inAttesa) + 0.45 : 0);
           mondo.grido = 1.1;
-          mondo.testoGrido = ["LANCIA!", "PRENDI!", "ECCO!"][m.lanciati % 3];
-          m.oggetti.push({ attesa: 0.85, x: 0, y: 0, vx: 0, vy: 0, r: 0, stato: "pronta", colpito: false, superato: false });
+          mondo.testoGrido = ["LANCIA!", "PRENDI!", "ECCO!", "ORA!"][Math.floor(Math.random() * 4)];
+          m.oggetti.push({ attesa, vel: 620 + Math.random() * 280, x: 0, y: 0, vx: 0, vy: 0, r: 0, stato: "pronta", colpito: false, superato: false });
         }
       }
     }
@@ -873,8 +903,8 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
             const tm = testaMonaco();
             o.x = Math.max(-40, capo + 30);
             o.y = SUOLO - 235;
-            o.vx = VEL_LANCIA;
-            o.vy = ((tm.y - o.y) / (tm.x - o.x)) * VEL_LANCIA;
+            o.vx = o.vel;
+            o.vy = ((tm.y - o.y) / (tm.x - o.x)) * o.vel;
             o.r = Math.atan2(o.vy, o.vx);
             o.stato = "volo";
           }
@@ -921,35 +951,92 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     if (!m || m.tipo !== "salto") return;
     for (const o of m.oggetti) {
       const y = SUOLO + 4;
+      const k = (i) => hash(o.seme + i);
+      // ombra a terra (resta giù anche quando l'ostacolo vola via)
+      if (!o.colpito || o.oy > -30) {
+        ctx.fillStyle = "rgba(0,0,0,0.28)";
+        ctx.beginPath(); ctx.ellipse(o.x + o.w / 2, y, o.w / 2 + 10, 7, 0, 0, Math.PI * 2); ctx.fill();
+      }
       ctx.save();
       if (o.colpito) {
         const cx = o.x + o.w / 2, cy = y - o.h / 2;
         ctx.translate(cx, cy + o.oy); ctx.rotate(o.rot); ctx.translate(-cx, -cy);
       }
-      if (o.tronco) {
-        // tronco abbattuto con la sezione verso di noi
-        poligono([[o.x + 10, y], [o.x + o.w - 16, y], [o.x + o.w - 16, y - o.h], [o.x + 10, y - o.h]], "#7a4a22");
-        ctx.strokeStyle = "#5a3818"; ctx.lineWidth = 3;
-        for (let i = 0; i < 3; i++) {
-          ctx.beginPath(); ctx.moveTo(o.x + 18 + i * 18, y - o.h + 9 + i * 7); ctx.lineTo(o.x + 40 + i * 18, y - o.h + 9 + i * 7); ctx.stroke();
+      const x = o.x, w = o.w, h = o.h;
+      if (o.tipo === "tronco") {
+        // tronco abbattuto di traverso, con la sezione verso il monaco
+        const r = h / 2, cy = y - r;
+        poligono([[x + r * 0.6, y], [x + w - r, y], [x + w - r, y - h], [x + r * 0.6, y - h]], "#6e4220");
+        ctx.beginPath(); ctx.ellipse(x + r * 0.6, cy, r * 0.6, r, 0, Math.PI / 2, Math.PI * 1.5); ctx.fillStyle = "#6e4220"; ctx.fill();
+        ctx.strokeStyle = "#24160c"; ctx.lineWidth = 3; ctx.stroke();
+        // corteccia
+        ctx.strokeStyle = "#4a2c12"; ctx.lineWidth = 3; ctx.lineCap = "round";
+        for (let i = 0; i < 4; i++) {
+          const yy = y - h + 8 + i * 8 + k(i) * 3;
+          ctx.beginPath(); ctx.moveTo(x + 10 + k(i + 5) * 12, yy); ctx.lineTo(x + w - r - 8 - k(i + 9) * 14, yy + 1); ctx.stroke();
         }
-        cerchio(o.x + o.w - 16, y - o.h / 2, o.h / 2, "#d8a868");
+        ctx.fillStyle = "#8c5a2e"; ctx.fillRect(x + r * 0.6, y - h + 2, w - r * 1.6, 5);
+        // sezione con gli anelli
+        cerchio(x + w - r, cy, r, "#e0b070");
         ctx.strokeStyle = "#a8743c"; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(o.x + o.w - 16, y - o.h / 2, o.h / 3.3, 0, Math.PI * 2); ctx.stroke();
-        ctx.beginPath(); ctx.arc(o.x + o.w - 16, y - o.h / 2, o.h / 7, 0, Math.PI * 2); ctx.stroke();
-        // rametto
-        arto(o.x + 30, y - o.h + 2, o.x + 22, y - o.h - 16, 5, "#7a4a22");
-        cerchio(o.x + 20, y - o.h - 20, 7, "#4f7a32", "#24160c", 2);
+        for (const f of [0.68, 0.42, 0.18]) { ctx.beginPath(); ctx.arc(x + w - r, cy, r * f, 0, Math.PI * 2); ctx.stroke(); }
+        // muschio e rametto con foglie
+        ctx.fillStyle = "#5c8a34";
+        ctx.beginPath(); ctx.ellipse(x + w * 0.4, y - h + 1, 16, 5, 0, Math.PI, 0); ctx.fill();
+        arto(x + 22, y - h + 3, x + 12, y - h - 18, 5, "#6e4220");
+        cerchio(x + 10, y - h - 22, 8, "#4f7a32", "#24160c", 2.5);
+        cerchio(x + 20, y - h - 25, 6, "#6a9a40", "#24160c", 2.5);
+      } else if (o.tipo === "botte") {
+        // botte rovesciata in piedi, con doghe e cerchi di ferro
+        const pancia = 5;
+        ctx.beginPath();
+        ctx.moveTo(x + 4, y); ctx.quadraticCurveTo(x - pancia, y - h / 2, x + 4, y - h);
+        ctx.lineTo(x + w - 4, y - h); ctx.quadraticCurveTo(x + w + pancia, y - h / 2, x + w - 4, y);
+        ctx.closePath();
+        ctx.fillStyle = "#9a6232"; ctx.fill();
+        ctx.lineJoin = "round"; ctx.strokeStyle = "#24160c"; ctx.lineWidth = 3; ctx.stroke();
+        ctx.strokeStyle = "#6e4220"; ctx.lineWidth = 2;
+        for (const f of [0.3, 0.5, 0.7]) { ctx.beginPath(); ctx.moveTo(x + w * f, y - h + 3); ctx.lineTo(x + w * f, y - 3); ctx.stroke(); }
+        ctx.fillStyle = "#c08850"; ctx.fillRect(x + 8, y - h + 5, 6, h - 10);
+        for (const f of [0.18, 0.82]) {
+          ctx.fillStyle = "#4a4e55"; ctx.fillRect(x + 1, y - h * f - 3, w - 2, 7);
+          ctx.strokeStyle = "#24160c"; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y - h * f - 3, w - 2, 7);
+        }
+        // coperchio visto appena dall'alto
+        ctx.beginPath(); ctx.ellipse(x + w / 2, y - h, w / 2 - 4, 5, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "#7a4a22"; ctx.fill(); ctx.strokeStyle = "#24160c"; ctx.lineWidth = 2.5; ctx.stroke();
+      } else if (o.tipo === "sassi") {
+        // mucchio di sassi
+        const sasso = (cx, cy, rx, ry, c, i) => {
+          const pts = [];
+          for (let a = 0; a < 7; a++) {
+            const ang = (a / 7) * Math.PI * 2, f = 0.85 + k(i * 7 + a) * 0.25;
+            pts.push([cx + Math.cos(ang) * rx * f, Math.min(y, cy + Math.sin(ang) * ry * f)]);
+          }
+          poligono(pts, c);
+          ctx.fillStyle = "rgba(255,255,255,0.25)";
+          ctx.beginPath(); ctx.ellipse(cx - rx * 0.25, cy - ry * 0.45, rx * 0.35, ry * 0.2, -0.3, 0, Math.PI * 2); ctx.fill();
+        };
+        sasso(x + 18, y - 12, 18, 13, "#7d766c", 1);
+        sasso(x + w - 18, y - 13, 19, 14, "#8f877c", 2);
+        sasso(x + w / 2, y - h + 9, 17, 12, "#a39a8c", 3);
+        ctx.strokeStyle = "#5c8a34"; ctx.lineWidth = 3; ctx.lineCap = "round";
+        for (const d of [-6, 0, 6]) { ctx.beginPath(); ctx.moveTo(x + w + 6, y); ctx.lineTo(x + w + 6 + d, y - 12 + Math.abs(d)); ctx.stroke(); }
       } else {
-        const k = (i) => hash(o.seme + i) * 8;
-        poligono([
-          [o.x, y], [o.x + 4 + k(1), y - o.h * 0.55], [o.x + 18, y - o.h + k(2) * 0.5], [o.x + 40, y - o.h - 2],
-          [o.x + o.w - 6, y - o.h * 0.6 + k(3) * 0.5], [o.x + o.w, y],
-        ], "#8f877c");
-        ctx.fillStyle = "#b3aa9c";
-        ctx.beginPath(); ctx.ellipse(o.x + 26, y - o.h + 12, 10, 5, -0.3, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = "#6f675d";
-        ctx.beginPath(); ctx.ellipse(o.x + o.w - 18, y - 10, 12, 6, 0, 0, Math.PI * 2); ctx.fill();
+        // masso con faccia in luce, crepa e ciuffi d'erba
+        const j = (i) => k(i) * 7;
+        const pts = [[x, y], [x + 3 + j(1), y - h * 0.5], [x + 14, y - h + j(2) * 0.6], [x + 34, y - h - 2],
+          [x + w - 10, y - h * 0.72 + j(3) * 0.5], [x + w, y - h * 0.3], [x + w + 2, y]];
+        poligono(pts, "#8a8277");
+        poligono([[x + 14, y - h + j(2) * 0.6 + 2], [x + 34, y - h + 1], [x + w - 12, y - h * 0.7 + j(3) * 0.5], [x + 30, y - h * 0.55]], "#aaa192", null);
+        ctx.fillStyle = "#6c655c";
+        poligono([[x + w - 14, y - h * 0.6], [x + w - 2, y - h * 0.3], [x + w, y - 2], [x + w - 22, y - 2]], "#6c655c", null);
+        ctx.strokeStyle = "#24160c"; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.moveTo(x + 32, y - h + 6); ctx.lineTo(x + 26, y - h * 0.55); ctx.lineTo(x + 32, y - h * 0.3); ctx.stroke();
+        ctx.fillStyle = "#5c8a34";
+        ctx.beginPath(); ctx.ellipse(x + 26, y - h + 3, 11, 4, -0.2, Math.PI, 0); ctx.fill();
+        ctx.strokeStyle = "#4f7a32"; ctx.lineWidth = 3; ctx.lineCap = "round";
+        for (const d of [-5, 0, 5]) { ctx.beginPath(); ctx.moveTo(x - 4, y); ctx.lineTo(x - 4 + d, y - 11 + Math.abs(d)); ctx.stroke(); }
       }
       ctx.restore();
     }
@@ -1640,7 +1727,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     btn.textContent = mg.tipo === "salto" ? "SALTA" : "GIÙ";
     btn.className = mg.tipo;
     banner("", mg.tipo === "salto" ? "SALTA!" : "ABBASSATI!", "verde");
-    mondo.mini = { tipo: mg.tipo, quanti: mg.quanti, lanciati: 0, prossimo: 1.6, oggetti: [], evitati: 0, colpiti: 0, attivo: true };
+    mondo.mini = { tipo: mg.tipo, quanti: mg.quanti, lanciati: 0, prossimo: 1.0 + Math.random() * 1.4, oggetti: [], evitati: 0, colpiti: 0, attivo: true };
     const m = mondo.mini;
     while (m.evitati + m.colpiti < m.quanti) await attendi(100);
     m.attivo = false;
