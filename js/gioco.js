@@ -1737,26 +1737,53 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     await dialogo(mg.istruzioni, "normale", ["Pronti! ▶"]);
     chiudiPergamena();
     const btn = $("btn-azione");
-    btn.textContent = mg.tipo === "salto" ? "SALTA" : "GIÙ";
-    btn.className = mg.tipo;
-    banner("", mg.tipo === "salto" ? "SALTA!" : "ABBASSATI!", "verde");
-    mondo.mini = { tipo: mg.tipo, quanti: mg.quanti, lanciati: 0, prossimo: 1.0 + Math.random() * 1.4, oggetti: [], evitati: 0, colpiti: 0, attivo: true };
-    const m = mondo.mini;
-    while (m.evitati + m.colpiti < m.quanti) await attendi(100);
-    m.attivo = false;
-    btn.className = "nascosto";
-    await attendi(500);
-    if (m.colpiti === 0) {
-      mondo.D = Math.min(tetto(), mondo.D + 6);
-      mondo.vel = 2.1;
-      suona("giusto");
-      banner("", "PERFETTO!", "verde");
-      for (let s = 0; s < 14; s++) particella(posizioni().gx - 80 + Math.random() * 120, SUOLO - 60, "stella");
-    } else {
-      banner("", `EVITATI ${m.evitati} SU ${m.quanti}`, m.evitati >= m.quanti / 2 ? "verde" : "rosso");
+    const distaccoPrima = mondo.D;
+    const minimo = mg.minimoEvitati ?? 1;
+    for (;;) {
+      btn.textContent = mg.tipo === "salto" ? "SALTA" : "GIÙ";
+      btn.className = mg.tipo;
+      banner("", mg.tipo === "salto" ? "SALTA!" : "ABBASSATI!", "verde");
+      mondo.mini = { tipo: mg.tipo, quanti: mg.quanti, lanciati: 0, prossimo: 1.0 + Math.random() * 1.4, oggetti: [], evitati: 0, colpiti: 0, attivo: true };
+      const m = mondo.mini;
+      while (m.evitati + m.colpiti < m.quanti) await attendi(100);
+      m.attivo = false;
+      btn.className = "nascosto";
+      await attendi(500);
+      if (m.evitati >= minimo) {
+        if (m.colpiti === 0) {
+          mondo.D = Math.min(tetto(), mondo.D + 6);
+          mondo.vel = 2.1;
+          suona("giusto");
+          banner("", "PERFETTO!", "verde");
+          for (let s = 0; s < 14; s++) particella(posizioni().gx - 80 + Math.random() * 120, SUOLO - 60, "stella");
+        } else {
+          banner("", `EVITATI ${m.evitati} SU ${m.quanti}`, m.evitati >= m.quanti / 2 ? "verde" : "rosso");
+        }
+        await attendi(1800);
+        mondo.mini = null;
+        return;
+      }
+      // troppi colpi: i soldati raggiungono il carretto e si ripete solo il minigioco
+      mondo.mini = null;
+      mondo.D = 0;
+      mondo.grido = 2.5;
+      mondo.testoGrido = "PRESI!";
+      await attendi(900);
+      mondo.cattura = true;
+      mondo.vel = 0.3;
+      mondo.lampo = 1.2;
+      suona("sbagliato");
+      banner("", "PRESI!", "rosso");
+      await attendi(1600);
+      await dialogo(MINIGIOCO_PRESI, "arrabbiato", ["Riprova ▶"]);
+      chiudiPergamena();
+      await velo(1, 500);
+      mondo.cattura = false;
+      mondo.D = mondo.Dv = distaccoPrima;
+      mondo.vel = 1;
+      await velo(0, 500);
+      await attendi(600);
     }
-    await attendi(1800);
-    mondo.mini = null;
   }
 
   async function partita() {

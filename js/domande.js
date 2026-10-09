@@ -37,20 +37,27 @@ const ISTRUZIONI_CORSA =
 // Minigiochi d'azione alla fine di una tappa (prima di passare alla successiva).
 // tipo "salto": saltare sassi e tronchi; tipo "lance": abbassarsi per schivare le lance.
 // "quanti" è il numero di ostacoli o di lance.
+// "minimoEvitati": quanti ostacoli o lance bisogna evitare almeno; altrimenti i soldati
+// raggiungono il carretto e si ripete il minigioco (non tutta la partita).
 const MINIGIOCHI = [
   {
     dopoTappa: 1,
     tipo: "salto",
     quanti: 8,
+    minimoEvitati: 1,
     istruzioni: "Attenti! Il sentiero è pieno di sassi, tronchi caduti e botti rotolate giù. Premete la BARRA SPAZIATRICE (o toccate lo schermo) per saltare con il carretto!",
   },
   {
     dopoTappa: 2,
     tipo: "lance",
     quanti: 8,
+    minimoEvitati: 1,
     istruzioni: "Quei soldati ci tirano le lance! Quando sentite gridare, premete la FRECCIA GIÙ o la BARRA SPAZIATRICE (o toccate lo schermo) per abbassare la testa!",
   },
 ];
+
+// Cosa dice l'Abate quando i soldati lo prendono durante un minigioco.
+const MINIGIOCO_PRESI = "Ahimè, ci hanno raggiunti! Per fortuna sono riuscito a sgusciare via... riproviamo, e stavolta state più attenti!";
 
 // Banca delle domande: a ogni partita se ne pescano 12 a caso
 // (4 per ognuna delle tre tappe, come indicato in DOMANDE_PER_TAPPA).
