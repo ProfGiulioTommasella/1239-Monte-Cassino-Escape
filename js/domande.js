@@ -21,7 +21,7 @@ const DOMANDA_INIZIALE = "Siete con me?";
 const RISPOSTA_SI = "Molto bene miei prodi discepoli! Partiamo!";
 const RISPOSTA_NO = "Beh, tanto non avete scelta, perché in quanto novizi avete fatto voto di obbedienza!";
 const ISTRUZIONI_CORSA =
-  "I soldati di Federico II ci inseguono! Ogni risposta giusta ci fa guadagnare terreno; ogni risposta sbagliata li avvicina e ci fa perdere un libro dal carretto!";
+  "I soldati di Federico II ci inseguono! Ogni risposta giusta ci fa guadagnare terreno, ogni risposta sbagliata li avvicina e ci fa perdere un libro dal carretto. E non perdete tempo: se esitate troppo, accelerano!";
 
 const DOMANDE = [
   {

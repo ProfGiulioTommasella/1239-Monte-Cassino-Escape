@@ -9,7 +9,10 @@
   const H = 720;
   const SUOLO = 640; // linea dei piedi dei personaggi
   const DISTACCO_INIZIALE = 40;
-  const PASSO_DISTACCO = 12;
+  const PASSO_DISTACCO = 15; // terreno guadagnato o perso a ogni risposta
+const RIMONTA = [10, 13, 16]; // quanto si avvicinano i soldati a ogni rimonta, tappa per tappa
+const MINIMO_RIMONTA = 15; // le rimonte da sole non bastano a raggiungere l'Abate
+const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CORSA!"];
   const VEL_BASE = 420; // pixel al secondo della strada
 
   const $ = (id) => document.getElementById(id);
@@ -146,6 +149,10 @@
     veloObiettivo: 0,
     lampo: 0,
     grido: 0,
+    inseguimento: false,
+    prossimaRimonta: 9,
+    scatto: 0,
+    passoSoldati: 0,
     finale: null,
     corrette: 0,
     sbagliate: 0,
@@ -156,6 +163,7 @@
       scroll: 0, vel: 1, D: DISTACCO_INIZIALE, Dv: DISTACCO_INIZIALE,
       tappa: 1, tappaPrec: 1, dissolvenza: 1, libri: DOMANDE.length,
       libriVolanti: [], particelle: [], uscita: 0, cattura: false,
+      inseguimento: false, prossimaRimonta: 9, scatto: 0, passoSoldati: 0,
       lampo: 0, grido: 0, finale: null, corrette: 0, sbagliate: 0,
     });
   }
@@ -603,7 +611,7 @@
   function posizioni() {
     const gx = 590 + mondo.Dv * 1.6 + mondo.uscita;
     const retro = gx - 228;
-    const capo = mondo.cattura ? retro - 70 : retro - 100 - mondo.Dv * 4.6;
+    const capo = mondo.cattura ? retro - 70 : retro - 100 - mondo.Dv * 3.6;
     return { gx, retro, capo };
   }
 
@@ -637,6 +645,21 @@
     mondo.libriVolanti = mondo.libriVolanti.filter((l) => l.x > -150);
     mondo.lampo = Math.max(0, mondo.lampo - dt * 2);
     mondo.grido = Math.max(0, mondo.grido - dt);
+    mondo.scatto = Math.max(0, mondo.scatto - dt);
+    mondo.passoSoldati += mondo.scatto * dt * 9;
+    // se si tarda a rispondere, i soldati accelerano e si rifanno sotto (una volta per domanda)
+    if (mondo.inseguimento) {
+      mondo.prossimaRimonta -= dt;
+      if (mondo.prossimaRimonta <= 0) {
+        mondo.prossimaRimonta = Infinity;
+        if (mondo.D > MINIMO_RIMONTA) {
+          mondo.D = Math.max(MINIMO_RIMONTA, mondo.D - RIMONTA[(mondo.tappa - 1) % RIMONTA.length]);
+          mondo.scatto = 1.2;
+          mondo.grido = 1.8;
+          mondo.testoGrido = GRIDA_RIMONTA[Math.floor(Math.random() * GRIDA_RIMONTA.length)];
+        }
+      }
+    }
   }
 
   function disegnaCorsa() {
@@ -659,7 +682,7 @@
       const jitter = Math.sin(mondo.t * 1.7 + i * 2.1) * 10;
       const sx = capo + f.dx + jitter;
       if (sx < -140 || sx > W + 140) continue;
-      disegnaSoldato(sx, SUOLO + f.dy, f.s, fase * 1.08 + i * 1.3, TIPI_SOLDATO[i]);
+      disegnaSoldato(sx, SUOLO + f.dy, f.s, fase * 1.08 + mondo.passoSoldati + i * 1.3, TIPI_SOLDATO[i]);
     }
     if (mondo.grido > 0 && capo > -40) {
       fumetto(capo + 10, SUOLO - 215, mondo.testoGrido || "FERMATELI!");
@@ -912,10 +935,13 @@
       }
       await attendi(i === 0 ? 900 : 1800);
 
+      mondo.inseguimento = true;
+      mondo.prossimaRimonta = 4 + Math.random() * 3;
       const scelta = await dialogo(q.testo, "normale", q.opzioni, {
         risposte: true,
         intestazione: `Domanda ${i + 1} di ${DOMANDE.length}`,
       });
+      mondo.inseguimento = false;
       const bottoni = $("opzioni").querySelectorAll("button");
       const giusta = scelta === q.giusta;
       bottoni[q.giusta].classList.add("corretta");
@@ -959,6 +985,7 @@
   async function finale() {
     const c = mondo.corrette;
     const fin = FINALI.find((f) => c >= f.minimo) || FINALI[FINALI.length - 1];
+    mondo.inseguimento = false;
     $("hud").classList.add("nascosto");
     await attendi(600);
 
