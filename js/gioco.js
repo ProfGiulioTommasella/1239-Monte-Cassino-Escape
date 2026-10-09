@@ -824,7 +824,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     if (m.tipo === "salto") {
       if (mondo.salto <= 0.5) { mondo.vSalto = SALTO_SPINTA; mondo.salto = 1; suona("hop", 0.7); }
     } else {
-      mondo.abbassaFino = mondo.t + 0.75;
+      mondo.abbassaFino = mondo.t + 0.55;
     }
   }
 
@@ -848,7 +848,8 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     }
     mondo.incl += (inclObiettivo - mondo.incl) * Math.min(1, dt * (mondo.salto > 0 ? 9 : 14));
     const chinoObiettivo = mondo.t < mondo.abbassaFino ? 1 : 0;
-    mondo.chino += (chinoObiettivo - mondo.chino) * Math.min(1, dt * 16);
+    // si china in fretta e si rialza ancora più in fretta
+    mondo.chino += (chinoObiettivo - mondo.chino) * Math.min(1, dt * (chinoObiettivo ? 16 : 22));
     mondo.urto = Math.max(0, mondo.urto - dt * 2.5);
     const m = mondo.mini;
     if (!m) return;

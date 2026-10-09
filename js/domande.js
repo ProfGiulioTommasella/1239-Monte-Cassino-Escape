@@ -52,7 +52,7 @@ const MINIGIOCHI = [
     tipo: "lance",
     quanti: 8,
     colpiMassimi: 3,
-    istruzioni: "Quei soldati ci tirano le lance! Quando sentite gridare, premete la FRECCIA GIÙ o la BARRA SPAZIATRICE (o toccate lo schermo) per abbassare la testa! Al quarto colpo ci prendono!",
+    istruzioni: "Quei soldati ci tirano le lance! Quando vedete un soldato gridare nel fumetto, premete la FRECCIA GIÙ o la BARRA SPAZIATRICE (o toccate lo schermo) per abbassare la testa! Al quarto colpo ci prendono!",
   },
 ];
 
