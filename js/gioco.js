@@ -523,6 +523,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     poligono([[g2.px - 7, g2.py - 7], [g2.px + 14, g2.py - 2], [g2.px + 14, g2.py + 4], [g2.px - 7, g2.py + 4]], "#3a2414", "#24160c", 2);
     // braccio dietro
     if (tipo === "lancia") arto(-4, G - 108 + bob, 22, G - 92 + bob, 10, "#6f747b");
+    else if (tipo === "ariete") arto(-4, G - 108 + bob, 20, G - 84, 10, "#6f747b");
     else arto(-4, G - 108 + bob, -24, G - 84 + bob, 10, "#6f747b");
     // scudo sulla schiena
     if (tipo === "spada" || tipo === "torcia") {
@@ -582,6 +583,10 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       ctx.restore();
       arto(6, G - 108 + bob, 24, G - 128 + bob, 10, MAGLIA);
       cerchio(26, G - 128 + bob, 5, "#e9b384", "#24160c", 2);
+    } else if (tipo === "ariete") {
+      // braccia in avanti che reggono la trave
+      arto(6, G - 108 + bob, 30, G - 84, 10, MAGLIA);
+      cerchio(32, G - 84, 5.5, "#e9b384", "#24160c", 2);
     } else {
       arto(6, G - 108 + bob, -10, G - 96 + bob, 10, MAGLIA);
     }
@@ -1017,24 +1022,30 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   }
 
   // ---------------------------------------------------------------
-  //  Scena iniziale: i soldati sfondano il portone, l'Abate carica il carretto
+  //  Scena iniziale, in spaccato: a destra i soldati battono l'ariete sul portone,
+  //  a sinistra l'Abate fa avanti e indietro dallo scriptorium per caricare i codici
   // ---------------------------------------------------------------
-  const PILA_X = 1120; // mucchio di libri da caricare
-  const CARRO_X = 700; // posizione del carretto (davanti, dove sta l'Abate)
+  const SCAFFALE_X = 196; // dove l'Abate prende i codici
+  const PILA_X = 70; // codici ancora da caricare, a terra davanti allo scaffale
+  const LANCIO_X = 600; // dove si ferma per gettarli sul carretto
+  const CARRO_X = 540; // muso del carretto (girato verso sinistra, la via di fuga)
+  const PORTONE_X = 981; // portone, sul lato esterno della torre
   const scena = {};
   function azzeraScena() {
     Object.assign(scena, {
+      periodoColpo: 2,
       prossimoColpo: 2.2,
       scossa: 0,
       bum: 0,
-      crepe: 0,
       porta: "chiusa",
+      caduta: 0, // rotazione del portone che crolla
+      ariete: 0, // arretramento dell'ariete
       assi: [],
       soldati: [],
       prossimoSoldato: 0,
       libri: 7,
       libroVolo: null,
-      monaco: { x: PILA_X - 30, dir: -1, carica: true, sosta: 0, fase: 0, stato: "carica" },
+      monaco: { x: LANCIO_X, dir: -1, carica: false, sosta: 0.3, fase: 0, stato: "carica" },
       gx: CARRO_X,
       vFuga: 0,
       esclama: 0,
@@ -1043,20 +1054,34 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   }
   azzeraScena();
 
+  // disegna fn() specchiato rispetto alla verticale x = cx
+  function specchia(cx, fn) {
+    ctx.save();
+    ctx.translate(cx * 2, 0);
+    ctx.scale(-1, 1);
+    fn();
+    ctx.restore();
+  }
+
   function aggiornaScena(dt) {
     const m = scena.monaco;
     // colpi d'ariete sul portone
     if (scena.porta === "chiusa") {
       scena.prossimoColpo -= dt;
       if (scena.prossimoColpo <= 0) {
-        scena.prossimoColpo = 1.6 + Math.random() * 0.8;
+        scena.periodoColpo = 1.6 + Math.random() * 0.8;
+        scena.prossimoColpo = scena.periodoColpo;
         scena.scossa = 1;
         scena.bum = 1;
-        scena.tremore = 0.35;
-        scena.crepe = Math.min(6, scena.crepe + 1);
+        scena.tremore = 0.3;
         suona("colpo", 0.9);
-        for (let i = 0; i < 10; i++) particella(130 + Math.random() * 120, SUOLO - Math.random() * 30, "polvere");
+        for (let i = 0; i < 8; i++) particella(PORTONE_X - 20 + Math.random() * 30, SUOLO - Math.random() * 200, "polvere");
       }
+      // l'ariete arretra e poi scatta in avanti contro il portone
+      const u = 1 - scena.prossimoColpo / scena.periodoColpo;
+      scena.ariete = u < 0.75 ? 75 * Math.sin((u / 0.75) * Math.PI * 0.5) : 75 * (1 - (u - 0.75) / 0.25);
+    } else {
+      scena.caduta = Math.min(Math.PI / 2, scena.caduta + dt * (2 + scena.caduta * 6));
     }
     scena.scossa = Math.max(0, scena.scossa - dt * 4);
     scena.bum = Math.max(0, scena.bum - dt * 1.6);
@@ -1066,32 +1091,33 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       a.vy += 1400 * dt; a.x += a.vx * dt; a.y += a.vy * dt; a.r += a.vr * dt;
       if (a.y > SUOLO - 6) { a.y = SUOLO - 6; a.vy *= -0.25; a.vx *= 0.6; a.vr *= 0.5; }
     }
-    // l'Abate fa avanti e indietro tra il mucchio e il carretto
+    // l'Abate fa avanti e indietro tra lo scriptorium e il carretto
     const pieno = Math.min(11, DOMANDE.length);
     if (m.stato === "carica" || m.stato === "posizione") {
       if (m.sosta > 0) {
         m.sosta -= dt;
       } else {
-        const meta = m.stato === "posizione" ? CARRO_X : m.carica ? CARRO_X + 10 : PILA_X - 30;
+        const meta = m.stato === "posizione" ? CARRO_X : m.carica ? LANCIO_X : SCAFFALE_X;
         const d = meta - m.x;
         if (Math.abs(d) > 0.5) m.dir = d < 0 ? -1 : 1;
-        const passo = Math.sign(d) * Math.min(Math.abs(d), 200 * dt);
+        const passo = Math.sign(d) * Math.min(Math.abs(d), 250 * dt);
         m.x += passo;
         m.fase += Math.abs(passo) / 22;
         if (Math.abs(d) < 1) {
           if (m.stato === "posizione") {
             m.stato = "pronto";
-            m.dir = 1;
+            m.dir = -1;
           } else if (m.carica) {
-            // lancia il libro sul carretto
+            // getta il codice sul carretto
             m.carica = false;
             m.sosta = 0.35;
             const p = posizioneLibro(scena.libri, CARRO_X, SUOLO - 84);
-            scena.libroVolo = { x: m.x - 40, y: SUOLO - 100, tx: p.x + 20, ty: p.y - 10, t: 0 };
+            scena.libroVolo = { x: m.x + 30, y: SUOLO - 100, tx: 2 * CARRO_X - (p.x + 20), ty: p.y - 10, t: 0 };
             if (scena.libri + 1 >= pieno) m.stato = "posizione";
           } else {
+            // prende un codice dalla pila
             m.carica = true;
-            m.sosta = 0.4;
+            m.sosta = 0.45;
           }
         }
       }
@@ -1104,24 +1130,24 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
         scena.libri = Math.min(pieno, scena.libri + 1);
       }
     }
-    // il portone cede e i soldati entrano
+    // il portone cede e i soldati entrano da destra
     if (scena.porta === "rotta") {
       scena.prossimoSoldato -= dt;
       if (scena.prossimoSoldato <= 0 && scena.soldati.length < FORMAZIONE.length) {
-        scena.prossimoSoldato = 0.45;
+        scena.prossimoSoldato = 0.4;
         const f = FORMAZIONE[scena.soldati.length];
-        scena.soldati.push({ x: 160, tipo: TIPI_SOLDATO[scena.soldati.length], fase: Math.random() * 6, dy: f.dy, s: f.s });
+        scena.soldati.push({ x: PORTONE_X + 60, tipo: TIPI_SOLDATO[scena.soldati.length], fase: Math.random() * 6, dy: f.dy, s: f.s });
       }
       for (const sd of scena.soldati) {
-        sd.x += 195 * dt;
-        sd.fase += (195 * dt) / 34;
+        sd.x -= 210 * dt;
+        sd.fase += (210 * dt) / 34;
       }
       if (m.stato === "fuga") {
         scena.vFuga = Math.min(420, scena.vFuga + 500 * dt);
-        scena.gx += scena.vFuga * dt;
+        scena.gx -= scena.vFuga * dt;
         m.fase += (scena.vFuga * dt) / 34;
         mondo.scroll += scena.vFuga * dt; // fa girare la ruota
-        if (Math.random() < 0.6) particella(scena.gx - 150, SUOLO - 4, "polvere");
+        if (Math.random() < 0.6) particella(scena.gx + 150, SUOLO - 4, "polvere");
       }
     }
     aggiornaParticelle(dt, 0);
@@ -1132,163 +1158,111 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     scena.tremore = 0.8;
     mondo.lampo = 1.2;
     suona("crollo");
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 10; i++) {
       scena.assi.push({
-        x: 150 + Math.random() * 80, y: 420 + Math.random() * 180,
-        vx: 200 + Math.random() * 500, vy: -300 - Math.random() * 400,
-        r: 0, vr: (Math.random() - 0.5) * 14, w: 14 + Math.random() * 10, h: 50 + Math.random() * 40,
+        x: PORTONE_X - 10 + Math.random() * 20, y: 420 + Math.random() * 180,
+        vx: -120 - Math.random() * 280, vy: -300 - Math.random() * 400,
+        r: 0, vr: (Math.random() - 0.5) * 14, w: 12 + Math.random() * 8, h: 40 + Math.random() * 40,
       });
     }
-    for (let i = 0; i < 25; i++) particella(150 + Math.random() * 100, SUOLO - Math.random() * 200, "polvere");
+    for (let i = 0; i < 25; i++) particella(PORTONE_X - 60 + Math.random() * 100, SUOLO - Math.random() * 220, "polvere");
   }
 
-  function disegnaMura() {
-    const top = 170;
-    // muro di pietra
-    ctx.fillStyle = "#5b5249";
-    ctx.fillRect(0, top, 330, SUOLO - top);
-    for (let r = 0; r < 12; r++) {
-      const y = top + r * 39;
-      for (let c = -1; c < 7; c++) {
-        const x = c * 56 + (r % 2) * 28;
-        ctx.fillStyle = `hsl(30, 8%, ${30 + hash(r * 17 + c) * 12}%)`;
-        ctx.fillRect(x + 2, y + 2, 52, 35);
-      }
-    }
-    // merli
-    for (let c = 0; c < 6; c++) {
-      ctx.fillStyle = "#4e463e";
-      ctx.fillRect(c * 60, top - 40, 38, 42);
-      ctx.strokeStyle = "#24160c"; ctx.lineWidth = 3; ctx.strokeRect(c * 60, top - 40, 38, 42);
-    }
-    ctx.strokeStyle = "#24160c"; ctx.lineWidth = 4;
-    ctx.strokeRect(-4, top, 334, SUOLO - top);
-    // torcia sul muro
-    const f = 1 + Math.sin(mondo.t * 19) * 0.12;
-    arto(300, 330, 300, 370, 6, "#6b4520");
-    ctx.fillStyle = "#ff7a1a"; ctx.beginPath(); ctx.ellipse(300, 318, 10 * f, 18 * f, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#ffd34d"; ctx.beginPath(); ctx.ellipse(300, 322, 5 * f, 9 * f, 0, 0, Math.PI * 2); ctx.fill();
-    const alone = ctx.createRadialGradient(300, 320, 5, 300, 320, 140);
-    alone.addColorStop(0, "rgba(255,150,50,0.35)"); alone.addColorStop(1, "rgba(255,150,50,0)");
-    ctx.fillStyle = alone; ctx.fillRect(160, 180, 280, 280);
-    if (Math.random() < 0.2) particella(300, 305, "scintilla");
+  // il portone di legno nel varco della torre (crolla verso il cortile)
+  function disegnaPortone() {
+    const h = 222;
+    const dx = scena.porta === "chiusa" ? Math.sin(mondo.t * 70) * 4 * scena.scossa : 0;
+    ctx.save();
+    ctx.translate(PORTONE_X - 16 + dx, SUOLO);
+    ctx.rotate(-scena.caduta);
+    poligono([[0, 0], [0, -h], [18, -h], [18, 0]], "#6e4320", "#24160c", 3);
+    ctx.fillStyle = "#2b2b2b";
+    for (const y of [-h + 26, -h / 2, -30]) ctx.fillRect(-1, y, 20, 10);
+    ctx.restore();
+    // trave di sbarramento sul lato del cortile
+    if (scena.porta === "chiusa") poligono([[PORTONE_X - 30 + dx, SUOLO - 120], [PORTONE_X - 16 + dx, SUOLO - 120], [PORTONE_X - 16 + dx, SUOLO - 100], [PORTONE_X - 30 + dx, SUOLO - 100]], "#4a2c12", "#24160c", 2);
+  }
 
-    // arco del portone
-    const ax = 70, aw = 190, ay = 360;
-    const arco = () => {
-      ctx.beginPath();
-      ctx.moveTo(ax, SUOLO);
-      ctx.lineTo(ax, ay);
-      ctx.arc(ax + aw / 2, ay, aw / 2, Math.PI, 0);
-      ctx.lineTo(ax + aw, SUOLO);
-      ctx.closePath();
-    };
-    ctx.lineWidth = 22; ctx.strokeStyle = "#8a7f72"; arco(); ctx.stroke();
-    ctx.lineWidth = 3; ctx.strokeStyle = "#24160c"; arco(); ctx.stroke();
-    if (scena.porta === "chiusa") {
-      const dx = Math.sin(mondo.t * 70) * 5 * scena.scossa;
-      ctx.save();
-      arco(); ctx.clip();
-      ctx.translate(dx, 0);
-      ctx.fillStyle = "#6e4320"; ctx.fillRect(ax, ay - aw / 2, aw, SUOLO - ay + aw / 2);
-      ctx.strokeStyle = "#3d2410"; ctx.lineWidth = 3;
-      for (let i = 1; i < 6; i++) { ctx.beginPath(); ctx.moveTo(ax + (i * aw) / 6, ay - aw / 2); ctx.lineTo(ax + (i * aw) / 6, SUOLO); ctx.stroke(); }
-      ctx.fillStyle = "#2b2b2b";
-      for (const yy of [ay - 30, ay + 70, ay + 190]) ctx.fillRect(ax, yy, aw, 12);
-      ctx.fillStyle = "#555";
-      for (const yy of [ay - 30, ay + 70, ay + 190]) for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.arc(ax + 20 + i * 38, yy + 6, 3, 0, Math.PI * 2); ctx.fill(); }
-      // trave di sbarramento
-      ctx.fillStyle = "#4a2c12"; ctx.fillRect(ax - 10, ay + 120, aw + 20, 18);
-      // crepe con la luce del fuoco
-      ctx.strokeStyle = "#ffb347"; ctx.lineWidth = 3;
-      for (let c = 0; c < scena.crepe; c++) {
-        let x = ax + 30 + hash(c * 9) * (aw - 60);
-        let y = ay - 40 + hash(c * 5) * 200;
-        ctx.beginPath(); ctx.moveTo(x, y);
-        for (let s = 0; s < 4; s++) { x += (hash(c * 31 + s) - 0.5) * 30; y += 14 + hash(c * 7 + s) * 16; ctx.lineTo(x, y); }
-        ctx.stroke();
-      }
-      ctx.restore();
-      if (scena.bum > 0) {
-        ctx.save();
-        ctx.translate(165, 300);
-        ctx.rotate(-0.15);
-        ctx.scale(0.8 + scena.bum * 0.5, 0.8 + scena.bum * 0.5);
-        ctx.globalAlpha = Math.min(1, scena.bum * 2);
-        ctx.font = '40px "Press Start 2P", monospace';
-        ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.lineWidth = 8; ctx.strokeStyle = "#000"; ctx.strokeText("BUM!", 0, 0);
-        ctx.fillStyle = "#ffcf3a"; ctx.fillText("BUM!", 0, 0);
-        ctx.restore();
-        ctx.textAlign = "left";
-      }
-    } else {
-      // varco aperto sul fuoco
-      ctx.save(); arco(); ctx.clip();
-      const g = ctx.createLinearGradient(0, ay - aw / 2, 0, SUOLO);
-      g.addColorStop(0, "#2a0d05"); g.addColorStop(1, `rgba(255,${Math.round(110 + Math.sin(mondo.t * 9) * 30)},30,1)`);
-      ctx.fillStyle = g; ctx.fillRect(ax, ay - aw / 2, aw, SUOLO);
-      ctx.restore();
+  // fuori: tre soldati con l'ariete (girati verso sinistra)
+  function disegnaAriete() {
+    const off = scena.porta === "chiusa" ? scena.ariete : 40;
+    const fase = scena.porta === "chiusa" ? off / 18 : 0;
+    const x0 = PORTONE_X + 4 + off;
+    const y = SUOLO - 80;
+    if (scena.porta === "rotta") {
+      // ariete lasciato a terra
+      poligono([[x0 + 30, SUOLO - 2], [x0 + 30, SUOLO - 24], [x0 + 230, SUOLO - 24], [x0 + 230, SUOLO - 2]], "#7a4a22", "#24160c", 3);
+      return;
+    }
+    // trave con la testa di ferro
+    poligono([[x0 + 22, y - 12], [x0 + 215, y - 12], [x0 + 215, y + 12], [x0 + 22, y + 12]], "#7a4a22", "#24160c", 3);
+    ctx.strokeStyle = "#5a3818"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x0 + 40, y - 3); ctx.lineTo(x0 + 200, y - 3); ctx.stroke();
+    poligono([[x0, y - 16], [x0 + 26, y - 16], [x0 + 26, y + 16], [x0, y + 16]], "#5e646c", "#24160c", 3);
+    for (const [i, dxs] of [[0, 62], [1, 122], [2, 182]]) {
+      const sx = x0 + dxs;
+      specchia(sx, () => disegnaSoldato(sx, SUOLO + (i === 1 ? -4 : 0), 0.95, fase + i * 1.3, "ariete"));
     }
   }
 
   function disegnaScena() {
     ctx.save();
     if (scena.tremore > 0) ctx.translate((Math.random() - 0.5) * 16 * scena.tremore, (Math.random() - 0.5) * 10 * scena.tremore);
-    sfondi.inizio(mondo.t);
-    // cortile lastricato
-    ctx.fillStyle = "#3e3730";
-    ctx.fillRect(-20, SUOLO - 30, W + 40, H);
-    for (let r = 0; r < 4; r++) {
-      for (let c = 0; c < 22; c++) {
-        const x = c * 64 + (r % 2) * 32 - 20;
-        const y = SUOLO - 26 + r * 26;
-        ctx.fillStyle = `hsl(28, 10%, ${22 + hash(r * 41 + c) * 10}%)`;
-        ctx.beginPath(); ctx.ellipse(x + 30, y + 11, 29, 10, 0, 0, Math.PI * 2); ctx.fill();
-      }
-    }
-    ctx.fillStyle = "#1c1814"; ctx.fillRect(-20, SUOLO + 78, W + 40, H);
-    disegnaMura();
-    // mucchio di libri ancora da caricare
+    sfondi.cortile(mondo.t, SUOLO);
     const m = scena.monaco;
+    // codici ancora da caricare, a terra nello scriptorium
     const rimasti = Math.max(0, Math.min(11, DOMANDE.length) - scena.libri - (scena.libroVolo ? 1 : 0) - (m.carica && m.stato === "carica" ? 1 : 0));
     for (let i = 0; i < rimasti; i++) {
-      const x = PILA_X + 10 + (i % 2) * 34;
+      const x = PILA_X + (i % 2) * 34;
       const y = SUOLO - 4 - Math.floor(i / 2) * 15;
       poligono([[x, y], [x + 56, y], [x + 56, y - 14], [x, y - 14]], COLORI_LIBRI[(i + 7) % COLORI_LIBRI.length], "#24160c", 2.5);
       ctx.fillStyle = "#f5ecd2"; ctx.fillRect(x + 48, y - 12, 6, 10);
     }
-    // assi del portone
+    disegnaAriete();
+    disegnaPortone();
+    if (scena.bum > 0) {
+      ctx.save();
+      ctx.translate(PORTONE_X - 70, 330);
+      ctx.rotate(0.12);
+      ctx.scale(0.8 + scena.bum * 0.5, 0.8 + scena.bum * 0.5);
+      ctx.globalAlpha = Math.min(1, scena.bum * 2);
+      ctx.font = '40px "Press Start 2P", monospace';
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.lineWidth = 8; ctx.strokeStyle = "#000"; ctx.strokeText("BUM!", 0, 0);
+      ctx.fillStyle = "#ffcf3a"; ctx.fillText("BUM!", 0, 0);
+      ctx.restore();
+      ctx.textAlign = "left";
+    }
     for (const a of scena.assi) {
       ctx.save(); ctx.translate(a.x, a.y); ctx.rotate(a.r);
       poligono([[-a.w / 2, -a.h / 2], [a.w / 2, -a.h / 2], [a.w / 2, a.h / 2], [-a.w / 2, a.h / 2]], "#6e4320", "#24160c", 2);
       ctx.restore();
     }
-    // soldati che irrompono
-    for (let i = scena.soldati.length - 1; i >= 0; i--) {
-      const sd = scena.soldati[i];
-      disegnaSoldato(sd.x, SUOLO + sd.dy, sd.s, sd.fase, sd.tipo);
-    }
-    // carretto e Abate
+    // carretto (girato verso sinistra) e Abate
     mondo.libri = scena.libri;
     const davanti = m.stato === "pronto" || m.stato === "fuga";
-    disegnaCarretto(davanti ? scena.gx : CARRO_X, 0);
-    if (davanti) {
-      disegnaMonaco(scena.gx, m.fase, m.stato === "fuga" ? "paura" : "normale", "traino", m.stato === "pronto");
-    } else {
-      ctx.save();
-      if (m.dir < 0) { ctx.translate(m.x * 2, 0); ctx.scale(-1, 1); }
-      disegnaMonaco(m.x, m.fase, "normale", m.carica ? "porta" : "vuote", m.sosta > 0);
-      ctx.restore();
+    const cx = davanti ? scena.gx : CARRO_X;
+    specchia(cx, () => {
+      disegnaCarretto(cx, 0);
+      if (davanti) disegnaMonaco(cx, m.fase, m.stato === "fuga" ? "paura" : "normale", "traino", m.stato === "pronto");
+    });
+    if (!davanti) {
+      const disegna = () => disegnaMonaco(m.x, m.fase, "normale", m.carica ? "porta" : "vuote", m.sosta > 0);
+      if (m.dir < 0) specchia(m.x, disegna); else disegna();
     }
     if (scena.libroVolo && img.libro && img.libro.naturalWidth) {
       const l = scena.libroVolo;
       const x = l.x + (l.tx - l.x) * l.t;
       const y = l.y + (l.ty - l.y) * l.t - Math.sin(l.t * Math.PI) * 90;
-      ctx.save(); ctx.translate(x, y); ctx.rotate(-l.t * 6.3); ctx.drawImage(img.libro, -24, -20, 48, 40); ctx.restore();
+      ctx.save(); ctx.translate(x, y); ctx.rotate(l.t * 6.3); ctx.drawImage(img.libro, -24, -20, 48, 40); ctx.restore();
     }
-    if (scena.esclama > 0) fumetto(scena.gx + 20, SUOLO - 205, "!!!");
-    if (scena.soldati.length && scena.soldati[0].x < 760) fumetto(scena.soldati[0].x + 10, SUOLO - 215, "ALL'ASSALTO!");
+    // soldati che irrompono nel cortile
+    for (let i = scena.soldati.length - 1; i >= 0; i--) {
+      const sd = scena.soldati[i];
+      specchia(sd.x, () => disegnaSoldato(sd.x, SUOLO + sd.dy, sd.s, sd.fase, sd.tipo));
+    }
+    if (scena.esclama > 0) fumetto(scena.gx - 30, SUOLO - 205, "!!!");
+    if (scena.soldati.length && scena.soldati[0].x > 560) fumetto(scena.soldati[0].x - 10, SUOLO - 215, "ALL'ASSALTO!");
     disegnaParticelle();
     ctx.restore();
     if (mondo.lampo > 0) {

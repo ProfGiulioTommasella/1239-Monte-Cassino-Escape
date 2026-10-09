@@ -388,5 +388,143 @@ function creaSfondi(ctx, W, hash) {
     ctx.fillStyle = "#1c120e"; ctx.fillRect(0, 610, W, 110);
   }
 
-  return { tappe: [tappa1, tappa2, tappa3], inizio, vittoria, quasi, fiamme, fiamma };
+  // Spaccato dell'abbazia per la scena iniziale: scriptorium a sinistra,
+  // cortile con il chiostro al centro, torre del portone a destra e fuori la notte.
+  // (il portone, l'ariete e i personaggi li disegna gioco.js)
+  function cortile(t, G) {
+    // cielo rosso dell'incendio
+    cielo([[0, "#1a0f14"], [0.6, "#4a1a14"], [1, "#a3401a"]], 0, G);
+    stelle(40, 7, 0.5);
+    const bagliore = ctx.createRadialGradient(700, 330, 30, 700, 330, 560);
+    bagliore.addColorStop(0, "rgba(255,140,40,0.5)"); bagliore.addColorStop(1, "rgba(255,140,40,0)");
+    ctx.fillStyle = bagliore; ctx.fillRect(0, 0, W, G);
+    for (let i = 0; i < 7; i++) {
+      const k = (t * 0.045 + i / 7) % 1;
+      ctx.fillStyle = `rgba(40,28,28,${0.5 * (1 - k)})`;
+      ctx.beginPath(); ctx.arc(600 + i * 40 + k * 140, 250 - k * 260, 40 + k * 80, 0, Math.PI * 2); ctx.fill();
+    }
+    // fuori dalle mura: colline scure
+    profilo(0, G - 130, 25, 140, "#2c1d1a", 3, G + 10);
+
+    // campanile della chiesa che brucia, dietro al chiostro
+    poli([[650, 360], [650, 175], [730, 175], [730, 360]], "#7d6656");
+    poli([[642, 175], [690, 115], [738, 175]], "#6b3022");
+    ctx.beginPath(); ctx.moveTo(672, 260); ctx.lineTo(672, 225); ctx.arc(690, 225, 18, Math.PI, 0); ctx.lineTo(708, 260); ctx.closePath(); contorno("#2a1a14", 2.5);
+    fiamma(690, 130, 1.4, t, 1);
+    fiamma(662, 182, 0.9, t, 2);
+
+    // chiostro: piano superiore, tetto del portico e arcate
+    const cx0 = 430, cx1 = 900;
+    poli([[cx0, G - 30], [cx0, 285], [cx1, 285], [cx1, G - 30]], "#9a8470");
+    for (let x = cx0 + 45; x < cx1 - 30; x += 95) {
+      ctx.beginPath(); ctx.moveTo(x, 335); ctx.lineTo(x, 312); ctx.arc(x + 13, 312, 13, Math.PI, 0); ctx.lineTo(x + 26, 335); ctx.closePath();
+      contorno(`rgba(255,${170 + Math.round(Math.sin(t * 7 + x) * 30)},70,1)`, 2.5);
+    }
+    poli([[cx0 - 10, 372], [cx0 + 10, 348], [cx1 - 10, 348], [cx1 + 10, 372]], "#7a3a26");
+    ctx.strokeStyle = "#5a2a1a"; ctx.lineWidth = 2;
+    for (let x = cx0 + 20; x < cx1; x += 22) { ctx.beginPath(); ctx.moveTo(x, 352); ctx.lineTo(x - 4, 370); ctx.stroke(); }
+    for (let x = cx0 + 20, i = 0; x < cx1 - 40; x += 76, i++) {
+      // arcata scura con colonnina
+      ctx.beginPath(); ctx.moveTo(x, G - 30); ctx.lineTo(x, 430); ctx.arc(x + 28, 430, 28, Math.PI, 0); ctx.lineTo(x + 56, G - 30); ctx.closePath();
+      contorno("#2e1d16", 2.5);
+      poli([[x + 60, G - 30], [x + 60, 400], [x + 68, 400], [x + 68, G - 30]], "#b6a189", 2);
+    }
+    fiamma(560, 350, 1.0, t, 3);
+    fiamma(790, 350, 1.2, t, 4);
+
+    // pavimento del cortile
+    ctx.fillStyle = "#3e3730";
+    ctx.fillRect(0, G - 30, W, 200);
+    for (let r = 0; r < 4; r++) {
+      for (let c = 0; c < 22; c++) {
+        const x = c * 64 + (r % 2) * 32 - 20;
+        const y = G - 26 + r * 26;
+        ctx.fillStyle = `hsl(28, 10%, ${22 + hash(r * 41 + c) * 10}%)`;
+        ctx.beginPath(); ctx.ellipse(x + 30, y + 11, 29, 10, 0, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    ctx.fillStyle = "#1c1814"; ctx.fillRect(0, G + 78, W, 200);
+
+    // ---- scriptorium in spaccato
+    const s0 = 0, s1 = 452, alto = 262;
+    // parete di fondo illuminata dalla candela
+    poli([[s0 + 34, G - 30], [s0 + 34, alto], [s1 - 30, alto], [s1 - 30, G - 30]], "#c39a6b");
+    const luce = ctx.createRadialGradient(300, 450, 10, 300, 450, 260);
+    luce.addColorStop(0, "rgba(255,220,140,0.45)"); luce.addColorStop(1, "rgba(60,30,10,0.35)");
+    ctx.fillStyle = luce; ctx.fillRect(s0 + 34, alto, s1 - 64, G - 30 - alto);
+    // finestrella sul cielo rosso
+    ctx.beginPath(); ctx.moveTo(280, 370); ctx.lineTo(280, 318); ctx.arc(300, 318, 20, Math.PI, 0); ctx.lineTo(320, 370); ctx.closePath();
+    contorno("#b8461c", 3);
+    arto2(300, 300, 300, 370, 3);
+    // pavimento di assi
+    poli([[s0, G - 30], [s0, G + 6], [s1, G + 6], [s1, G - 30]], "#7a4f2a", 2.5);
+    // scaffale con i codici
+    poli([[56, G - 30], [56, 300], [176, 300], [176, G - 30]], "#6b4520");
+    for (let r = 0; r < 4; r++) {
+      const y = 300 + 12 + r * 66;
+      poli([[60, y], [60, y + 52], [172, y + 52], [172, y]], "#3a2414", 2);
+      let x = 64;
+      for (let i = 0; x < 160; i++) {
+        const w = 12 + hash(r * 13 + i) * 6;
+        const h = 36 + hash(r * 7 + i) * 12;
+        const col = ["#8b1e1e", "#1f4e8c", "#2e6b34", "#7b3f99", "#a86b1d", "#5a3a1a"][(r * 3 + i) % 6];
+        poli([[x, y + 52], [x, y + 52 - h], [x + w, y + 52 - h], [x + w, y + 52]], col, 2);
+        ctx.fillStyle = "#e8c24a"; ctx.fillRect(x + 3, y + 52 - h + 6, w - 6, 2.5);
+        x += w + 1;
+      }
+    }
+    // leggio con il codice aperto e la candela
+    poli([[250, G - 30], [262, G - 120], [270, G - 120], [262, G - 30]], "#5a3818", 2.5);
+    poli([[340, G - 30], [330, G - 120], [338, G - 120], [350, G - 30]], "#5a3818", 2.5);
+    poli([[236, G - 132], [356, G - 150], [362, G - 128], [242, G - 112]], "#7a4a22");
+    poli([[256, G - 136], [298, G - 142], [300, G - 128], [258, G - 122]], "#f5ecd2", 2);
+    poli([[300, G - 142], [342, G - 148], [344, G - 134], [300, G - 128]], "#f5ecd2", 2);
+    ctx.strokeStyle = "#8b1e1e"; ctx.lineWidth = 2;
+    for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(262, G - 133 + i * 4); ctx.lineTo(292, G - 137 + i * 4); ctx.stroke(); }
+    ctx.strokeStyle = "#24160c"; ctx.lineWidth = 1.5;
+    for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(306, G - 139 + i * 4); ctx.lineTo(336, G - 143 + i * 4); ctx.stroke(); }
+    poli([[372, G - 150], [372, G - 172], [380, G - 172], [380, G - 150]], "#f2e6c8", 2);
+    fiamma(376, G - 172, 0.45, t, 5);
+    // muri in sezione e tetto a spiovente
+    poli([[s0 - 4, G + 6], [s0 - 4, alto - 6], [s0 + 34, alto - 6], [s0 + 34, G + 6]], "#6e5a4b");
+    poli([[s1 - 30, G - 168], [s1 - 30, alto - 6], [s1 + 8, alto - 6], [s1 + 8, G - 168]], "#6e5a4b");
+    // arco della porticina (aperta verso il cortile)
+    ctx.beginPath(); ctx.moveTo(s1 - 30, G - 168); ctx.quadraticCurveTo(s1 - 11, G - 186, s1 + 8, G - 168); ctx.closePath(); contorno("#6e5a4b", 3);
+    poli([[s1 + 8, G - 160], [s1 + 30, G - 152], [s1 + 30, G - 2], [s1 + 8, G + 4]], "#7a4a22", 2.5);
+    ctx.fillStyle = "#2b2b2b"; ctx.fillRect(s1 + 10, G - 130, 19, 6); ctx.fillRect(s1 + 10, G - 50, 19, 6);
+    poli([[s0 - 20, alto], [226, 168], [s1 + 30, alto], [s1 + 30, alto + 14], [226, 184], [s0 - 20, alto + 14]], "#8a3a26");
+    ctx.strokeStyle = "#5a2a1a"; ctx.lineWidth = 2;
+    for (let i = 1; i < 10; i++) {
+      const k = i / 10;
+      const xa = s0 - 20 + k * (226 - s0 + 20), ya = alto + 14 - k * (alto + 14 - 184);
+      const xb = 226 + k * (s1 + 30 - 226), yb = 184 + k * (alto + 14 - 184);
+      ctx.beginPath(); ctx.moveTo(xa, ya); ctx.lineTo(xa, ya - 14); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(xb, yb); ctx.lineTo(xb, yb - 14); ctx.stroke();
+    }
+
+    // ---- torre del portone in spaccato (il varco resta aperto: il portone lo disegna il gioco)
+    const t0 = 900, t1 = 1000, cima = 210;
+    for (let c = 0; c < 4; c++) poli([[t0 - 6 + c * 30, cima], [t0 - 6 + c * 30, cima - 30], [t0 + 14 + c * 30, cima - 30], [t0 + 14 + c * 30, cima]], "#6e5a4b");
+    poli([[t0 - 8, cima], [t0 - 8, G - 236], [t1 + 4, G - 236], [t1 + 4, cima]], "#7d6656");
+    ctx.fillStyle = "#6a5546";
+    for (let r = 0; r < 6; r++) for (let c = 0; c < 4; c++) {
+      if (hash(r * 9 + c) < 0.5) ctx.fillRect(t0 + c * 24 + (r % 2) * 10, cima + 10 + r * 30, 18, 10);
+    }
+    // varco sotto la volta
+    ctx.beginPath(); ctx.moveTo(t0 - 8, G + 6); ctx.lineTo(t0 - 8, G - 236); ctx.quadraticCurveTo((t0 + t1) / 2, G - 270, t1 + 4, G - 236); ctx.lineTo(t1 + 4, G + 6); ctx.closePath();
+    contorno("#3a2a22", 3);
+    poli([[t0 - 8, G - 236], [t0 - 8, G - 222], [t1 + 4, G - 222], [t1 + 4, G - 236]], "#6e5a4b", 2.5);
+    // torcia sul lato del cortile
+    arto2(t0 - 26, 420, t0 - 26, 460, 6);
+    fiamma(t0 - 26, 422, 0.55, t, 6);
+  }
+  function arto2(x1, y1, x2, y2, sp) {
+    ctx.lineCap = "round";
+    ctx.strokeStyle = L; ctx.lineWidth = sp + 4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.strokeStyle = "#6b4520"; ctx.lineWidth = sp;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  }
+
+  return { tappe: [tappa1, tappa2, tappa3], inizio, cortile, vittoria, quasi, fiamme, fiamma };
 }

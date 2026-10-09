@@ -16,16 +16,16 @@ const TAPPE = [
 // Musica della schermata iniziale e del dialogo con l'Abate.
 const MUSICA_INTRO = "assets/audio/musica-intro.mp3";
 
-// Didascalie della scena iniziale (testo delle istruzioni del progetto Scratch).
+// Didascalie della scena iniziale.
 const DIDASCALIE = [
   "1239: i soldati di Federico II di Svevia devastano l'Abbazia di Montecassino.",
-  "Nel famoso scriptorium dell'Abbazia sono nati i preziosi inni gregoriani.",
-  "L'Abate Stefano II deve metterli in salvo in una vicina abbazia, prima che il portone ceda!",
+  "L'Abbazia era uno dei più importanti centri di produzione di manoscritti.",
+  "L'Abate Stefano II deve mettere in salvo i preziosi codici di canto gregoriano in una vicina abbazia, prima che il portone ceda!",
 ];
 
 const INTRO = [
   "Benvenuti, miei fidati novizi! Come potete vedere, i soldati hanno devastato il nostro povero monastero...",
-  "Ho recuperato dalla biblioteca i nostri inni sacri appena in tempo, e con il vostro aiuto li porteremo in salvo all'abbazia più vicina!",
+  "Ho recuperato dallo scriptorium i nostri manoscritti di canto gregoriano appena in tempo, e con il vostro aiuto li porteremo in salvo all'abbazia più vicina!",
 ];
 const DOMANDA_INIZIALE = "Siete con me?";
 const RISPOSTA_SI = "Molto bene miei prodi discepoli! Partiamo!";

@@ -3,11 +3,12 @@
 Gioco di ripasso sul Canto Gregoriano per la seconda media, in stile arcade.
 
 > 1239: i soldati di Federico II di Svevia devastano l'Abbazia di Montecassino.
-> Aiutate l'Abate Stefano II a raggiungere una vicina abbazia per mettere in salvo
-> i preziosi inni gregoriani, creati nel famoso scriptorium dell'Abbazia.
+> L'Abbazia era uno dei più importanti centri di produzione di manoscritti:
+> aiutate l'Abate Stefano II a raggiungere una vicina abbazia per mettere in salvo
+> i preziosi codici di canto gregoriano.
 
-Si comincia con una breve scena: i soldati prendono a colpi d'ariete il portone dell'Abbazia
-mentre l'Abate carica in fretta gli ultimi libri sul carretto (si può saltare con **SALTA**).
+Si comincia con una breve scena in spaccato dell'Abbazia: fuori i soldati prendono a colpi
+d'ariete il portone, mentre nel cortile l'Abate fa la spola dallo scriptorium per caricare i codici sul carretto (si può saltare con **SALTA**).
 Poi l'Abate fugge tirando il carretto pieno di libri, inseguito dai soldati di Federico II.
 La corsa non si ferma mai, nemmeno mentre si risponde alle domande:
 
