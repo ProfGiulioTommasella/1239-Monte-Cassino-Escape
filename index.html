@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/stile.css?v=16">
+  <link rel="stylesheet" href="css/stile.css?v=17">
 </head>
 <body>
   <div id="schermo">
@@ -70,7 +70,20 @@
     <div id="finale" class="nascosto">
       <h2 id="finale-titolo"></h2>
       <p id="finale-punteggio"></p>
-      <button id="btn-rigioca" class="grande">↻ GIOCA ANCORA</button>
+      <div class="pulsanti-finale">
+        <button id="btn-ripasso" class="grande secondario">📜 DA RIPASSARE</button>
+        <button id="btn-rigioca" class="grande">↻ GIOCA ANCORA</button>
+      </div>
+    </div>
+
+    <!-- Riepilogo finale: i concetti delle domande sbagliate -->
+    <div id="ripasso" class="nascosto">
+      <div class="foglio">
+        <h3>Da ripassare</h3>
+        <p class="sotto" id="ripasso-sotto"></p>
+        <ul id="ripasso-lista"></ul>
+        <button id="btn-chiudi-ripasso" class="grande">OK</button>
+      </div>
     </div>
 
   </div>
@@ -80,8 +93,8 @@
     <p>Ruota il dispositivo in orizzontale per giocare</p>
   </div>
 
-  <script src="js/domande.js?v=16"></script>
-  <script src="js/sfondi.js?v=16"></script>
-  <script src="js/gioco.js?v=16"></script>
+  <script src="js/domande.js?v=17"></script>
+  <script src="js/sfondi.js?v=17"></script>
+  <script src="js/gioco.js?v=17"></script>
 </body>
 </html>

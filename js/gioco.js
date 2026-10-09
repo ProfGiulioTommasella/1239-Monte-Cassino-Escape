@@ -213,7 +213,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       tappa: 1, tappaPrec: 1, dissolvenza: 1, libri: DOMANDE.length,
       libriVolanti: [], particelle: [], uscita: 0, cattura: false,
       inseguimento: false, prossimaRimonta: 9, scatto: 0, passoSoldati: 0,
-      lampo: 0, grido: 0, finale: null, corrette: 0, sbagliate: 0,
+      lampo: 0, grido: 0, finale: null, corrette: 0, sbagliate: 0, daRipassare: [],
       mini: null, salto: 0, vSalto: 0, incl: 0, chino: 0, abbassaFino: 0, urto: 0,
     });
   }
@@ -1824,6 +1824,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
         for (let s = 0; s < 14; s++) particella(posizioni().gx - 80 + Math.random() * 120, SUOLO - 60, "stella");
       } else {
         mondo.sbagliate++;
+        mondo.daRipassare.push(q);
         mondo.D = Math.max(0, mondo.D - PASSO_DISTACCO);
         mondo.vel = 0.55;
         mondo.lampo = 1;
@@ -1894,7 +1895,25 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     dialogo(fin.testo, umore, []);
     $("finale-titolo").textContent = fin.titolo;
     $("finale-punteggio").textContent = `Inni salvati: ${c} su ${DOMANDE.length}`;
+    preparaRipasso();
     $("finale").classList.remove("nascosto");
+  }
+
+  // Riepilogo finale: un concetto da ripassare per ogni domanda sbagliata
+  function preparaRipasso() {
+    const sbagliate = mondo.daRipassare;
+    $("btn-ripasso").classList.toggle("nascosto", sbagliate.length === 0);
+    $("ripasso-sotto").textContent = sbagliate.length === 1
+      ? "Avete sbagliato una domanda. Ecco il concetto da ripassare:"
+      : `Avete sbagliato ${sbagliate.length} domande. Ecco i concetti da ripassare:`;
+    const lista = $("ripasso-lista");
+    lista.innerHTML = "";
+    lista.classList.toggle("tante", sbagliate.length > 8);
+    for (const q of sbagliate) {
+      const li = document.createElement("li");
+      li.textContent = q.ripasso || q.testo;
+      lista.appendChild(li);
+    }
   }
 
   // ---------------------------------------------------------------
@@ -1921,7 +1940,10 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     e.preventDefault();
     azione();
   });
+  $("btn-ripasso").addEventListener("click", () => $("ripasso").classList.remove("nascosto"));
+  $("btn-chiudi-ripasso").addEventListener("click", () => $("ripasso").classList.add("nascosto"));
   $("btn-rigioca").addEventListener("click", () => {
+    $("ripasso").classList.add("nascosto");
     chiudiPergamena();
     partita();
   });

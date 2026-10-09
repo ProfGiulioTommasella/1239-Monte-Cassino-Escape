@@ -16,6 +16,7 @@ La corsa non si ferma mai, nemmeno mentre si risponde alle domande:
 - **risposta sbagliata**: i soldati si avvicinano e un libro cade dal carretto.
 
 Ogni partita pesca 11 domande da una banca di 27 (ricavate anche dalla verifica sul Canto gregoriano), divise in tre tappe (bosco, palude, sentiero di pietra): 5 nella prima, 4 nella seconda, 2 nella terza, preferendo quelle non uscite nella partita precedente.
+Alla fine, il pulsante **DA RIPASSARE** mostra un concetto da ripassare per ogni domanda sbagliata (il campo `ripasso` in `js/domande.js`); se non ci sono errori il pulsante non compare.
 A ogni partita le risposte cambiano posto (Vero/Falso resta in quest'ordine).
 Alla fine delle prime due tappe c'è un breve minigioco d'azione: prima bisogna **saltare**
 sassi e tronchi con il carretto, poi **abbassarsi** per schivare le lance dei soldati.

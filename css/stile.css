@@ -342,6 +342,76 @@ button {
   text-shadow: 2px 2px 4px #000, 0 0 12px #000;
 }
 
+.pulsanti-finale { display: flex; justify-content: center; gap: 26px; }
+.grande.secondario {
+  background: var(--pergamena);
+  box-shadow: 0 7px 0 #8a6a3a, 0 10px 18px rgba(0,0,0,0.5);
+  animation: none;
+}
+
+/* ---------- Riepilogo finale ---------- */
+#ripasso {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(12, 6, 3, 0.72);
+}
+#ripasso .foglio {
+  width: 940px;
+  max-height: 660px;
+  overflow-y: auto;
+  padding: 26px 40px 30px;
+  text-align: center;
+  color: var(--inchiostro);
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.35), transparent 60%),
+    linear-gradient(180deg, var(--pergamena) 0%, #ead2a0 100%);
+  border: 4px solid #6b4520;
+  border-radius: 14px;
+  box-shadow: inset 0 0 40px rgba(120, 72, 20, 0.45), 0 12px 30px rgba(0,0,0,0.6);
+  animation: entra 0.28s ease-out;
+}
+#ripasso h3 {
+  font-family: var(--arcade);
+  font-size: 28px;
+  margin: 0 0 10px;
+  color: var(--rosso);
+}
+#ripasso .sotto {
+  font-family: var(--libro);
+  font-size: 22px;
+  margin: 0 0 16px;
+}
+#ripasso ul {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  text-align: left;
+}
+#ripasso li {
+  font-family: var(--libro);
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.3;
+  padding: 9px 0 9px 44px;
+  position: relative;
+  border-bottom: 2px dashed rgba(107, 69, 32, 0.35);
+}
+#ripasso ul.tante li { font-size: 20px; padding: 6px 0 6px 40px; }
+#ripasso ul.tante li::before { font-size: 22px; top: 4px; }
+#ripasso li:last-child { border-bottom: none; }
+#ripasso li::before {
+  content: "✎";
+  position: absolute;
+  left: 6px;
+  top: 7px;
+  color: var(--rosso);
+  font-size: 26px;
+}
+
 /* ---------- Scena iniziale ---------- */
 #didascalia {
   position: absolute;
