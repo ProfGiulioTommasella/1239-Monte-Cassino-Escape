@@ -6,7 +6,9 @@ Gioco di ripasso sul Canto Gregoriano per la seconda media, in stile arcade.
 > Aiutate l'Abate Stefano II a raggiungere una vicina abbazia per mettere in salvo
 > i preziosi inni gregoriani, creati nel famoso scriptorium dell'Abbazia.
 
-L'Abate fugge tirando un carretto pieno di libri, inseguito dai soldati di Federico II.
+Si comincia con una breve scena: i soldati prendono a colpi d'ariete il portone dell'Abbazia
+mentre l'Abate carica in fretta gli ultimi libri sul carretto (si può saltare con **SALTA**).
+Poi l'Abate fugge tirando il carretto pieno di libri, inseguito dai soldati di Federico II.
 La corsa non si ferma mai, nemmeno mentre si risponde alle domande:
 
 - **risposta giusta**: l'Abate scatta in avanti e i soldati restano indietro;
@@ -62,4 +64,5 @@ js/gioco.js         motore di gioco (scena, personaggi, inseguimento)
 assets/img/         sfondi e ritratti dell'Abate dal progetto Scratch
 assets/audio/       effetti sonori dal progetto Scratch e musiche originali
 strumenti/musica.py generatore delle musiche (Python, numpy, scipy, ffmpeg)
+strumenti/effetti.py generatore dei suoni della scena iniziale (ariete, portone che crolla)
 ```
