@@ -33,6 +33,24 @@ const RISPOSTA_NO = "Beh, tanto non avete scelta, perché in quanto novizi avete
 const ISTRUZIONI_CORSA =
   "I soldati di Federico II ci inseguono! Ogni risposta giusta ci fa guadagnare terreno, ogni risposta sbagliata li avvicina e ci fa perdere un libro dal carretto. E non perdete tempo: se esitate troppo, accelerano!";
 
+// Minigiochi d'azione alla fine di una tappa (prima di passare alla successiva).
+// tipo "salto": saltare sassi e tronchi; tipo "lance": abbassarsi per schivare le lance.
+// "quanti" è il numero di ostacoli o di lance.
+const MINIGIOCHI = [
+  {
+    dopoTappa: 1,
+    tipo: "salto",
+    quanti: 6,
+    istruzioni: "Attenti! Il sentiero è pieno di sassi e tronchi caduti. Premete la BARRA SPAZIATRICE (o toccate lo schermo) per saltare con il carretto!",
+  },
+  {
+    dopoTappa: 2,
+    tipo: "lance",
+    quanti: 6,
+    istruzioni: "Quei soldati ci tirano le lance! Quando sentite gridare, premete la FRECCIA GIÙ o la BARRA SPAZIATRICE (o toccate lo schermo) per abbassare la testa!",
+  },
+];
+
 const DOMANDE = [
   {
     tappa: 1,

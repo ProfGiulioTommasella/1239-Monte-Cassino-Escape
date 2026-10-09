@@ -15,6 +15,9 @@ La corsa non si ferma mai, nemmeno mentre si risponde alle domande:
 - **risposta sbagliata**: i soldati si avvicinano e un libro cade dal carretto.
 
 Le 11 domande sono divise in tre tappe (bosco, palude, sentiero di pietra).
+Alla fine delle prime due tappe c'è un breve minigioco d'azione: prima bisogna **saltare**
+sassi e tronchi con il carretto, poi **abbassarsi** per schivare le lance dei soldati.
+Ogni ostacolo evitato fa guadagnare un po' di terreno, ogni colpo preso lo fa perdere.
 Alla fine ci sono tre finali, come nel progetto Scratch originale:
 tutte giuste = **salvi**, da 5 a 10 giuste = **quasi salvi**, meno di 5 = **presi**.
 
@@ -22,6 +25,7 @@ tutte giuste = **salvi**, da 5 a 10 giuste = **quasi salvi**, meno di 5 = **pres
 
 Funziona su PC e tablet in orizzontale, con mouse, dito o tastiera
 (A, B, C oppure 1, 2, 3 per rispondere; V/F per vero o falso; Invio per andare avanti).
+Nei minigiochi si usa la barra spaziatrice (o le frecce su e giù); sul tablet basta toccare lo schermo.
 Il pulsante ⛶ mette il gioco a schermo intero.
 
 ## Pubblicarlo con GitHub Pages

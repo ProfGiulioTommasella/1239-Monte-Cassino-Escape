@@ -179,6 +179,12 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     finale: null,
     corrette: 0,
     sbagliate: 0,
+    mini: null, // minigioco in corso
+    salto: 0, // altezza del salto del carretto
+    vSalto: 0,
+    chino: 0, // 0 = in piedi, 1 = testa abbassata
+    abbassaFino: 0,
+    urto: 0,
   };
 
   function azzeraMondo() {
@@ -188,6 +194,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       libriVolanti: [], particelle: [], uscita: 0, cattura: false,
       inseguimento: false, prossimaRimonta: 9, scatto: 0, passoSoldati: 0,
       lampo: 0, grido: 0, finale: null, corrette: 0, sbagliate: 0,
+      mini: null, salto: 0, vSalto: 0, chino: 0, abbassaFino: 0, urto: 0,
     });
   }
 
@@ -653,6 +660,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       }
     }
     mondo.libriVolanti = mondo.libriVolanti.filter((l) => l.x > -150);
+    aggiornaMinigioco(dt, velStrada);
     mondo.lampo = Math.max(0, mondo.lampo - dt * 2);
     mondo.grido = Math.max(0, mondo.grido - dt);
     mondo.scatto = Math.max(0, mondo.scatto - dt);
@@ -686,6 +694,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
 
     const { gx, capo } = posizioni();
     const fase = mondo.scroll / 34;
+    disegnaOstacoli();
     // soldati (dal più lontano al più vicino)
     for (let i = FORMAZIONE.length - 1; i >= 0; i--) {
       const f = FORMAZIONE[i];
@@ -697,9 +706,27 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     if (mondo.grido > 0 && capo > -40) {
       fumetto(capo + 10, SUOLO - 215, mondo.testoGrido || "FERMATELI!");
     }
+    // ombra a terra durante il salto
+    if (mondo.salto > 1) {
+      ctx.fillStyle = `rgba(0,0,0,${0.3 * Math.max(0.3, 1 - mondo.salto / 260)})`;
+      ctx.beginPath(); ctx.ellipse(gx - 100, SUOLO + 2, 150 * (1 - mondo.salto / 700), 10, 0, 0, Math.PI * 2); ctx.fill();
+    }
+    const scossa = mondo.urto > 0 ? Math.sin(mondo.t * 60) * 6 * mondo.urto : 0;
+    ctx.save();
+    ctx.translate(scossa, -mondo.salto);
     disegnaCarretto(gx, fase);
-    const umore = mondo.Dv < 22 ? "paura" : mondo.vel > 1.3 ? "felice" : "normale";
+    const umore = mondo.urto > 0 || mondo.Dv < 22 ? "paura" : mondo.vel > 1.3 ? "felice" : "normale";
+    if (mondo.chino > 0.01) {
+      // il monaco si abbassa piegandosi in avanti
+      const c = mondo.chino;
+      ctx.translate(gx, SUOLO);
+      ctx.rotate(0.28 * c);
+      ctx.scale(1 + 0.06 * c, 1 - 0.3 * c);
+      ctx.translate(-gx, -SUOLO);
+    }
     disegnaMonaco(gx, fase, umore);
+    ctx.restore();
+    disegnaLance();
     // libri che cadono
     for (const l of mondo.libriVolanti) {
       if (!img.libro || !img.libro.naturalWidth) continue;
@@ -725,6 +752,212 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       ctx.fillRect(0, 0, W, H);
     }
     vignetta();
+  }
+
+  // ---------------------------------------------------------------
+  //  Minigiochi d'azione: saltare gli ostacoli, schivare le lance
+  // ---------------------------------------------------------------
+  const SALTO_SPINTA = 820;
+  const GRAVITA_SALTO = 1650;
+  const VEL_LANCIA = 760;
+
+  function testaMonaco() {
+    const { gx } = posizioni();
+    return { x: gx + 22, y: SUOLO - 138 };
+  }
+
+  function azione() {
+    const m = mondo.mini;
+    if (!m || !m.attivo) return;
+    if (m.tipo === "salto") {
+      if (mondo.salto <= 0.5) { mondo.vSalto = SALTO_SPINTA; mondo.salto = 1; }
+    } else {
+      mondo.abbassaFino = mondo.t + 0.75;
+    }
+  }
+
+  function aggiornaMinigioco(dt, velStrada) {
+    // salto e chinata (anche fuori dal minigioco, per finire il movimento)
+    if (mondo.salto > 0 || mondo.vSalto > 0) {
+      mondo.vSalto -= GRAVITA_SALTO * dt;
+      mondo.salto += mondo.vSalto * dt;
+      if (mondo.salto <= 0) {
+        mondo.salto = 0; mondo.vSalto = 0;
+        const { gx } = posizioni();
+        for (let i = 0; i < 8; i++) particella(gx - 160 + Math.random() * 180, SUOLO - 4, "polvere");
+      }
+    }
+    const chinoObiettivo = mondo.t < mondo.abbassaFino ? 1 : 0;
+    mondo.chino += (chinoObiettivo - mondo.chino) * Math.min(1, dt * 16);
+    mondo.urto = Math.max(0, mondo.urto - dt * 2.5);
+    const m = mondo.mini;
+    if (!m) return;
+    const { gx, capo } = posizioni();
+
+    // nuovi ostacoli o lance
+    if (m.attivo && m.lanciati < m.quanti) {
+      m.prossimo -= dt;
+      if (m.prossimo <= 0) {
+        m.lanciati++;
+        m.prossimo = m.tipo === "salto" ? 1.5 + Math.random() * 0.9 : 1.9 + Math.random() * 1.0;
+        if (m.tipo === "salto") {
+          const tronco = Math.random() < 0.5;
+          m.oggetti.push({ x: W + 60, w: tronco ? 74 : 58, h: tronco ? 38 : 46, tronco, seme: Math.random() * 100, colpito: false, superato: false });
+        } else {
+          // il lanciere grida e poi tira: c'è tempo per abbassarsi
+          mondo.grido = 1.1;
+          mondo.testoGrido = ["LANCIA!", "PRENDI!", "ECCO!"][m.lanciati % 3];
+          m.oggetti.push({ attesa: 0.85, x: 0, y: 0, vx: 0, vy: 0, r: 0, stato: "pronta", colpito: false, superato: false });
+        }
+      }
+    }
+
+    for (const o of m.oggetti) {
+      if (m.tipo === "salto") {
+        o.x -= velStrada * dt;
+        if (o.colpito) {
+          // l'ostacolo urtato viene sbalzato via all'indietro
+          if (o.oy < 0 || o.voy < 0) {
+            o.voy += 1800 * dt; o.oy += o.voy * dt; o.x -= 260 * dt; o.rot -= 7 * dt;
+            if (o.oy >= 0) { o.oy = 0; o.voy = 0; }
+          }
+          continue;
+        }
+        if (o.superato) continue;
+        // si urta con la ruota o con i piedi dell'Abate se non si è abbastanza in alto
+        const sopra = mondo.salto > o.h * 0.65;
+        const tocca = (a, b) => o.x < b && o.x + o.w > a;
+        if (!sopra && (tocca(gx - 176, gx - 124) || tocca(gx - 14, gx + 18))) {
+          o.colpito = true;
+          o.voy = -620; o.oy = -1; o.rot = 0;
+          m.colpiti++;
+          mondo.D = Math.max(5, mondo.D - 6);
+          mondo.urto = 1;
+          mondo.lampo = 0.7;
+          mondo.vel = 0.6;
+          suona("colpo", 0.8);
+        } else if (o.x + o.w < gx - 180) {
+          o.superato = true;
+          m.evitati++;
+          mondo.D = Math.min(100, mondo.D + 2);
+        }
+      } else {
+        if (o.stato === "pronta") {
+          o.attesa -= dt;
+          if (o.attesa <= 0) {
+            // parte dalla mano del lanciere verso la testa dell'Abate
+            const tm = testaMonaco();
+            o.x = Math.max(-40, capo + 30);
+            o.y = SUOLO - 235;
+            o.vx = VEL_LANCIA;
+            o.vy = ((tm.y - o.y) / (tm.x - o.x)) * VEL_LANCIA;
+            o.r = Math.atan2(o.vy, o.vx);
+            o.stato = "volo";
+          }
+        } else if (o.stato === "volo") {
+          const prima = o.x;
+          o.x += o.vx * dt;
+          o.y += o.vy * dt;
+          const tm = testaMonaco();
+          if (!o.superato && !o.colpito && prima + 55 < tm.x + 6 && o.x + 55 >= tm.x - 14) {
+            if (mondo.chino > 0.55) {
+              o.superato = true;
+              m.evitati++;
+              mondo.D = Math.min(100, mondo.D + 2);
+            } else {
+              // la lancia colpisce di piatto il cappuccio e rimbalza indietro
+              o.colpito = true;
+              m.colpiti++;
+              o.stato = "caduta";
+              o.vx = -220; o.vy = -380;
+              mondo.D = Math.max(5, mondo.D - 6);
+              mondo.urto = 1;
+              mondo.lampo = 0.7;
+              mondo.vel = 0.6;
+              suona("sbagliato", 0.7);
+            }
+          }
+          if (o.y + Math.sin(o.r) * 55 >= SUOLO - 8 && o.x > tm.x) o.stato = "piantata";
+        } else if (o.stato === "caduta") {
+          o.vy += 1800 * dt;
+          o.x += o.vx * dt;
+          o.y += o.vy * dt;
+          o.r += 9 * dt;
+          if (o.y > SUOLO - 6) { o.y = SUOLO - 6; o.r = 0.05; o.stato = "terra"; }
+        } else {
+          o.x -= velStrada * dt;
+        }
+      }
+    }
+    m.oggetti = m.oggetti.filter((o) => o.x > -260 && o.x < W + 400);
+  }
+
+  function disegnaOstacoli() {
+    const m = mondo.mini;
+    if (!m || m.tipo !== "salto") return;
+    for (const o of m.oggetti) {
+      const y = SUOLO + 4;
+      ctx.save();
+      if (o.colpito) {
+        const cx = o.x + o.w / 2, cy = y - o.h / 2;
+        ctx.translate(cx, cy + o.oy); ctx.rotate(o.rot); ctx.translate(-cx, -cy);
+      }
+      if (o.tronco) {
+        // tronco abbattuto con la sezione verso di noi
+        poligono([[o.x + 10, y], [o.x + o.w - 16, y], [o.x + o.w - 16, y - o.h], [o.x + 10, y - o.h]], "#7a4a22");
+        ctx.strokeStyle = "#5a3818"; ctx.lineWidth = 3;
+        for (let i = 0; i < 3; i++) {
+          ctx.beginPath(); ctx.moveTo(o.x + 18 + i * 18, y - o.h + 9 + i * 7); ctx.lineTo(o.x + 40 + i * 18, y - o.h + 9 + i * 7); ctx.stroke();
+        }
+        cerchio(o.x + o.w - 16, y - o.h / 2, o.h / 2, "#d8a868");
+        ctx.strokeStyle = "#a8743c"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(o.x + o.w - 16, y - o.h / 2, o.h / 3.3, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(o.x + o.w - 16, y - o.h / 2, o.h / 7, 0, Math.PI * 2); ctx.stroke();
+        // rametto
+        arto(o.x + 30, y - o.h + 2, o.x + 22, y - o.h - 16, 5, "#7a4a22");
+        cerchio(o.x + 20, y - o.h - 20, 7, "#4f7a32", "#24160c", 2);
+      } else {
+        const k = (i) => hash(o.seme + i) * 8;
+        poligono([
+          [o.x, y], [o.x + 4 + k(1), y - o.h * 0.55], [o.x + 18, y - o.h + k(2) * 0.5], [o.x + 40, y - o.h - 2],
+          [o.x + o.w - 6, y - o.h * 0.6 + k(3) * 0.5], [o.x + o.w, y],
+        ], "#8f877c");
+        ctx.fillStyle = "#b3aa9c";
+        ctx.beginPath(); ctx.ellipse(o.x + 26, y - o.h + 12, 10, 5, -0.3, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#6f675d";
+        ctx.beginPath(); ctx.ellipse(o.x + o.w - 18, y - 10, 12, 6, 0, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  function disegnaLance() {
+    const m = mondo.mini;
+    if (!m || m.tipo !== "lance") return;
+    for (const o of m.oggetti) {
+      if (o.stato === "pronta") continue;
+      ctx.save();
+      ctx.translate(o.x, o.y);
+      ctx.rotate(o.r);
+      // asta e punta di ferro (la punta è a +55 dal centro)
+      arto(-55, 0, 38, 0, 5, "#8b5a2b");
+      poligono([[36, -6], [60, 0], [36, 6]], "#c9ced6", "#24160c", 2.5);
+      ctx.restore();
+    }
+    // punto esclamativo sopra l'Abate quando sta per arrivare una lancia
+    if (m.oggetti.some((o) => o.stato === "pronta" || (o.stato === "volo" && !o.superato && !o.colpito))) {
+      const tm = testaMonaco();
+      const pulsa = 1 + Math.sin(mondo.t * 18) * 0.12;
+      ctx.save();
+      ctx.translate(tm.x + 4, tm.y - 58 - mondo.salto);
+      ctx.scale(pulsa, pulsa);
+      ctx.font = '28px "Press Start 2P", monospace';
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.lineWidth = 6; ctx.strokeStyle = "#24160c"; ctx.strokeText("!", 0, 0);
+      ctx.fillStyle = "#ff5a3c"; ctx.fillText("!", 0, 0);
+      ctx.restore();
+      ctx.textAlign = "left";
+    }
   }
 
   function fumetto(x, y, testo) {
@@ -1391,7 +1624,12 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   }
   function chiudiPergamena() { $("pergamena").classList.add("nascosto"); scelte = []; }
 
+  const TASTI_AZIONE = [" ", "ArrowUp", "ArrowDown", "w", "s", "W", "S"];
   document.addEventListener("keydown", (e) => {
+    if (mondo.mini && mondo.mini.attivo) {
+      if (TASTI_AZIONE.includes(e.key)) { e.preventDefault(); azione(); }
+      return;
+    }
     if (!scelte.length) {
       if ((e.key === "Enter" || e.key === " ") && !$("titolo").classList.contains("nascosto")) $("btn-inizia").click();
       else if ((e.key === "Enter" || e.key === " " || e.key === "Escape") && saltaScena) { e.preventDefault(); saltaScena(); }
@@ -1427,6 +1665,33 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     mondo.scrollTappa = mondo.scroll;
     musica("tappa" + n);
     banner("TAPPA " + n, TAPPE[n - 1].nome.toUpperCase());
+  }
+
+  async function minigioco(mg) {
+    await attendi(1200);
+    await dialogo(mg.istruzioni, "normale", ["Pronti! ▶"]);
+    chiudiPergamena();
+    const btn = $("btn-azione");
+    btn.textContent = mg.tipo === "salto" ? "SALTA" : "GIÙ";
+    btn.className = mg.tipo;
+    banner("", mg.tipo === "salto" ? "SALTA!" : "ABBASSATI!", "verde");
+    mondo.mini = { tipo: mg.tipo, quanti: mg.quanti, lanciati: 0, prossimo: 1.6, oggetti: [], evitati: 0, colpiti: 0, attivo: true };
+    const m = mondo.mini;
+    while (m.evitati + m.colpiti < m.quanti) await attendi(100);
+    m.attivo = false;
+    btn.className = "nascosto";
+    await attendi(500);
+    if (m.colpiti === 0) {
+      mondo.D = Math.min(100, mondo.D + 6);
+      mondo.vel = 2.1;
+      suona("giusto");
+      banner("", "PERFETTO!", "verde");
+      for (let s = 0; s < 14; s++) particella(posizioni().gx - 80 + Math.random() * 120, SUOLO - 60, "stella");
+    } else {
+      banner("", `EVITATI ${m.evitati} SU ${m.quanti}`, m.evitati >= m.quanti / 2 ? "verde" : "rosso");
+    }
+    await attendi(1800);
+    mondo.mini = null;
   }
 
   async function partita() {
@@ -1477,6 +1742,8 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       const q = DOMANDE[i];
       $("n-domanda").textContent = i + 1;
       if (q.tappa !== mondo.tappa) {
+        const mg = (typeof MINIGIOCHI !== "undefined" ? MINIGIOCHI : []).find((g) => g.dopoTappa === mondo.tappa);
+        if (mg) await minigioco(mg);
         cambiaTappa(q.tappa);
         await attendi(2600);
       }
@@ -1592,6 +1859,13 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     sbloccaAudio();
     $("titolo").classList.add("nascosto");
     partita();
+  });
+  // sul tablet basta toccare lo schermo (o il pulsante) per saltare o abbassarsi
+  $("schermo").addEventListener("pointerdown", (e) => {
+    if (!mondo.mini || !mondo.mini.attivo) return;
+    if (e.target.closest("#comandi")) return;
+    e.preventDefault();
+    azione();
   });
   $("btn-rigioca").addEventListener("click", () => {
     chiudiPergamena();

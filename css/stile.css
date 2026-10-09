@@ -363,6 +363,34 @@ button {
 }
 
 /* ---------- Firma ---------- */
+/* ---------- Pulsante dei minigiochi ---------- */
+#btn-azione {
+  position: absolute;
+  right: 40px;
+  bottom: 60px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 5px solid #24160c;
+  background: radial-gradient(circle at 40% 35%, #ffe08a, #e8a92c);
+  box-shadow: 0 8px 0 #8a5a12, 0 12px 20px rgba(0,0,0,0.5);
+  color: #24160c;
+  font-family: var(--arcade);
+  font-size: 22px;
+  z-index: 25;
+  cursor: pointer;
+  animation: pulsa-azione 0.9s ease-in-out infinite;
+  touch-action: none;
+}
+#btn-azione::before { display: block; font-size: 40px; margin-bottom: 6px; }
+#btn-azione.salto::before { content: "⤒"; }
+#btn-azione.lance::before { content: "⤓"; }
+#btn-azione:active { transform: translateY(6px); box-shadow: 0 2px 0 #8a5a12; }
+@keyframes pulsa-azione {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.15); }
+}
+
 #firma {
   position: absolute;
   right: 14px;
