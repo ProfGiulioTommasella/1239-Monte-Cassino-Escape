@@ -66,7 +66,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     suoni[n] = a;
   });
   // musiche di sottofondo: una per l'introduzione e una per ogni tappa
-  const VOLUME_MUSICA = 0.4;
+  const VOLUME_MUSICA = 0.15; // musica molto bassa, sotto gli effetti sonori
   const musiche = {};
   [["intro", MUSICA_INTRO], ...TAPPE.map((t, i) => ["tappa" + (i + 1), t.musica])].forEach(([nome, src]) => {
     if (!src) return;
