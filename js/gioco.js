@@ -1205,9 +1205,14 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     }
   }
 
+  // La scena è disegnata con il portone a destra e poi specchiata, così sullo schermo
+  // i soldati arrivano da sinistra e l'Abate fugge verso destra, come nella corsa.
   function disegnaScena() {
     ctx.save();
     if (scena.tremore > 0) ctx.translate((Math.random() - 0.5) * 16 * scena.tremore, (Math.random() - 0.5) * 10 * scena.tremore);
+    ctx.save();
+    ctx.translate(W, 0);
+    ctx.scale(-1, 1);
     sfondi.cortile(mondo.t, SUOLO);
     const m = scena.monaco;
     // codici ancora da caricare, a terra nello scriptorium
@@ -1220,19 +1225,6 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     }
     disegnaAriete();
     disegnaPortone();
-    if (scena.bum > 0) {
-      ctx.save();
-      ctx.translate(PORTONE_X - 70, 330);
-      ctx.rotate(0.12);
-      ctx.scale(0.8 + scena.bum * 0.5, 0.8 + scena.bum * 0.5);
-      ctx.globalAlpha = Math.min(1, scena.bum * 2);
-      ctx.font = '40px "Press Start 2P", monospace';
-      ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.lineWidth = 8; ctx.strokeStyle = "#000"; ctx.strokeText("BUM!", 0, 0);
-      ctx.fillStyle = "#ffcf3a"; ctx.fillText("BUM!", 0, 0);
-      ctx.restore();
-      ctx.textAlign = "left";
-    }
     for (const a of scena.assi) {
       ctx.save(); ctx.translate(a.x, a.y); ctx.rotate(a.r);
       poligono([[-a.w / 2, -a.h / 2], [a.w / 2, -a.h / 2], [a.w / 2, a.h / 2], [-a.w / 2, a.h / 2]], "#6e4320", "#24160c", 2);
@@ -1261,9 +1253,24 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       const sd = scena.soldati[i];
       specchia(sd.x, () => disegnaSoldato(sd.x, SUOLO + sd.dy, sd.s, sd.fase, sd.tipo));
     }
-    if (scena.esclama > 0) fumetto(scena.gx - 30, SUOLO - 205, "!!!");
-    if (scena.soldati.length && scena.soldati[0].x > 560) fumetto(scena.soldati[0].x - 10, SUOLO - 215, "ALL'ASSALTO!");
     disegnaParticelle();
+    ctx.restore();
+    // scritte fuori dallo specchio, per leggerle dritte
+    if (scena.bum > 0) {
+      ctx.save();
+      ctx.translate(W - (PORTONE_X - 70), 330);
+      ctx.rotate(-0.12);
+      ctx.scale(0.8 + scena.bum * 0.5, 0.8 + scena.bum * 0.5);
+      ctx.globalAlpha = Math.min(1, scena.bum * 2);
+      ctx.font = '40px "Press Start 2P", monospace';
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.lineWidth = 8; ctx.strokeStyle = "#000"; ctx.strokeText("BUM!", 0, 0);
+      ctx.fillStyle = "#ffcf3a"; ctx.fillText("BUM!", 0, 0);
+      ctx.restore();
+      ctx.textAlign = "left";
+    }
+    if (scena.esclama > 0) fumetto(W - (scena.gx - 30), SUOLO - 205, "!!!");
+    if (scena.soldati.length && scena.soldati[0].x > 560) fumetto(W - (scena.soldati[0].x - 10), SUOLO - 215, "ALL'ASSALTO!");
     ctx.restore();
     if (mondo.lampo > 0) {
       ctx.fillStyle = `rgba(255,200,120,${mondo.lampo * 0.35})`;
