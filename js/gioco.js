@@ -1747,6 +1747,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   }
 
   async function partita() {
+    pescaDomande();
     azzeraMondo();
     $("finale").classList.add("nascosto");
     $("hud").classList.add("nascosto");

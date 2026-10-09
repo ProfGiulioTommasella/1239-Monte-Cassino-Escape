@@ -15,7 +15,7 @@ La corsa non si ferma mai, nemmeno mentre si risponde alle domande:
 - **risposta giusta**: l'Abate scatta in avanti e i soldati restano indietro;
 - **risposta sbagliata**: i soldati si avvicinano e un libro cade dal carretto.
 
-Le 11 domande sono divise in tre tappe (bosco, palude, sentiero di pietra).
+Ogni partita pesca 11 domande da una banca di 24 (ricavate anche dalla verifica sul Canto gregoriano), divise in tre tappe (bosco, palude, sentiero di pietra): 5 nella prima, 4 nella seconda, 2 nella terza, preferendo quelle non uscite nella partita precedente.
 A ogni partita le risposte cambiano posto (Vero/Falso resta in quest'ordine).
 Alla fine delle prime due tappe c'è un breve minigioco d'azione: prima bisogna **saltare**
 sassi e tronchi con il carretto, poi **abbassarsi** per schivare le lance dei soldati.

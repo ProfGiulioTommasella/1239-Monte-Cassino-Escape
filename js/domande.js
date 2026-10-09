@@ -51,7 +51,9 @@ const MINIGIOCHI = [
   },
 ];
 
-const DOMANDE = [
+// Banca delle domande: a ogni partita se ne pescano 11 a caso
+// (5 nella prima tappa, 4 nella seconda, 2 nella terza, come indicato in DOMANDE_PER_TAPPA).
+const BANCA_DOMANDE = [
   {
     tappa: 1,
     testo: 'Li chiamiamo "Inni Gregoriani" in onore di un famoso "MAGNO"... chi era?',
@@ -141,7 +143,136 @@ const DOMANDE = [
     bravo: "Ah giusto! Era proprio un bravo monaco!",
     sbagliato: "Anche se parlava agli animali, non vuol dire che adesso gli dobbiamo attribuire anche cose che non ha fatto!!!",
   },
+  // ---- Domande ricavate dalla verifica ----
+  {
+    tappa: 1,
+    testo: "Dicono che quest'epoca, il MEDIOEVO, sia iniziata nel 476. Con quale avvenimento?",
+    opzioni: ["La caduta dell'Impero romano d'Occidente", "L'incoronazione di Carlo Magno", "La nascita di San Benedetto"],
+    giusta: 0,
+    bravo: "Esatto! Roma è caduta e noi monaci abbiamo custodito il sapere!",
+    sbagliato: "Ma no! Nel 476 cade l'Impero romano d'Occidente!",
+  },
+  {
+    tappa: 1,
+    testo: "Un frate indovino dice che il Medioevo, per convenzione, finirà nel 1492. Perché proprio allora?",
+    opzioni: ["Per la scoperta dell'America", "Per la fine del mondo", "Per l'invenzione degli occhiali"],
+    giusta: 0,
+    bravo: "America? Non so cosa sia, ma mi fido di voi!",
+    sbagliato: "Ma che dite! Il frate parlava della scoperta dell'America, qualunque cosa sia!",
+  },
+  {
+    tappa: 1,
+    testo: "In quale ambiente nasce e si diffonde il nostro Canto gregoriano?",
+    opzioni: ["Nelle corti dei re", "Nei monasteri", "Nelle piazze del mercato"],
+    giusta: 1,
+    bravo: "Proprio così! Qui tra le mura del monastero!",
+    sbagliato: "Al mercato si vendono cavoli, mica si compongono inni! Nei monasteri!",
+  },
+  {
+    tappa: 1,
+    testo: "Il ritmo dei nostri canti com'è?",
+    opzioni: ["Regolare, come una marcia", "Libero, segue le parole", "Veloce, come una danza"],
+    giusta: 1,
+    bravo: "Benissimo! Il ritmo segue le parole della preghiera!",
+    sbagliato: "Marce e danze?! Il nostro ritmo è libero e segue le parole!",
+  },
+  {
+    tappa: 1,
+    testo: "Le melodie dei nostri canti sono semplici e senza accompagnamento.",
+    opzioni: ["Vero", "Falso"],
+    giusta: 0,
+    bravo: "Semplici e senza accompagnamento, come piace al Signore!",
+    sbagliato: "E invece è Vero! Melodie semplici e nessun accompagnamento!",
+  },
+  {
+    tappa: 2,
+    testo: "In quale stanza del monastero si creano le copie dei codici e degli Inni gregoriani?",
+    opzioni: ["Refettorio", "Calefactorium", "Scriptorium"],
+    giusta: 2,
+    bravo: "Lo scriptorium! Proprio da lì ho salvato questi libri!",
+    sbagliato: "Ahimè! Si copia nello SCRIPTORIUM, non dove si mangia o ci si scalda!",
+  },
+  {
+    tappa: 2,
+    testo: "Come si chiama il grande librone che contiene le copie originali degli Inni Gregoriani?",
+    opzioni: ["Codex Magnus", "Antiphonarium Cento", "Liber Gregorius"],
+    giusta: 1,
+    bravo: "L'Antiphonarium Cento! Siete preparatissimi!",
+    sbagliato: "Si chiama ANTIPHONARIUM CENTO! Scrivetevelo sulla mano!",
+  },
+  {
+    tappa: 2,
+    testo: "Come si chiamano le nostre note, scritte sopra le parole del canto?",
+    opzioni: ["Neumi", "Crome", "Righi"],
+    giusta: 0,
+    bravo: "I neumi! Vedo che sfogliate i codici!",
+    sbagliato: "Si chiamano NEUMI, figlioli!",
+  },
+  {
+    tappa: 3,
+    testo: "Il buon Guido d'Arezzo ha stabilito due chiavi musicali per leggere le note. Quali?",
+    opzioni: ["Chiave di Do e chiave di Fa", "Chiave di Sol e chiave di Mi", "Chiave di casa e chiave della cantina"],
+    giusta: 0,
+    bravo: "Do e Fa! Guido ne sarebbe fiero!",
+    sbagliato: "Ma quale cantina! Sono la chiave di Do e la chiave di Fa!",
+  },
+  {
+    tappa: 3,
+    testo: "Da dove ha preso Guido d'Arezzo i nomi delle note?",
+    opzioni: ["Dalle lettere dell'alfabeto", "Dalle sillabe di un inno a San Giovanni", "Dai nomi dei suoi confratelli"],
+    giusta: 1,
+    bravo: "Ut queant laxis... che bell'inno!",
+    sbagliato: "Ma no! Dalle prime sillabe dell'inno a San Giovanni!",
+  },
+  {
+    tappa: 3,
+    testo: "E l'Antiphonarium Cento, il grande librone degli inni... che fine farà?",
+    opzioni: ["Lo ritroveranno a Parigi", "Andrà perduto", "Lo portiamo noi nel carretto"],
+    giusta: 1,
+    bravo: "Perduto?! Allora i nostri libri devono salvarsi a tutti i costi!",
+    sbagliato: "Purtroppo andrà perduto! Ragione in più per salvare i nostri!",
+  },
+  {
+    tappa: 3,
+    testo: "Il famoso Monastero di Cluny si trova in...",
+    opzioni: ["Svizzera", "Italia", "Francia"],
+    giusta: 2,
+    bravo: "Francia! Salutatemi i confratelli francesi!",
+    sbagliato: "Cluny si trova in FRANCIA!",
+  },
+  {
+    tappa: 3,
+    testo: "E il Monastero di San Gallo dove si trova?",
+    opzioni: ["Svizzera", "Francia", "Italia"],
+    giusta: 0,
+    bravo: "In Svizzera, tra le montagne!",
+    sbagliato: "San Gallo è in SVIZZERA!",
+  },
 ];
+
+// Quante domande pescare in ogni tappa (in tutto 11).
+const DOMANDE_PER_TAPPA = { 1: 5, 2: 4, 3: 2 };
+
+// Le domande della partita in corso: le sceglie pescaDomande() all'inizio di ogni partita,
+// preferendo quelle che non sono uscite nella partita precedente.
+const DOMANDE = [];
+let domandeUscite = new Set();
+function pescaDomande() {
+  const scelte = [];
+  for (const tappa of [1, 2, 3]) {
+    const gruppo = BANCA_DOMANDE.filter((q) => q.tappa === tappa);
+    for (let i = gruppo.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [gruppo[i], gruppo[j]] = [gruppo[j], gruppo[i]];
+    }
+    gruppo.sort((a, b) => domandeUscite.has(a) - domandeUscite.has(b));
+    scelte.push(...gruppo.slice(0, DOMANDE_PER_TAPPA[tappa]));
+  }
+  domandeUscite = new Set(scelte);
+  DOMANDE.length = 0;
+  DOMANDE.push(...scelte);
+}
+pescaDomande();
 
 // I tre finali. "minimo" = risposte giuste necessarie (vale il primo che corrisponde).
 const FINALI = [
