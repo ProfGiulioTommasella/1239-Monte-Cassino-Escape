@@ -361,16 +361,24 @@ function creaSfondi(ctx, W, hash) {
     cielo([[0, "#0f1a2c"], [0.7, "#2b3a55"], [1, "#46506a"]], 0, 720);
     ctx.fillRect(0, 600, W, 120);
     stelle(80, 11);
-    ctx.beginPath(); ctx.arc(1080, 120, 40, 0, Math.PI * 2); contorno("#ece6be", 3);
+    ctx.beginPath(); ctx.arc(1175, 210, 40, 0, Math.PI * 2); contorno("#ece6be", 3);
     // facciata
-    poli([[200, 640], [200, 150], [640, 40], [1080, 150], [1080, 640]], "#8d7a68");
-    for (let r = 0; r < 12; r++) for (let c = 0; c < 10; c++) {
+    const facciata = [[200, 640], [200, 150], [640, 40], [1080, 150], [1080, 640]];
+    poli(facciata, "#8d7a68");
+    // mattoni tagliati sul profilo della facciata, così non sporgono dai lati
+    ctx.save();
+    ctx.beginPath(); facciata.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath();
+    ctx.clip();
+    for (let r = -2; r < 12; r++) for (let c = -1; c < 11; c++) {
       const x = 205 + c * 88 + (r % 2) * 44;
       const y = 160 + r * 40;
       if (y > 630) continue;
-      ctx.fillStyle = `hsl(28, 12%, ${36 + hash(r * 13 + c) * 9}%)`;
+      ctx.fillStyle = `hsl(28, 12%, ${36 + hash(r * 13 + c + 40) * 9}%)`;
       ctx.fillRect(x, y, 84, 36);
     }
+    ctx.restore();
+    ctx.beginPath(); facciata.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath();
+    ctx.lineJoin = "round"; ctx.strokeStyle = L; ctx.lineWidth = 3; ctx.stroke();
     poli([[200, 150], [640, 40], [1080, 150], [1080, 175], [640, 65], [200, 175]], "#6b3022");
     // portale ad arco
     ctx.beginPath(); ctx.moveTo(470, 640); ctx.lineTo(470, 360); ctx.arc(640, 360, 170, Math.PI, 0); ctx.lineTo(810, 640); ctx.closePath(); contorno("#a8957c", 4);
