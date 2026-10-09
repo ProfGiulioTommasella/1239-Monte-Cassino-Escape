@@ -35,9 +35,13 @@ Il pulsante ⛶ mette il gioco a schermo intero.
 1. Nel repository apri **Settings → Pages**.
 2. In *Build and deployment* scegli **Deploy from a branch**, branch `main`, cartella `/ (root)`.
 3. Dopo un minuto il gioco è online all'indirizzo
-   `https://profgiuliotommasella.github.io/1239-monte-cassino-escape/`.
+   `https://profgiuliotommasella.github.io/1239-Monte-Cassino-Escape/`.
 
 Si può anche giocare offline aprendo `index.html` nel browser.
+
+Dopo una modifica ai file in `js/` o `css/`, aumenta di uno il numero `?v=` nelle righe
+di `index.html` che li caricano: così i browser scaricano subito la versione nuova
+invece di usare quella vecchia in memoria.
 
 ## Modificare domande e testi
 
