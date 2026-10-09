@@ -2,7 +2,9 @@
 Genera gli effetti sonori della scena iniziale (pubblico dominio, CC0).
 
 Uso:  python3 strumenti/effetti.py   (richiede numpy, scipy e ffmpeg)
-Crea: assets/audio/colpo.mp3 (ariete contro il portone), assets/audio/crollo.mp3 (portone sfondato)
+Crea: assets/audio/colpo.mp3 (ariete contro il portone).
+assets/audio/portone.mp3 (portone sfondato) è invece la registrazione "Colpo su legno-muro"
+fornita dal prof. Tommasella, e questo script non la sovrascrive.
 """
 import os
 import subprocess
@@ -59,4 +61,3 @@ def salva(segnale, nome):
 
 if __name__ == "__main__":
     salva(tonfo(), "colpo.mp3")
-    salva(schianto(), "crollo.mp3")

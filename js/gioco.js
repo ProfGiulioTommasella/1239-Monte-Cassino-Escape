@@ -58,7 +58,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   // ---------------------------------------------------------------
   //  Suoni
   // ---------------------------------------------------------------
-  const NOMI_SUONI = ["colpo", "crollo", "giusto", "sbagliato", "esplosione", "vittoria", "magia", "russare", "risata"];
+  const NOMI_SUONI = ["colpo", "portone", "giusto", "sbagliato", "esplosione", "vittoria", "magia", "russare", "risata"];
   const suoni = {};
   NOMI_SUONI.forEach((n) => {
     const a = new Audio(`assets/audio/${n}.mp3`);
@@ -1263,7 +1263,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     scena.porta = "rotta";
     scena.tremore = 0.8;
     mondo.lampo = 1.2;
-    suona("crollo");
+    suona("portone");
     for (let i = 0; i < 10; i++) {
       scena.assi.push({
         x: PORTONE_X - 10 + Math.random() * 20, y: 420 + Math.random() * 180,
