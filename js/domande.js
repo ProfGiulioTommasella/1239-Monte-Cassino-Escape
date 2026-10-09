@@ -37,22 +37,22 @@ const ISTRUZIONI_CORSA =
 // Minigiochi d'azione alla fine di una tappa (prima di passare alla successiva).
 // tipo "salto": saltare sassi e tronchi; tipo "lance": abbassarsi per schivare le lance.
 // "quanti" è il numero di ostacoli o di lance.
-// "minimoEvitati": quanti ostacoli o lance bisogna evitare almeno; altrimenti i soldati
+// "colpiMassimi": quanti ostacoli o lance si possono prendere; al colpo successivo i soldati
 // raggiungono il carretto e si ripete il minigioco (non tutta la partita).
 const MINIGIOCHI = [
   {
     dopoTappa: 1,
     tipo: "salto",
     quanti: 8,
-    minimoEvitati: 1,
-    istruzioni: "Attenti! Il sentiero è pieno di sassi, tronchi caduti e botti rotolate giù. Premete la BARRA SPAZIATRICE (o toccate lo schermo) per saltare con il carretto!",
+    colpiMassimi: 3,
+    istruzioni: "Attenti! Il sentiero è pieno di sassi, tronchi caduti e botti rotolate giù. Premete la BARRA SPAZIATRICE (o toccate lo schermo) per saltare con il carretto! Possiamo permetterci al massimo 3 colpi!",
   },
   {
     dopoTappa: 2,
     tipo: "lance",
     quanti: 8,
-    minimoEvitati: 1,
-    istruzioni: "Quei soldati ci tirano le lance! Quando sentite gridare, premete la FRECCIA GIÙ o la BARRA SPAZIATRICE (o toccate lo schermo) per abbassare la testa!",
+    colpiMassimi: 3,
+    istruzioni: "Quei soldati ci tirano le lance! Quando sentite gridare, premete la FRECCIA GIÙ o la BARRA SPAZIATRICE (o toccate lo schermo) per abbassare la testa! Al quarto colpo ci prendono!",
   },
 ];
 

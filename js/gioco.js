@@ -772,6 +772,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     disegnaMonaco(gx, fase, umore);
     ctx.restore();
     disegnaLance();
+    disegnaCuori();
     // libri che cadono
     for (const l of mondo.libriVolanti) {
       if (!img.libro || !img.libro.naturalWidth) continue;
@@ -1082,6 +1083,39 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       ctx.restore();
       ctx.textAlign = "left";
     }
+  }
+
+  // Colpi ancora concessi nel minigioco, come cuori sotto la barra del distacco
+  function disegnaCuori() {
+    const m = mondo.mini;
+    if (!m || !m.colpiMassimi) return;
+    const n = m.colpiMassimi;
+    const rimasti = Math.max(0, n - m.colpiti);
+    const passo = 46, x0 = W / 2 - ((n - 1) * passo) / 2, y = 122;
+    ctx.save();
+    ctx.fillStyle = "rgba(20, 12, 6, 0.6)";
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(x0 - 34, y - 26, (n - 1) * passo + 68, 52, 12) : ctx.rect(x0 - 34, y - 26, (n - 1) * passo + 68, 52);
+    ctx.fill();
+    for (let i = 0; i < n; i++) {
+      const pieno = i < rimasti;
+      // l'ultimo cuore perso pulsa per un attimo
+      const s = !pieno && i === rimasti && mondo.urto > 0 ? 1 + mondo.urto * 0.4 : 1;
+      ctx.save();
+      ctx.translate(x0 + i * passo, y);
+      ctx.scale(s, s);
+      ctx.beginPath();
+      ctx.moveTo(0, 14);
+      ctx.bezierCurveTo(-24, -2, -14, -22, 0, -9);
+      ctx.bezierCurveTo(14, -22, 24, -2, 0, 14);
+      ctx.closePath();
+      ctx.fillStyle = pieno ? "#e0352b" : "#4a3a30";
+      ctx.fill();
+      ctx.lineWidth = 3; ctx.strokeStyle = "#24160c"; ctx.stroke();
+      if (pieno) { ctx.fillStyle = "rgba(255,255,255,0.55)"; ctx.beginPath(); ctx.ellipse(-7, -6, 4, 3, -0.6, 0, Math.PI * 2); ctx.fill(); }
+      ctx.restore();
+    }
+    ctx.restore();
   }
 
   function fumetto(x, y, testo) {
@@ -1738,18 +1772,18 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     chiudiPergamena();
     const btn = $("btn-azione");
     const distaccoPrima = mondo.D;
-    const minimo = mg.minimoEvitati ?? 1;
+    const colpiMassimi = mg.colpiMassimi ?? 3;
     for (;;) {
       btn.textContent = mg.tipo === "salto" ? "SALTA" : "GIÙ";
       btn.className = mg.tipo;
       banner("", mg.tipo === "salto" ? "SALTA!" : "ABBASSATI!", "verde");
-      mondo.mini = { tipo: mg.tipo, quanti: mg.quanti, lanciati: 0, prossimo: 1.0 + Math.random() * 1.4, oggetti: [], evitati: 0, colpiti: 0, attivo: true };
+      mondo.mini = { tipo: mg.tipo, quanti: mg.quanti, colpiMassimi, lanciati: 0, prossimo: 1.0 + Math.random() * 1.4, oggetti: [], evitati: 0, colpiti: 0, attivo: true };
       const m = mondo.mini;
-      while (m.evitati + m.colpiti < m.quanti) await attendi(100);
+      while (m.evitati + m.colpiti < m.quanti && m.colpiti <= colpiMassimi) await attendi(100);
       m.attivo = false;
       btn.className = "nascosto";
       await attendi(500);
-      if (m.evitati >= minimo) {
+      if (m.colpiti <= colpiMassimi) {
         if (m.colpiti === 0) {
           mondo.D = Math.min(tetto(), mondo.D + 6);
           mondo.vel = 2.1;
@@ -1764,6 +1798,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
         return;
       }
       // troppi colpi: i soldati raggiungono il carretto e si ripete solo il minigioco
+      await attendi(400);
       mondo.mini = null;
       mondo.D = 0;
       mondo.grido = 2.5;

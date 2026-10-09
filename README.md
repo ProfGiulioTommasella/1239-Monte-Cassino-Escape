@@ -21,7 +21,7 @@ A ogni partita le risposte cambiano posto (Vero/Falso resta in quest'ordine).
 Alla fine delle prime due tappe c'è un breve minigioco d'azione: prima bisogna **saltare**
 sassi e tronchi con il carretto, poi **abbassarsi** per schivare le lance dei soldati.
 Ogni ostacolo evitato fa guadagnare un po' di terreno, ogni colpo preso lo fa perdere.
-Se non se ne evita neanche uno, i soldati raggiungono il carretto e si ripete solo il minigioco (`minimoEvitati` in `js/domande.js`).
+Si possono prendere al massimo 3 colpi: al quarto i soldati raggiungono il carretto e si ripete solo il minigioco (`colpiMassimi` in `js/domande.js`).
 Alla fine ci sono tre finali, come nel progetto Scratch originale:
 tutte giuste = **salvi**, da 5 a 10 giuste = **quasi salvi**, meno di 5 = **presi**.
 
