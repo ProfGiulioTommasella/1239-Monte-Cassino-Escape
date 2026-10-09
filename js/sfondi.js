@@ -406,6 +406,8 @@ function creaSfondi(ctx, W, hash) {
       ctx.beginPath(); ctx.arc(200 + i * 130 + k * 100, 380 - k * 380, 70 + k * 100, 0, Math.PI * 2); ctx.fill();
     }
     profilo(0, 520, 40, 220, "#2a1714", 3, 760);
+    // monte su cui poggia l'abbazia lontana
+    poli([[760, 720], [830, 560], [880, 500], [893, 470], [1107, 470], [1122, 500], [1180, 560], [1260, 720]], "#3a211b");
     abbazia(1000, 470, 0.45, { muro: "#5e4a3e", ombra: "#4a3a30", tetto: "#3e1c14", luce: "#ff9a3a" });
     [[930, 380], [970, 350], [1040, 340], [1080, 410]].forEach(([x, y], i) => fiamma(x, y, 0.9, t, i + 20));
     ctx.fillStyle = "#1c120e"; ctx.fillRect(0, 610, W, 110);
