@@ -58,7 +58,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   // ---------------------------------------------------------------
   //  Suoni
   // ---------------------------------------------------------------
-  const NOMI_SUONI = ["colpo", "portone", "giusto", "sbagliato", "esplosione", "vittoria", "magia", "russare", "risata"];
+  const NOMI_SUONI = ["colpo", "portone", "giusto", "sbagliato", "esplosione", "vittoria", "magia", "russare", "risata", "hop", "atterraggio", "lancia"];
   const suoni = {};
   NOMI_SUONI.forEach((n) => {
     const a = new Audio(`assets/audio/${n}.mp3`);
@@ -810,7 +810,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     const m = mondo.mini;
     if (!m || !m.attivo) return;
     if (m.tipo === "salto") {
-      if (mondo.salto <= 0.5) { mondo.vSalto = SALTO_SPINTA; mondo.salto = 1; }
+      if (mondo.salto <= 0.5) { mondo.vSalto = SALTO_SPINTA; mondo.salto = 1; suona("hop", 0.7); }
     } else {
       mondo.abbassaFino = mondo.t + 0.75;
     }
@@ -823,6 +823,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       mondo.salto += mondo.vSalto * dt;
       if (mondo.salto <= 0) {
         mondo.salto = 0; mondo.vSalto = 0;
+        suona("atterraggio", 0.55);
         const { gx } = posizioni();
         for (let i = 0; i < 8; i++) particella(gx - 160 + Math.random() * 180, SUOLO - 4, "polvere");
       }
@@ -907,6 +908,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
             o.vy = ((tm.y - o.y) / (tm.x - o.x)) * o.vel;
             o.r = Math.atan2(o.vy, o.vx);
             o.stato = "volo";
+            suona("lancia", 0.8);
           }
         } else if (o.stato === "volo") {
           const prima = o.x;
