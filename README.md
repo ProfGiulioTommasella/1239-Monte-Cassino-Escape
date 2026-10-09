@@ -28,7 +28,7 @@ tutte giuste = **salvi**, da 5 a 10 giuste = **quasi salvi**, meno di 5 = **pres
 Funziona su PC e tablet in orizzontale, con mouse, dito o tastiera
 (A, B, C oppure 1, 2, 3 per rispondere; V/F per vero o falso; Invio per andare avanti).
 Nei minigiochi si usa la barra spaziatrice (o le frecce su e giù); sul tablet basta toccare lo schermo.
-Il pulsante ⛶ mette il gioco a schermo intero.
+In alto a destra 🎵 spegne la musica, 🔊 spegne gli effetti sonori e ⛶ mette il gioco a schermo intero.
 
 ## Pubblicarlo con GitHub Pages
 

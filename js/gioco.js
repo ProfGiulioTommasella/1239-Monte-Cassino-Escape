@@ -76,7 +76,12 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     musiche[nome] = a;
   });
   const tuttiGliAudio = () => [...Object.values(suoni), ...Object.values(musiche)];
-  let muto = false;
+  // musica ed effetti si spengono separatamente; la scelta resta per le partite successive
+  const leggi = (k) => { try { return localStorage.getItem(k) === "1"; } catch (e) { return false; } };
+  const scrivi = (k, v) => { try { localStorage.setItem(k, v ? "1" : "0"); } catch (e) { /* niente */ } };
+  let mutoMusica = leggi("mce-muto-musica");
+  let mutoEffetti = leggi("mce-muto-effetti");
+  const mutoPer = (a) => (Object.values(musiche).includes(a) ? mutoMusica : mutoEffetti);
   let audioSbloccato = false;
   let musicaCorrente = null;
 
@@ -86,8 +91,8 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     tuttiGliAudio().forEach((a) => {
       a.muted = true;
       const p = a.play();
-      const ferma = () => { if (a !== musicaCorrente) { a.pause(); a.currentTime = 0; } a.muted = muto; };
-      if (p && p.then) p.then(ferma).catch(() => { a.muted = muto; });
+      const ferma = () => { if (a !== musicaCorrente) { a.pause(); a.currentTime = 0; } a.muted = mutoPer(a); };
+      if (p && p.then) p.then(ferma).catch(() => { a.muted = mutoPer(a); });
       else ferma();
     });
   }
@@ -98,7 +103,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       a.pause();
       a.currentTime = 0;
       a.volume = volume;
-      a.muted = muto;
+      a.muted = mutoEffetti;
       const p = a.play();
       if (p && p.catch) p.catch(() => {});
     } catch (e) { /* audio non disponibile */ }
@@ -121,18 +126,32 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     if (vecchia) sfuma(vecchia, vecchia.volume, 0, 1200, () => { if (vecchia !== musicaCorrente) vecchia.pause(); });
     if (nuova) {
       nuova.currentTime = 0;
-      nuova.muted = muto;
+      nuova.muted = mutoMusica;
       nuova.volume = 0;
       const p = nuova.play();
       if (p && p.catch) p.catch(() => {});
       sfuma(nuova, 0, VOLUME_MUSICA, 1500);
     }
   }
-  $("btn-audio").addEventListener("click", () => {
-    muto = !muto;
-    tuttiGliAudio().forEach((a) => { a.muted = muto; });
-    $("btn-audio").textContent = muto ? "🔇" : "🔊";
+  function aggiornaPulsantiAudio() {
+    $("btn-musica").classList.toggle("spento", mutoMusica);
+    $("btn-musica").title = mutoMusica ? "Accendi la musica" : "Spegni la musica";
+    $("btn-audio").classList.toggle("spento", mutoEffetti);
+    $("btn-audio").textContent = mutoEffetti ? "🔇" : "🔊";
+    $("btn-audio").title = mutoEffetti ? "Accendi gli effetti sonori" : "Spegni gli effetti sonori";
+    tuttiGliAudio().forEach((a) => { a.muted = mutoPer(a); });
+  }
+  $("btn-musica").addEventListener("click", () => {
+    mutoMusica = !mutoMusica;
+    scrivi("mce-muto-musica", mutoMusica);
+    aggiornaPulsantiAudio();
   });
+  $("btn-audio").addEventListener("click", () => {
+    mutoEffetti = !mutoEffetti;
+    scrivi("mce-muto-effetti", mutoEffetti);
+    aggiornaPulsantiAudio();
+  });
+  aggiornaPulsantiAudio();
   $("btn-schermo").addEventListener("click", () => {
     const d = document;
     if (d.fullscreenElement || d.webkitFullscreenElement) {

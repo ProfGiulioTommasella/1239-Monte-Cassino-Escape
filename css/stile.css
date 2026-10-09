@@ -51,7 +51,7 @@ button {
   position: absolute;
   top: 16px;
   left: 16px;
-  right: 136px;
+  right: 196px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -111,7 +111,18 @@ button {
   gap: 10px;
   z-index: 20;
 }
+.tondo.spento { opacity: 0.55; border-color: #8a7a5a; }
+#btn-musica.spento::after {
+  content: "";
+  position: absolute;
+  left: 9px; right: 9px; top: 50%;
+  height: 3px;
+  background: #ff6b5b;
+  transform: rotate(-45deg);
+  border-radius: 2px;
+}
 .tondo {
+  position: relative;
   width: 50px;
   height: 50px;
   border-radius: 50%;

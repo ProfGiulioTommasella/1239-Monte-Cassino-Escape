@@ -269,7 +269,7 @@ function creaSfondi(ctx, W, hash) {
     }
     // monte e abbazia
     profilo(0, 640, 30, 300, "#2c1d1a", 3, 760);
-    ctx.beginPath(); ctx.ellipse(820, 560, 430, 150, 0, Math.PI, 0); contorno("#3a2620", 3);
+    ctx.beginPath(); ctx.ellipse(820, 730, 560, 305, 0, Math.PI, 0); contorno("#3a2620", 3); // collina che scende fino a terra
     abbazia(820, 430, 0.95, { muro: "#8c7563", ombra: "#6e5a4b", tetto: "#6b3022", luce: "#ffb347" });
     // fiamme sui tetti
     const punti = [[700, 245], [760, 210], [835, 175], [900, 205], [985, 300], [1010, 300], [640, 290], [705, 95], [930, 300]];
