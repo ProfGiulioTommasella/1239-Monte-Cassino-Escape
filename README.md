@@ -15,7 +15,7 @@ La corsa non si ferma mai, nemmeno mentre si risponde alle domande:
 - **risposta giusta**: l'Abate scatta in avanti e i soldati restano indietro;
 - **risposta sbagliata**: i soldati si avvicinano e un libro cade dal carretto.
 
-Ogni partita pesca 11 domande da una banca di 27 (ricavate anche dalla verifica sul Canto gregoriano), divise in tre tappe (bosco, palude, sentiero di pietra): 5 nella prima, 4 nella seconda, 2 nella terza, preferendo quelle non uscite nella partita precedente.
+Ogni partita pesca 12 domande da una banca di 27 (ricavate anche dalla verifica sul Canto gregoriano), 4 per ognuna delle tre tappe (bosco, palude, sentiero di pietra), preferendo quelle non uscite nella partita precedente. Alla sesta risposta sbagliata i soldati raggiungono il carretto e la partita finisce (si cambia con `ERRORI_PER_CATTURA` in `js/domande.js`).
 Alla fine, il pulsante **DA RIPASSARE** mostra un concetto da ripassare per ogni domanda sbagliata (il campo `ripasso` in `js/domande.js`); se non ci sono errori il pulsante non compare.
 A ogni partita le risposte cambiano posto (Vero/Falso resta in quest'ordine).
 Alla fine delle prime due tappe c'è un breve minigioco d'azione: prima bisogna **saltare**

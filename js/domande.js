@@ -32,7 +32,7 @@ const DOMANDA_INIZIALE = "Siete con me?";
 const RISPOSTA_SI = "Molto bene miei prodi discepoli! Partiamo!";
 const RISPOSTA_NO = "Beh, tanto non avete scelta, perché in quanto novizi avete fatto voto di obbedienza!";
 const ISTRUZIONI_CORSA =
-  "I soldati di Federico II ci inseguono! Ogni risposta giusta ci fa guadagnare terreno, ogni risposta sbagliata li avvicina e ci fa perdere un libro dal carretto. E non perdete tempo: se esitate troppo, accelerano!";
+  "I soldati di Federico II ci inseguono! Ogni risposta giusta ci fa guadagnare terreno, ogni risposta sbagliata li avvicina e ci fa perdere un libro dal carretto. E non perdete tempo: se esitate troppo, accelerano! Attenti: alla sesta risposta sbagliata ci prendono!";
 
 // Minigiochi d'azione alla fine di una tappa (prima di passare alla successiva).
 // tipo "salto": saltare sassi e tronchi; tipo "lance": abbassarsi per schivare le lance.
@@ -41,19 +41,19 @@ const MINIGIOCHI = [
   {
     dopoTappa: 1,
     tipo: "salto",
-    quanti: 6,
+    quanti: 8,
     istruzioni: "Attenti! Il sentiero è pieno di sassi, tronchi caduti e botti rotolate giù. Premete la BARRA SPAZIATRICE (o toccate lo schermo) per saltare con il carretto!",
   },
   {
     dopoTappa: 2,
     tipo: "lance",
-    quanti: 6,
+    quanti: 8,
     istruzioni: "Quei soldati ci tirano le lance! Quando sentite gridare, premete la FRECCIA GIÙ o la BARRA SPAZIATRICE (o toccate lo schermo) per abbassare la testa!",
   },
 ];
 
-// Banca delle domande: a ogni partita se ne pescano 11 a caso
-// (5 nella prima tappa, 4 nella seconda, 2 nella terza, come indicato in DOMANDE_PER_TAPPA).
+// Banca delle domande: a ogni partita se ne pescano 12 a caso
+// (4 per ognuna delle tre tappe, come indicato in DOMANDE_PER_TAPPA).
 const BANCA_DOMANDE = [
   {
     tappa: 1,
@@ -302,8 +302,11 @@ const BANCA_DOMANDE = [
   },
 ];
 
-// Quante domande pescare in ogni tappa (in tutto 11).
-const DOMANDE_PER_TAPPA = { 1: 5, 2: 4, 3: 2 };
+// Quante domande pescare in ogni tappa (in tutto 12).
+const DOMANDE_PER_TAPPA = { 1: 4, 2: 4, 3: 4 };
+
+// Alla sesta risposta sbagliata i soldati raggiungono il carretto e la partita finisce.
+const ERRORI_PER_CATTURA = 6;
 
 // Le domande della partita in corso: le sceglie pescaDomande() all'inizio di ogni partita,
 // preferendo quelle che non sono uscite nella partita precedente.
@@ -327,6 +330,7 @@ function pescaDomande() {
 pescaDomande();
 
 // I tre finali. "minimo" = risposte giuste necessarie (vale il primo che corrisponde).
+// Il finale "fiamme" arriva solo quando i soldati raggiungono il carretto (ERRORI_PER_CATTURA).
 const FINALI = [
   {
     tipo: "vittoria",
@@ -337,7 +341,7 @@ const FINALI = [
   },
   {
     tipo: "quasi",
-    minimo: 5,
+    minimo: 0,
    
     titolo: "QUASI SALVI!",
     testo: "Non male, miei novizi... ma si può sempre migliorare!",

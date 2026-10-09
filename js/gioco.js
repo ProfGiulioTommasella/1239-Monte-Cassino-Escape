@@ -379,15 +379,15 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     cerchio(ruotaX, ruotaY, 7, "#3b2412", "#24160c", 2);
   }
 
-  // 11 libri: 6 in piedi sul fondo, 5 sdraiati sopra
+  // 12 libri: 6 in piedi sul fondo, 6 sdraiati sopra
   function posizioneLibro(i, x, yb) {
     if (i < 6) return { x: x - 218 + i * 23, y: yb, tipo: "piedi" };
     const j = i - 6;
-    const pile = [[x - 214, 0], [x - 214, 1], [x - 150, 0], [x - 150, 1], [x - 182, 2]];
+    const pile = [[x - 214, 0], [x - 214, 1], [x - 150, 0], [x - 150, 1], [x - 182, 2], [x - 178, 3]];
     return { x: pile[j][0], y: yb - 40 - pile[j][1] * 13, tipo: "steso" };
   }
   function disegnaLibriCarretto(x, yb) {
-    for (let i = 0; i < Math.min(mondo.libri, 11); i++) {
+    for (let i = 0; i < Math.min(mondo.libri, 12); i++) {
       const p = posizioneLibro(i, x, yb);
       const c = COLORI_LIBRI[i % COLORI_LIBRI.length];
       if (p.tipo === "piedi") {
@@ -650,6 +650,16 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   // ---------------------------------------------------------------
   //  Aggiornamento e disegno della corsa
   // ---------------------------------------------------------------
+  // Il distacco minimo dipende dagli errori: i soldati si avvicinano a ogni errore
+  // e raggiungono il carretto solo all'ultimo (ERRORI_PER_CATTURA)
+  function pavimento() {
+    return 4 * Math.max(0, ERRORI_PER_CATTURA - mondo.sbagliate);
+  }
+  // e ogni errore abbassa anche il massimo vantaggio possibile
+  function tetto() {
+    return Math.max(pavimento() + 10, 100 - 16 * mondo.sbagliate);
+  }
+
   function posizioni() {
     const gx = 590 + mondo.Dv * 1.6 + mondo.uscita;
     const retro = gx - 228;
@@ -695,8 +705,9 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       mondo.prossimaRimonta -= dt;
       if (mondo.prossimaRimonta <= 0) {
         mondo.prossimaRimonta = Infinity;
-        if (mondo.D > MINIMO_RIMONTA) {
-          mondo.D = Math.max(MINIMO_RIMONTA, mondo.D - RIMONTA[(mondo.tappa - 1) % RIMONTA.length]);
+        const minimo = Math.max(MINIMO_RIMONTA, pavimento());
+        if (mondo.D > minimo) {
+          mondo.D = Math.max(minimo, mondo.D - RIMONTA[(mondo.tappa - 1) % RIMONTA.length]);
           mondo.scatto = 1.2;
           mondo.grido = 1.8;
           mondo.testoGrido = GRIDA_RIMONTA[Math.floor(Math.random() * GRIDA_RIMONTA.length)];
@@ -886,7 +897,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
           o.colpito = true;
           o.voy = -620; o.oy = -1; o.rot = 0;
           m.colpiti++;
-          mondo.D = Math.max(5, mondo.D - 6);
+          mondo.D = Math.max(pavimento(), mondo.D - 6);
           mondo.urto = 1;
           mondo.lampo = 0.7;
           mondo.vel = 0.6;
@@ -894,7 +905,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
         } else if (o.x + o.w < gx - 180) {
           o.superato = true;
           m.evitati++;
-          mondo.D = Math.min(100, mondo.D + 2);
+          mondo.D = Math.min(tetto(), mondo.D + 2);
         }
       } else {
         if (o.stato === "pronta") {
@@ -919,14 +930,14 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
             if (mondo.chino > 0.55) {
               o.superato = true;
               m.evitati++;
-              mondo.D = Math.min(100, mondo.D + 2);
+              mondo.D = Math.min(tetto(), mondo.D + 2);
             } else {
               // la lancia colpisce di piatto il cappuccio e rimbalza indietro
               o.colpito = true;
               m.colpiti++;
               o.stato = "caduta";
               o.vx = -220; o.vy = -380;
-              mondo.D = Math.max(5, mondo.D - 6);
+              mondo.D = Math.max(pavimento(), mondo.D - 6);
               mondo.urto = 1;
               mondo.lampo = 0.7;
               mondo.vel = 0.6;
@@ -1200,7 +1211,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       if (a.y > SUOLO - 6) { a.y = SUOLO - 6; a.vy *= -0.25; a.vx *= 0.6; a.vr *= 0.5; }
     }
     // l'Abate fa avanti e indietro tra lo scriptorium e il carretto
-    const pieno = Math.min(11, DOMANDE.length);
+    const pieno = Math.min(12, DOMANDE.length);
     if (m.stato === "carica" || m.stato === "posizione") {
       if (m.sosta > 0) {
         m.sosta -= dt;
@@ -1324,7 +1335,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     sfondi.cortile(mondo.t, SUOLO);
     const m = scena.monaco;
     // codici ancora da caricare, a terra nello scriptorium
-    const rimasti = Math.max(0, Math.min(11, DOMANDE.length) - scena.libri - (scena.libroVolo ? 1 : 0) - (m.carica && m.stato === "carica" ? 1 : 0));
+    const rimasti = Math.max(0, Math.min(12, DOMANDE.length) - scena.libri - (scena.libroVolo ? 1 : 0) - (m.carica && m.stato === "carica" ? 1 : 0));
     for (let i = 0; i < rimasti; i++) {
       const x = PILA_X + (i % 2) * 34;
       const y = SUOLO - 4 - Math.floor(i / 2) * 15;
@@ -1418,7 +1429,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     if (saltato || m.stato !== "pronto") {
       // carretto già carico e Abate al suo posto
       if (saltato) await velo(1, 250);
-      scena.libri = Math.min(11, DOMANDE.length);
+      scena.libri = Math.min(12, DOMANDE.length);
       scena.libroVolo = null;
       Object.assign(m, { stato: "pronto", carica: false, sosta: 0, dir: 1 });
       if (saltato) await velo(0, 250);
@@ -1736,7 +1747,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     btn.className = "nascosto";
     await attendi(500);
     if (m.colpiti === 0) {
-      mondo.D = Math.min(100, mondo.D + 6);
+      mondo.D = Math.min(tetto(), mondo.D + 6);
       mondo.vel = 2.1;
       suona("giusto");
       banner("", "PERFETTO!", "verde");
@@ -1819,7 +1830,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
 
       if (giusta) {
         mondo.corrette++;
-        mondo.D = Math.min(100, mondo.D + PASSO_DISTACCO);
+        mondo.D = Math.min(tetto(), mondo.D + PASSO_DISTACCO);
         mondo.vel = 2.1;
         suona("giusto");
         banner("", "GIUSTO!", "verde");
@@ -1827,7 +1838,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       } else {
         mondo.sbagliate++;
         mondo.daRipassare.push(q);
-        mondo.D = Math.max(0, mondo.D - PASSO_DISTACCO);
+        mondo.D = Math.min(tetto(), Math.max(pavimento(), mondo.D - PASSO_DISTACCO));
         mondo.vel = 0.55;
         mondo.lampo = 1;
         mondo.grido = 1.8;
@@ -1848,6 +1859,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
         await fine;
       }
       chiudiPergamena();
+      if (mondo.sbagliate >= ERRORI_PER_CATTURA) break;
     }
 
     await finale();
@@ -1855,7 +1867,10 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
 
   async function finale() {
     const c = mondo.corrette;
-    const fin = FINALI.find((f) => c >= f.minimo) || FINALI[FINALI.length - 1];
+    const presi = mondo.sbagliate >= ERRORI_PER_CATTURA;
+    const fin = presi
+      ? FINALI.find((f) => f.tipo === "fiamme")
+      : FINALI.find((f) => f.tipo !== "fiamme" && c >= f.minimo) || FINALI[0];
     mondo.inseguimento = false;
     $("hud").classList.add("nascosto");
     await attendi(600);
@@ -1896,7 +1911,9 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     const umore = fin.tipo === "vittoria" ? "felice" : fin.tipo === "quasi" ? "normale" : "arrabbiato";
     dialogo(fin.testo, umore, []);
     $("finale-titolo").textContent = fin.titolo;
-    $("finale-punteggio").textContent = `Inni salvati: ${c} su ${DOMANDE.length}`;
+    $("finale-punteggio").textContent = presi
+      ? `Vi hanno raggiunto alla domanda ${c + mondo.sbagliate} di ${DOMANDE.length}`
+      : `Inni salvati: ${c} su ${DOMANDE.length}`;
     preparaRipasso();
     $("finale").classList.remove("nascosto");
   }
