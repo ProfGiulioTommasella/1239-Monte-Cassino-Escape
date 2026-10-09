@@ -225,14 +225,14 @@ button {
   overflow: hidden;
   position: relative;
 }
-#ritratto img {
+#ritratto canvas {
   position: absolute;
-  width: 190px;
-  left: -14px;
-  top: 4px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 #ritratto.felice { background: linear-gradient(180deg, #78c27a, #2f6b36); }
-#ritratto.arrabbiato { background: linear-gradient(180deg, #e2604c, #7a1b12); animation: trema 0.4s; }
+#ritratto.arrabbiato { background: linear-gradient(180deg, #e2604c, #7a1b12); }
 @keyframes trema { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
 #contenuto { flex: 1; display: flex; flex-direction: column; }

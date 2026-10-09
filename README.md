@@ -61,7 +61,7 @@ index.html          pagina del gioco
 css/stile.css       grafica dell'interfaccia
 js/domande.js       contenuti (da modificare liberamente)
 js/gioco.js         motore di gioco (scena, personaggi, inseguimento)
-assets/img/         sfondi e ritratti dell'Abate dal progetto Scratch
+assets/img/         sfondi e libro dal progetto Scratch
 assets/audio/       effetti sonori dal progetto Scratch e musiche originali
 strumenti/musica.py generatore delle musiche (Python, numpy, scipy, ffmpeg)
 strumenti/effetti.py generatore dei suoni della scena iniziale (ariete, portone che crolla)
