@@ -87,6 +87,59 @@ function creaSfondi(ctx, W, hash) {
     ctx.fillStyle = "#ffd34d";
     ctx.fill();
   }
+  // Fiamma che esce da un tetto: la base segue la falda (o il colmo) e brucia dentro le tegole,
+  // con un bagliore sul tetto e lingue di fuoco di altezze diverse.
+  // base(dx) = scostamento verticale della falda rispetto a (x, y), in unità della fiamma
+  function fiammaTetto(x, y, s, t, seme, base) {
+    const f = (k) => 1 + Math.sin(t * (11 + k * 2) + seme * 3 + k * 1.7) * 0.14;
+    const sway = Math.sin(t * 9 + seme) * 2.5;
+    const by = (dx) => y + base(dx) * s + 3 * s;
+    // bagliore sul tetto
+    const g = ctx.createRadialGradient(x, y, 2, x, y, 46 * s);
+    g.addColorStop(0, "rgba(255,170,60,0.6)"); g.addColorStop(1, "rgba(255,120,30,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(x, y, 46 * s, 0, Math.PI * 2); ctx.fill();
+    // lingue: [dx, altezza, larghezza]
+    const lingue = [[-11, 24 * f(1), 8], [0, 48 * f(0), 11], [12, 30 * f(2), 8]];
+    const sagoma = (scala, colore) => {
+      const w = 19 * scala;
+      ctx.beginPath();
+      ctx.moveTo(x - w * s, by(-w));
+      lingue.forEach(([dx, h, lw], i) => {
+        const cx = x + (dx * scala + (i === 1 ? sway : sway * 0.5)) * s;
+        const top = by(dx * scala) - h * scala * s;
+        const sx = x + (dx * scala - lw * scala) * s;
+        const ex = x + (dx * scala + lw * scala) * s;
+        ctx.quadraticCurveTo(sx, by(dx * scala) - h * scala * 0.45 * s, cx, top);
+        ctx.quadraticCurveTo(ex, by(dx * scala) - h * scala * 0.45 * s, i < 2 ? ex : x + w * s, i < 2 ? by(dx * scala) - h * scala * 0.25 * s : by(w));
+      });
+      // la base torna indietro seguendo la falda, nascosta tra le tegole
+      for (let k = 1; k <= 8; k++) {
+        const dx = w - (2 * w * k) / 8;
+        ctx.lineTo(x + dx * s, by(dx) + (k % 2 ? 2 : -1) * s);
+      }
+      ctx.closePath();
+      ctx.fillStyle = colore; ctx.fill();
+    };
+    // contorno scuro: la sagoma un po' più grande, tagliata sopra la falda così la base resta senza bordo
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x - 40 * s, by(-40) - 2 * s);
+    for (let dx = -40; dx <= 40; dx += 5) ctx.lineTo(x + dx * s, by(dx) - 2 * s);
+    ctx.lineTo(x + 40 * s, y - 120 * s); ctx.lineTo(x - 40 * s, y - 120 * s);
+    ctx.closePath(); ctx.clip();
+    ctx.save(); ctx.translate(x, y); ctx.scale(1.1, 1.08); ctx.translate(-x, -y);
+    sagoma(1, L);
+    ctx.restore();
+    ctx.restore();
+    sagoma(1, "#ff7a1a");
+    sagoma(0.55, "#ffd34d");
+    // braci lungo la falda
+    ctx.strokeStyle = "rgba(255,200,80,0.9)"; ctx.lineWidth = 2.5 * s; ctx.lineCap = "round";
+    ctx.beginPath();
+    for (let dx = -22; dx <= 22; dx += 4) ctx[dx === -22 ? "moveTo" : "lineTo"](x + dx * s, by(dx) - 1 * s);
+    ctx.stroke();
+  }
   function stelle(n, seme, alpha = 1) {
     for (let i = 0; i < n; i++) {
       const x = hash(i * 3.1 + seme) * W;
@@ -293,8 +346,15 @@ function creaSfondi(ctx, W, hash) {
     }
     abbazia(AX, AB, AS, { muro: "#8c7563", ombra: "#6e5a4b", tetto: "#6b3022", luce: "#ffb347" });
     // fiamme sui tetti (punti presi dal disegno dell'abbazia)
-    const tetti = [[-105, -378, 1.1], [-130, -188, 1.2], [-175, -170, 0.9], [15, -268, 1.5], [-40, -215, 1.0], [70, -215, 1.1], [150, -163, 1.2], [195, -140, 0.9]];
-    tetti.forEach(([px, py, sc], i) => fiamma(AX + px * AS, AB + py * AS, sc, t, i));
+    // [x, y sulla falda, scala, forma]: "colmo" con la pendenza delle due falde, oppure pendenza di una sola falda
+    const colmo = (k) => (dx) => Math.abs(dx) * k;
+    const falda = (m) => (dx) => dx * m;
+    const tetti = [
+      [-105, -372, 1.0, colmo(1.4)], [-130, -186, 1.1, colmo(0.5)], [-178, -166, 0.85, falda(-0.5)],
+      [15, -264, 1.4, colmo(0.8)], [-38, -222, 0.95, falda(-0.8)], [68, -224, 1.0, falda(0.8)],
+      [150, -162, 1.1, colmo(0.5)], [196, -142, 0.85, falda(0.5)],
+    ];
+    tetti.forEach(([px, py, sc, forma], i) => fiammaTetto(AX + px * AS, AB + py * AS, sc, t, i, forma));
     // colline scure in primo piano
     profilo(60, 650, 22, 260, "#1d1210", 3, 760);
   }
