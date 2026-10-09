@@ -251,29 +251,52 @@ function creaSfondi(ctx, W, hash) {
   }
 
   // ------------------------------------------------------------ scene fisse
+  // Schermata del titolo: l'abbazia in fiamme sulla cima piatta di Montecassino
   function inizio(t) {
-    cielo([[0, "#1a0f14"], [0.55, "#5a1f17"], [1, "#b8461c"]], 0, 720);
+    const AX = 1010, AB = 452, AS = 0.85, D = 50; // posizione e scala dell'abbazia
+    cielo([[0, "#140b10"], [0.5, "#4a1a16"], [1, "#a8431c"]], 0, 640);
     ctx.fillRect(0, 600, W, 120);
-    stelle(50, 3, 0.6);
-    // bagliore dell'incendio
-    const g = ctx.createRadialGradient(820, 380, 40, 820, 380, 520);
-    g.addColorStop(0, "rgba(255,140,40,0.55)"); g.addColorStop(1, "rgba(255,140,40,0)");
+    stelle(60, 3, 0.6);
+    const g = ctx.createRadialGradient(AX, 330, 40, AX, 330, 600);
+    g.addColorStop(0, "rgba(255,140,40,0.5)"); g.addColorStop(1, "rgba(255,140,40,0)");
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, 720);
-    // fumo
-    for (let i = 0; i < 7; i++) {
-      const k = (t * 0.04 + i / 7) % 1;
-      const x = 700 + i * 45 + k * 160;
-      const y = 300 - k * 300;
-      ctx.fillStyle = `rgba(40,30,30,${0.55 * (1 - k)})`;
-      ctx.beginPath(); ctx.arc(x, y, 50 + k * 90, 0, Math.PI * 2); ctx.fill();
+    // catene di monti lontani
+    profilo(120, 470, 70, 210, "#3a1c1b", 0, 720);
+    profilo(400, 540, 45, 160, "#2d1716", 0, 720);
+    // colonna di fumo dall'incendio
+    for (let i = 0; i < 9; i++) {
+      const k = (t * 0.035 + i / 9) % 1;
+      const x = AX - 60 + i * 14 + k * 260;
+      const y = 300 - k * 330;
+      ctx.fillStyle = `rgba(35,24,24,${0.6 * (1 - k)})`;
+      ctx.beginPath(); ctx.arc(x, y, 40 + k * 110, 0, Math.PI * 2); ctx.fill();
     }
-    // monte e abbazia
-    profilo(0, 640, 30, 300, "#2c1d1a", 3, 760);
-    ctx.beginPath(); ctx.ellipse(820, 730, 560, 305, 0, Math.PI, 0); contorno("#3a2620", 3); // collina che scende fino a terra
-    abbazia(820, 430, 0.95, { muro: "#8c7563", ombra: "#6e5a4b", tetto: "#6b3022", luce: "#ffb347" });
-    // fiamme sui tetti
-    const punti = [[700, 245], [760, 210], [835, 175], [900, 205], [985, 300], [1010, 300], [640, 290], [705, 95], [930, 300]];
-    punti.forEach(([x, y], i) => fiamma(x, y, 1.2 + hash(i) * 0.8, t, i));
+    // il monte, con la cima piatta su cui poggia l'abbazia
+    poli([
+      [400, 720], [470, 640], [540, 590], [600, 548], [655, 520], [700, 480], [730, 466], [748, AB],
+      [1176, AB], [1196, 470], [1226, 500], [1262, 548], [1300, 590], [1300, 720],
+    ].map(([x, y]) => [x + D, y]), "#4a2a22");
+    // strati di roccia
+    ctx.strokeStyle = "#3a2019"; ctx.lineWidth = 3; ctx.lineCap = "round";
+    for (const [x1, y1, x2, y2] of [[620, 560, 700, 540], [560, 610, 650, 596], [700, 500, 760, 494], [1170, 500, 1230, 520], [1150, 560, 1250, 575], [800, 520, 900, 512], [960, 540, 1080, 548], [700, 620, 820, 612], [1000, 610, 1120, 604]]) {
+      ctx.beginPath(); ctx.moveTo(x1 + D, y1); ctx.lineTo(x2 + D, y2); ctx.stroke();
+    }
+    // muraglione di sostegno sul bordo della cima
+    poli([[740 + D, AB], [740 + D, AB + 22], [1184 + D, AB + 22], [1184 + D, AB]], "#5e4a3e", 2.5);
+    ctx.fillStyle = "#4f3d33";
+    for (let x = 752 + D; x < 1176 + D; x += 34) ctx.fillRect(x, AB + 6, 20, 9);
+    // cipressi sui fianchi
+    for (const [x0, y, h] of [[600, 560, 46], [628, 548, 40], [1232, 520, 44], [1262, 556, 50], [560, 600, 52], [520, 630, 58]]) {
+      const x = x0 + D;
+      ctx.beginPath(); ctx.moveTo(x, y - h); ctx.quadraticCurveTo(x + 11, y - h * 0.4, x + 6, y); ctx.lineTo(x - 6, y); ctx.quadraticCurveTo(x - 11, y - h * 0.4, x, y - h);
+      contorno("#1f2a1a", 2.5);
+    }
+    abbazia(AX, AB, AS, { muro: "#8c7563", ombra: "#6e5a4b", tetto: "#6b3022", luce: "#ffb347" });
+    // fiamme sui tetti (punti presi dal disegno dell'abbazia)
+    const tetti = [[-105, -378, 1.1], [-130, -188, 1.2], [-175, -170, 0.9], [15, -268, 1.5], [-40, -215, 1.0], [70, -215, 1.1], [150, -163, 1.2], [195, -140, 0.9]];
+    tetti.forEach(([px, py, sc], i) => fiamma(AX + px * AS, AB + py * AS, sc, t, i));
+    // colline scure in primo piano
+    profilo(60, 650, 22, 260, "#1d1210", 3, 760);
   }
 
   function vittoria(t) {

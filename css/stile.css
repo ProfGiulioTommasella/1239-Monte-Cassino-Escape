@@ -147,8 +147,11 @@ button {
   padding: 0 140px;
 }
 #titolo {
-  /* velo scuro al centro: l'abbazia in fiamme resta sullo sfondo senza disturbare il titolo */
-  background: radial-gradient(ellipse 50% 48% at 50% 46%, rgba(20,10,4,0.78) 0%, rgba(20,10,4,0.6) 55%, rgba(0,0,0,0.72) 100%);
+  /* titolo a sinistra, l'abbazia in fiamme ben visibile a destra */
+  align-items: flex-start;
+  text-align: left;
+  padding: 0 0 0 80px;
+  background: linear-gradient(90deg, rgba(12,6,3,0.82) 0%, rgba(12,6,3,0.6) 45%, rgba(12,6,3,0) 70%);
 }
 #titolo .anno {
   font-family: var(--arcade);
@@ -159,16 +162,16 @@ button {
 }
 #titolo h1 {
   font-family: var(--arcade);
-  font-size: 62px;
+  font-size: 54px;
   line-height: 1.25;
   margin: 18px 0 22px;
   color: #ffe7a8;
   text-shadow: 4px 4px 0 #7a1b0c, 8px 8px 0 #000;
 }
 #titolo .trama {
-  font-size: 25px;
+  font-size: 23px;
   line-height: 1.4;
-  max-width: 900px;
+  max-width: 640px;
   margin: 0 0 28px;
   text-shadow: 2px 2px 4px #000;
 }
