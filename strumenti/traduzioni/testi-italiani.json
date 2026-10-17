@@ -1,0 +1,1097 @@
+[
+ {
+  "it": "Un gioco di ripasso sul Canto Gregoriano.",
+  "nota": "schermata del titolo",
+  "id": 1
+ },
+ {
+  "it": "Rispondete alle domande dell'Abate e aiutatelo a sfuggire ai soldati!",
+  "nota": "schermata del titolo",
+  "id": 2
+ },
+ {
+  "it": "INIZIA",
+  "nota": "pulsante",
+  "id": 3
+ },
+ {
+  "it": "GIOCA ANCORA",
+  "nota": "pulsante",
+  "id": 4
+ },
+ {
+  "it": "DA RIPASSARE",
+  "nota": "pulsante",
+  "id": 5
+ },
+ {
+  "it": "OK",
+  "nota": "pulsante",
+  "id": 6
+ },
+ {
+  "it": "Avanti",
+  "nota": "pulsante",
+  "id": 7
+ },
+ {
+  "it": "Via!",
+  "nota": "pulsante",
+  "id": 8
+ },
+ {
+  "it": "Pronti!",
+  "nota": "pulsante",
+  "id": 9
+ },
+ {
+  "it": "Riprova",
+  "nota": "pulsante",
+  "id": 10
+ },
+ {
+  "it": "Partiamo!",
+  "nota": "pulsante",
+  "id": 11
+ },
+ {
+  "it": "Va bene...",
+  "nota": "pulsante",
+  "id": 12
+ },
+ {
+  "it": "Sì",
+  "nota": "risposta",
+  "id": 13
+ },
+ {
+  "it": "No",
+  "nota": "risposta",
+  "id": 14
+ },
+ {
+  "it": "Abate Stefano II",
+  "nota": "nome del personaggio",
+  "id": 15
+ },
+ {
+  "it": "Domanda {n} di {tot}",
+  "nota": "intestazione",
+  "id": 16
+ },
+ {
+  "it": "Risposta giusta: {r}",
+  "nota": "dopo un errore",
+  "id": 17
+ },
+ {
+  "it": "TAPPA {n}",
+  "nota": "banner",
+  "id": 18
+ },
+ {
+  "it": "GIUSTO!",
+  "nota": "banner",
+  "id": 19
+ },
+ {
+  "it": "SBAGLIATO!",
+  "nota": "banner",
+  "id": 20
+ },
+ {
+  "it": "SALTA!",
+  "nota": "banner minigioco",
+  "id": 21
+ },
+ {
+  "it": "ABBASSATI!",
+  "nota": "banner minigioco",
+  "id": 22
+ },
+ {
+  "it": "PERFETTO!",
+  "nota": "banner",
+  "id": 23
+ },
+ {
+  "it": "EVITATI {n} SU {tot}",
+  "nota": "banner",
+  "id": 24
+ },
+ {
+  "it": "PRESI!",
+  "nota": "banner, i soldati ci hanno preso",
+  "id": 25
+ },
+ {
+  "it": "Inni salvati: {n} su {tot}",
+  "nota": "finale",
+  "id": 26
+ },
+ {
+  "it": "Vi hanno raggiunto alla domanda {n} di {tot}",
+  "nota": "finale",
+  "id": 27
+ },
+ {
+  "it": "Da ripassare",
+  "nota": "titolo del riepilogo",
+  "id": 28
+ },
+ {
+  "it": "Avete sbagliato una domanda. Ecco il concetto da ripassare:",
+  "nota": "riepilogo",
+  "id": 29
+ },
+ {
+  "it": "Avete sbagliato {n} domande. Ecco i concetti da ripassare:",
+  "nota": "riepilogo",
+  "id": 30
+ },
+ {
+  "it": "SALTA",
+  "nota": "pulsante minigioco",
+  "id": 31
+ },
+ {
+  "it": "GIÙ",
+  "nota": "pulsante minigioco (abbassati)",
+  "id": 32
+ },
+ {
+  "it": "Il bosco delle nebbie",
+  "nota": "nome della tappa",
+  "id": 33
+ },
+ {
+  "it": "La palude oscura",
+  "nota": "nome della tappa",
+  "id": 34
+ },
+ {
+  "it": "Il sentiero di pietra",
+  "nota": "nome della tappa",
+  "id": 35
+ },
+ {
+  "it": "1239: i soldati di Federico II di Svevia devastano l'Abbazia di Montecassino.",
+  "nota": "didascalia iniziale",
+  "id": 36
+ },
+ {
+  "it": "L'Abbazia era uno dei più importanti centri di produzione di manoscritti.",
+  "nota": "didascalia iniziale",
+  "id": 37
+ },
+ {
+  "it": "L'Abate Stefano II deve mettere in salvo i preziosi codici di canto gregoriano in una vicina abbazia, prima che il portone ceda!",
+  "nota": "didascalia iniziale",
+  "id": 38
+ },
+ {
+  "it": "Benvenuti, miei fidati novizi! Come potete vedere, i soldati hanno devastato il nostro povero monastero...",
+  "nota": "l'Abate",
+  "id": 39
+ },
+ {
+  "it": "Ho recuperato dallo scriptorium i nostri manoscritti di canto gregoriano appena in tempo, e con il vostro aiuto li porteremo in salvo all'abbazia più vicina!",
+  "nota": "l'Abate",
+  "id": 40
+ },
+ {
+  "it": "Siete con me?",
+  "nota": "l'Abate",
+  "id": 41
+ },
+ {
+  "it": "Molto bene miei prodi discepoli! Partiamo!",
+  "nota": "l'Abate",
+  "id": 42
+ },
+ {
+  "it": "Beh, tanto non avete scelta, perché in quanto novizi avete fatto voto di obbedienza!",
+  "nota": "l'Abate",
+  "id": 43
+ },
+ {
+  "it": "I soldati di Federico II ci inseguono! Ogni risposta giusta ci fa guadagnare terreno, ogni risposta sbagliata li avvicina e ci fa perdere un libro dal carretto. E non perdete tempo: se esitate troppo, accelerano! Attenti: alla sesta risposta sbagliata ci prendono!",
+  "nota": "l'Abate",
+  "id": 44
+ },
+ {
+  "it": "Ahimè, ci hanno raggiunti! Per fortuna sono riuscito a sgusciare via... riproviamo, e stavolta state più attenti!",
+  "nota": "l'Abate",
+  "id": 45
+ },
+ {
+  "it": "Attenti! Il sentiero è pieno di sassi, tronchi caduti e botti rotolate giù. Premete la BARRA SPAZIATRICE (o toccate lo schermo) per saltare con il carretto! Possiamo permetterci al massimo 3 colpi!",
+  "nota": "istruzioni del minigioco",
+  "id": 46
+ },
+ {
+  "it": "Quei soldati ci tirano le lance! Quando vedete un soldato gridare nel fumetto, premete la FRECCIA GIÙ o la BARRA SPAZIATRICE (o toccate lo schermo) per abbassare la testa! Al quarto colpo ci prendono!",
+  "nota": "istruzioni del minigioco",
+  "id": 47
+ },
+ {
+  "it": "Li chiamiamo \"Inni Gregoriani\" in onore di un famoso \"MAGNO\"... chi era?",
+  "nota": "domanda 1",
+  "id": 48
+ },
+ {
+  "it": "Carlo Magno",
+  "nota": "risposta della domanda 1",
+  "id": 49
+ },
+ {
+  "it": "Papa Gregorio Magno",
+  "nota": "risposta della domanda 1 (giusta)",
+  "id": 50
+ },
+ {
+  "it": "Alessandro Magno",
+  "nota": "risposta della domanda 1",
+  "id": 51
+ },
+ {
+  "it": "Bravi i miei discepoli!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 1",
+  "id": 52
+ },
+ {
+  "it": "Il nostro povero Papa Gregorio Magno non sarebbe contento!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 1",
+  "id": 53
+ },
+ {
+  "it": "Il Canto gregoriano prende il nome da Papa Gregorio Magno.",
+  "nota": "concetto da ripassare (domanda 1)",
+  "id": 54
+ },
+ {
+  "it": "In che lingua scriviamo e cantiamo i nostri inni?",
+  "nota": "domanda 2",
+  "id": 55
+ },
+ {
+  "it": "Latino",
+  "nota": "risposta della domanda 2 (giusta)",
+  "id": 56
+ },
+ {
+  "it": "Volgare",
+  "nota": "risposta della domanda 2",
+  "id": 57
+ },
+ {
+  "it": "Italiano",
+  "nota": "risposta della domanda 2",
+  "id": 58
+ },
+ {
+  "it": "Magno Gaudio!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 2",
+  "id": 59
+ },
+ {
+  "it": "Non correcto est!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 2",
+  "id": 60
+ },
+ {
+  "it": "Il Canto gregoriano è scritto e cantato in latino.",
+  "nota": "concetto da ripassare (domanda 2)",
+  "id": 61
+ },
+ {
+  "it": "Durante le funzioni sacre, accompagniamo il canto con gli strumenti.",
+  "nota": "domanda 3",
+  "id": 62
+ },
+ {
+  "it": "Vero",
+  "nota": "risposta della domanda 3",
+  "id": 63
+ },
+ {
+  "it": "Falso",
+  "nota": "risposta della domanda 3 (giusta)",
+  "id": 64
+ },
+ {
+  "it": "Bravi, discìpuli! Gli strumenti distraggono dalla preghiera!!!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 3",
+  "id": 65
+ },
+ {
+  "it": "Ah, vi piacerebbe far baccano durante le sacre funzioni, eh?! È Falso!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 3",
+  "id": 66
+ },
+ {
+  "it": "Il Canto gregoriano si canta senza strumenti.",
+  "nota": "concetto da ripassare (domanda 3)",
+  "id": 67
+ },
+ {
+  "it": "Vi ricordate quanti anni è durata la SCHOLA CANTORUM, dove avete imparato a memoria tutti i canti?",
+  "nota": "domanda 4",
+  "id": 68
+ },
+ {
+  "it": "5",
+  "nota": "risposta della domanda 4",
+  "id": 69
+ },
+ {
+  "it": "9",
+  "nota": "risposta della domanda 4 (giusta)",
+  "id": 70
+ },
+ {
+  "it": "15",
+  "nota": "risposta della domanda 4",
+  "id": 71
+ },
+ {
+  "it": "Già! Sembrano volati, vero?",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 4",
+  "id": 72
+ },
+ {
+  "it": "Ahia! Fosse per me ve ne farei fare altri 20!!!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 4",
+  "id": 73
+ },
+ {
+  "it": "Nella Schola Cantorum si studiava per 9 anni, imparando a memoria tutti i canti.",
+  "nota": "concetto da ripassare (domanda 4)",
+  "id": 74
+ },
+ {
+  "it": "Quando cantiamo, seguiamo tutti quanti la stessa melodia, all'unisono. Questa pratica si chiama:",
+  "nota": "domanda 5",
+  "id": 75
+ },
+ {
+  "it": "MONODIA",
+  "nota": "risposta della domanda 5 (giusta)",
+  "id": 76
+ },
+ {
+  "it": "POLIFONIA",
+  "nota": "risposta della domanda 5",
+  "id": 77
+ },
+ {
+  "it": "Bene bene, vedo che siete attenti durante le sacre funzioni!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 5",
+  "id": 78
+ },
+ {
+  "it": "Poffarbacco! Deduco che siate molto distratti mentre cantiamo durante le sacre funzioni!!!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 5",
+  "id": 79
+ },
+ {
+  "it": "Il Canto gregoriano è monodico: tutti cantano la stessa melodia, all'unisono.",
+  "nota": "concetto da ripassare (domanda 5)",
+  "id": 80
+ },
+ {
+  "it": "Il nostro Papa Gregorio ha deciso che non possiamo perderci in inutili giochetti musicali, per cui ad ogni sillaba deve corrispondere solo una nota.",
+  "nota": "domanda 6",
+  "id": 81
+ },
+ {
+  "it": "Ma che soddisfazione questi discepoli ben preparati!!!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 6",
+  "id": 82
+ },
+ {
+  "it": "Perdindirindina!!! Non sarete mica dei fan dei MELISMI profani!!!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 6",
+  "id": 83
+ },
+ {
+  "it": "Il Canto gregoriano è sillabico: a ogni sillaba corrisponde una sola nota.",
+  "nota": "concetto da ripassare (domanda 6)",
+  "id": 84
+ },
+ {
+  "it": "Mi pare di ricordare che l'ANTIPHONARIUS CENTO, con tutti i nostri canti, fosse a Roma, nella Basilica di San Giovanni in Laterano.",
+  "nota": "domanda 7",
+  "id": 85
+ },
+ {
+  "it": "Oh, avete ragione, era a San Pietro! Sapete, l'età che avanza...",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 7",
+  "id": 86
+ },
+ {
+  "it": "Non datemi ragione solo perché sono vecchio!! Ora ricordo, era a San Pietro!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 7",
+  "id": 87
+ },
+ {
+  "it": "L'Antiphonarius Cento era custodito nella Basilica di San Pietro a Roma.",
+  "nota": "concetto da ripassare (domanda 7)",
+  "id": 88
+ },
+ {
+  "it": "Come chiamiamo i nostri bravi monaci che copiano tutto il giorno i vari inni? Monaci...",
+  "nota": "domanda 8",
+  "id": 89
+ },
+ {
+  "it": "Cistercensi",
+  "nota": "risposta della domanda 8",
+  "id": 90
+ },
+ {
+  "it": "Copiatori",
+  "nota": "risposta della domanda 8",
+  "id": 91
+ },
+ {
+  "it": "Amanuensi",
+  "nota": "risposta della domanda 8 (giusta)",
+  "id": 92
+ },
+ {
+  "it": "Superbo! Già vi ci vedo, tutto il giorno allo scrittoio intenti a copiare!!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 8",
+  "id": 93
+ },
+ {
+  "it": "\"AMANUENSI\"!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 8",
+  "id": 94
+ },
+ {
+  "it": "I monaci che copiavano i codici si chiamano amanuensi.",
+  "nota": "concetto da ripassare (domanda 8)",
+  "id": 95
+ },
+ {
+  "it": "Finalmente, dopo molti anni di tentativi, abbiamo deciso quanti RIGHI usare per scrivere la musica:",
+  "nota": "domanda 9",
+  "id": 96
+ },
+ {
+  "it": "3",
+  "nota": "risposta della domanda 9",
+  "id": 97
+ },
+ {
+  "it": "4",
+  "nota": "risposta della domanda 9 (giusta)",
+  "id": 98
+ },
+ {
+  "it": "Siete dei mùsici provetti!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 9",
+  "id": 99
+ },
+ {
+  "it": "Perdincibacco, ma in che anno vivete! Non siamo ancora nel 1400!!!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 9",
+  "id": 100
+ },
+ {
+  "it": "Per scrivere la musica si usano 4 righi: il tetragramma di Guido d'Arezzo.",
+  "nota": "concetto da ripassare (domanda 9)",
+  "id": 101
+ },
+ {
+  "it": "I NEUMI, ovvero le nostre note, sono infallibili. Infatti indicano sia l'ALTEZZA che la DURATA della nota.",
+  "nota": "domanda 10",
+  "id": 102
+ },
+ {
+  "it": "Ah già, la DURATA a noi non interessa, perché è un concetto troppo umano!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 10",
+  "id": 103
+ },
+ {
+  "it": "Miscredenti! A noi interessa solo l'altezza, non la durata! Tanto che a volte ci addormentiamo tenendo una sola nota!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 10",
+  "id": 104
+ },
+ {
+  "it": "I neumi indicano solo l'altezza delle note, non la durata.",
+  "nota": "concetto da ripassare (domanda 10)",
+  "id": 105
+ },
+ {
+  "it": "Non ricordo bene... i nomi delle note sono stati stabiliti da un nostro confratello...",
+  "nota": "domanda 11",
+  "id": 106
+ },
+ {
+  "it": "Guido d'Arezzo",
+  "nota": "risposta della domanda 11 (giusta)",
+  "id": 107
+ },
+ {
+  "it": "San Francesco d'Assisi",
+  "nota": "risposta della domanda 11",
+  "id": 108
+ },
+ {
+  "it": "Ah giusto! Era proprio un bravo monaco!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 11",
+  "id": 109
+ },
+ {
+  "it": "Anche se parlava agli animali, non vuol dire che adesso gli dobbiamo attribuire anche cose che non ha fatto!!!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 11",
+  "id": 110
+ },
+ {
+  "it": "I nomi delle note sono stati stabiliti da Guido d'Arezzo.",
+  "nota": "concetto da ripassare (domanda 11)",
+  "id": 111
+ },
+ {
+  "it": "Dicono che quest'epoca, il MEDIOEVO, sia iniziata nel 476. Con quale avvenimento?",
+  "nota": "domanda 12",
+  "id": 112
+ },
+ {
+  "it": "La caduta dell'Impero romano d'Occidente",
+  "nota": "risposta della domanda 12 (giusta)",
+  "id": 113
+ },
+ {
+  "it": "L'incoronazione di Carlo Magno",
+  "nota": "risposta della domanda 12",
+  "id": 114
+ },
+ {
+  "it": "La nascita di San Benedetto",
+  "nota": "risposta della domanda 12",
+  "id": 115
+ },
+ {
+  "it": "Esatto! Roma è caduta e noi monaci abbiamo custodito il sapere!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 12",
+  "id": 116
+ },
+ {
+  "it": "Ma no! Nel 476 cade l'Impero romano d'Occidente!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 12",
+  "id": 117
+ },
+ {
+  "it": "Il Medioevo inizia nel 476, con la caduta dell'Impero romano d'Occidente.",
+  "nota": "concetto da ripassare (domanda 12)",
+  "id": 118
+ },
+ {
+  "it": "Un frate indovino dice che il Medioevo, per convenzione, finirà nel 1492. Perché proprio allora?",
+  "nota": "domanda 13",
+  "id": 119
+ },
+ {
+  "it": "Per la scoperta dell'America",
+  "nota": "risposta della domanda 13 (giusta)",
+  "id": 120
+ },
+ {
+  "it": "Per la fine del mondo",
+  "nota": "risposta della domanda 13",
+  "id": 121
+ },
+ {
+  "it": "Per l'invenzione degli occhiali",
+  "nota": "risposta della domanda 13",
+  "id": 122
+ },
+ {
+  "it": "America? Non so cosa sia, ma mi fido di voi!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 13",
+  "id": 123
+ },
+ {
+  "it": "Ma che dite! Il frate parlava della scoperta dell'America, qualunque cosa sia!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 13",
+  "id": 124
+ },
+ {
+  "it": "Per convenzione il Medioevo finisce nel 1492, con la scoperta dell'America.",
+  "nota": "concetto da ripassare (domanda 13)",
+  "id": 125
+ },
+ {
+  "it": "In quale ambiente nasce e si diffonde il nostro Canto gregoriano?",
+  "nota": "domanda 14",
+  "id": 126
+ },
+ {
+  "it": "Nelle corti dei re",
+  "nota": "risposta della domanda 14",
+  "id": 127
+ },
+ {
+  "it": "Nei monasteri",
+  "nota": "risposta della domanda 14 (giusta)",
+  "id": 128
+ },
+ {
+  "it": "Nelle piazze del mercato",
+  "nota": "risposta della domanda 14",
+  "id": 129
+ },
+ {
+  "it": "Proprio così! Qui tra le mura del monastero!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 14",
+  "id": 130
+ },
+ {
+  "it": "Al mercato si vendono cavoli, mica si compongono inni! Nei monasteri!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 14",
+  "id": 131
+ },
+ {
+  "it": "Il Canto gregoriano nasce e si diffonde nei monasteri.",
+  "nota": "concetto da ripassare (domanda 14)",
+  "id": 132
+ },
+ {
+  "it": "Il ritmo dei nostri canti com'è?",
+  "nota": "domanda 15",
+  "id": 133
+ },
+ {
+  "it": "Regolare, come una marcia",
+  "nota": "risposta della domanda 15",
+  "id": 134
+ },
+ {
+  "it": "Libero, segue le parole",
+  "nota": "risposta della domanda 15 (giusta)",
+  "id": 135
+ },
+ {
+  "it": "Veloce, come una danza",
+  "nota": "risposta della domanda 15",
+  "id": 136
+ },
+ {
+  "it": "Benissimo! Il ritmo segue le parole della preghiera!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 15",
+  "id": 137
+ },
+ {
+  "it": "Marce e danze?! Il nostro ritmo è libero e segue le parole!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 15",
+  "id": 138
+ },
+ {
+  "it": "Il ritmo del Canto gregoriano è libero e segue le parole.",
+  "nota": "concetto da ripassare (domanda 15)",
+  "id": 139
+ },
+ {
+  "it": "Le melodie dei nostri canti sono semplici e senza salti.",
+  "nota": "domanda 16",
+  "id": 140
+ },
+ {
+  "it": "Semplici e senza salti, come piace al Signore!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 16",
+  "id": 141
+ },
+ {
+  "it": "E invece è Vero! Melodie semplici e senza salti, niente acrobazie!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 16",
+  "id": 142
+ },
+ {
+  "it": "Le melodie del Canto gregoriano sono semplici e senza salti.",
+  "nota": "concetto da ripassare (domanda 16)",
+  "id": 143
+ },
+ {
+  "it": "In quale stanza del monastero si creano le copie dei codici e degli Inni gregoriani?",
+  "nota": "domanda 17",
+  "id": 144
+ },
+ {
+  "it": "Refettorio",
+  "nota": "risposta della domanda 17",
+  "id": 145
+ },
+ {
+  "it": "Calefactorium",
+  "nota": "risposta della domanda 17",
+  "id": 146
+ },
+ {
+  "it": "Scriptorium",
+  "nota": "risposta della domanda 17 (giusta)",
+  "id": 147
+ },
+ {
+  "it": "Lo scriptorium! Proprio da lì ho salvato questi libri!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 17",
+  "id": 148
+ },
+ {
+  "it": "Ahimè! Si copia nello SCRIPTORIUM, non dove si mangia o ci si scalda!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 17",
+  "id": 149
+ },
+ {
+  "it": "Le copie dei codici e degli inni si facevano nello scriptorium.",
+  "nota": "concetto da ripassare (domanda 17)",
+  "id": 150
+ },
+ {
+  "it": "Come si chiama il grande librone che contiene le copie originali degli Inni Gregoriani?",
+  "nota": "domanda 18",
+  "id": 151
+ },
+ {
+  "it": "Codex Magnus",
+  "nota": "risposta della domanda 18",
+  "id": 152
+ },
+ {
+  "it": "Antiphonarius Cento",
+  "nota": "risposta della domanda 18 (giusta)",
+  "id": 153
+ },
+ {
+  "it": "Liber Gregorius",
+  "nota": "risposta della domanda 18",
+  "id": 154
+ },
+ {
+  "it": "L'Antiphonarius Cento! Siete preparatissimi!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 18",
+  "id": 155
+ },
+ {
+  "it": "Si chiama ANTIPHONARIUS CENTO! Scrivetevelo sulla mano!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 18",
+  "id": 156
+ },
+ {
+  "it": "Il librone con le copie originali degli inni si chiama Antiphonarius Cento.",
+  "nota": "concetto da ripassare (domanda 18)",
+  "id": 157
+ },
+ {
+  "it": "Nella Basilica di San Pietro, come era custodito l'Antiphonarius Cento?",
+  "nota": "domanda 19",
+  "id": 158
+ },
+ {
+  "it": "Chiuso in un forziere sottoterra",
+  "nota": "risposta della domanda 19",
+  "id": 159
+ },
+ {
+  "it": "Legato con una catena d'oro all'altare",
+  "nota": "risposta della domanda 19 (giusta)",
+  "id": 160
+ },
+ {
+  "it": "Appeso al soffitto con una corda",
+  "nota": "risposta della domanda 19",
+  "id": 161
+ },
+ {
+  "it": "Con una catena d'oro! Nessuno poteva portarselo via!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 19",
+  "id": 162
+ },
+ {
+  "it": "Ma no! Era legato con una catena d'oro all'altare!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 19",
+  "id": 163
+ },
+ {
+  "it": "L'Antiphonarius Cento era legato con una catena d'oro all'altare di San Pietro.",
+  "nota": "concetto da ripassare (domanda 19)",
+  "id": 164
+ },
+ {
+  "it": "Il nostro canto è SILLABICO, ma anche...",
+  "nota": "domanda 20",
+  "id": 165
+ },
+ {
+  "it": "Polifonico",
+  "nota": "risposta della domanda 20",
+  "id": 166
+ },
+ {
+  "it": "Strumentale",
+  "nota": "risposta della domanda 20",
+  "id": 167
+ },
+ {
+  "it": "Neumatico",
+  "nota": "risposta della domanda 20 (giusta)",
+  "id": 168
+ },
+ {
+  "it": "Sillabico e neumatico! Siete dei veri monaci!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 20",
+  "id": 169
+ },
+ {
+  "it": "Sillabico e NEUMATICO, figlioli!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 20",
+  "id": 170
+ },
+ {
+  "it": "Il Canto gregoriano è sillabico e neumatico.",
+  "nota": "concetto da ripassare (domanda 20)",
+  "id": 171
+ },
+ {
+  "it": "Come si chiamano le nostre note, scritte sopra le parole del canto?",
+  "nota": "domanda 21",
+  "id": 172
+ },
+ {
+  "it": "Neumi",
+  "nota": "risposta della domanda 21 (giusta)",
+  "id": 173
+ },
+ {
+  "it": "Crome",
+  "nota": "risposta della domanda 21",
+  "id": 174
+ },
+ {
+  "it": "Righi",
+  "nota": "risposta della domanda 21",
+  "id": 175
+ },
+ {
+  "it": "I neumi! Vedo che sfogliate i codici!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 21",
+  "id": 176
+ },
+ {
+  "it": "Si chiamano NEUMI, figlioli!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 21",
+  "id": 177
+ },
+ {
+  "it": "Le note del Canto gregoriano si chiamano neumi.",
+  "nota": "concetto da ripassare (domanda 21)",
+  "id": 178
+ },
+ {
+  "it": "Il buon Guido d'Arezzo ha stabilito due chiavi musicali per leggere le note. Quali?",
+  "nota": "domanda 22",
+  "id": 179
+ },
+ {
+  "it": "Chiave di Do e chiave di Fa",
+  "nota": "risposta della domanda 22 (giusta)",
+  "id": 180
+ },
+ {
+  "it": "Chiave di Sol e chiave di Mi",
+  "nota": "risposta della domanda 22",
+  "id": 181
+ },
+ {
+  "it": "Chiave di casa e chiave della cantina",
+  "nota": "risposta della domanda 22",
+  "id": 182
+ },
+ {
+  "it": "Do e Fa! Guido ne sarebbe fiero!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 22",
+  "id": 183
+ },
+ {
+  "it": "Ma quale cantina! Sono la chiave di Do e la chiave di Fa!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 22",
+  "id": 184
+ },
+ {
+  "it": "Guido d'Arezzo crea la chiave di Do e la chiave di Fa.",
+  "nota": "concetto da ripassare (domanda 22)",
+  "id": 185
+ },
+ {
+  "it": "Da dove ha preso Guido d'Arezzo i nomi delle note?",
+  "nota": "domanda 23",
+  "id": 186
+ },
+ {
+  "it": "Dalle lettere dell'alfabeto",
+  "nota": "risposta della domanda 23",
+  "id": 187
+ },
+ {
+  "it": "Dalle sillabe di un inno a San Giovanni",
+  "nota": "risposta della domanda 23 (giusta)",
+  "id": 188
+ },
+ {
+  "it": "Dai nomi dei suoi confratelli",
+  "nota": "risposta della domanda 23",
+  "id": 189
+ },
+ {
+  "it": "Ut queant laxis... che bell'inno!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 23",
+  "id": 190
+ },
+ {
+  "it": "Ma no! Dalle prime sillabe dell'inno a San Giovanni!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 23",
+  "id": 191
+ },
+ {
+  "it": "Guido d'Arezzo prende i nomi delle note dalle sillabe di un inno a San Giovanni.",
+  "nota": "concetto da ripassare (domanda 23)",
+  "id": 192
+ },
+ {
+  "it": "E l'Antiphonarius Cento, il grande librone degli inni... che fine ha fatto?",
+  "nota": "domanda 24",
+  "id": 193
+ },
+ {
+  "it": "È conservato in una biblioteca di Parigi",
+  "nota": "risposta della domanda 24",
+  "id": 194
+ },
+ {
+  "it": "È andato perduto durante un'invasione barbarica",
+  "nota": "risposta della domanda 24 (giusta)",
+  "id": 195
+ },
+ {
+  "it": "Ce l'abbiamo noi nel carretto",
+  "nota": "risposta della domanda 24",
+  "id": 196
+ },
+ {
+  "it": "Già, perduto per sempre... per questo i nostri libri vanno salvati a tutti i costi!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 24",
+  "id": 197
+ },
+ {
+  "it": "Magari! È andato perduto durante una delle tante invasioni barbariche!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 24",
+  "id": 198
+ },
+ {
+  "it": "L'Antiphonarius Cento è andato perduto durante una delle invasioni barbariche.",
+  "nota": "concetto da ripassare (domanda 24)",
+  "id": 199
+ },
+ {
+  "it": "E la nostra Abbazia di Monte Cassino in quale Paese si trova?",
+  "nota": "domanda 25",
+  "id": 200
+ },
+ {
+  "it": "Francia",
+  "nota": "risposta della domanda 25",
+  "id": 201
+ },
+ {
+  "it": "Italia",
+  "nota": "risposta della domanda 25 (giusta)",
+  "id": 202
+ },
+ {
+  "it": "Svizzera",
+  "nota": "risposta della domanda 25",
+  "id": 203
+ },
+ {
+  "it": "In Italia, naturalmente! Almeno questa la sapevate!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 25",
+  "id": 204
+ },
+ {
+  "it": "Ma come?! Ci state scappando adesso! È in ITALIA!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 25",
+  "id": 205
+ },
+ {
+  "it": "L'Abbazia di Monte Cassino si trova in Italia.",
+  "nota": "concetto da ripassare (domanda 25)",
+  "id": 206
+ },
+ {
+  "it": "Il famoso Monastero di Cluny si trova in...",
+  "nota": "domanda 26",
+  "id": 207
+ },
+ {
+  "it": "Francia! Salutatemi i confratelli francesi!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 26",
+  "id": 208
+ },
+ {
+  "it": "Cluny si trova in FRANCIA!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 26",
+  "id": 209
+ },
+ {
+  "it": "Il Monastero di Cluny si trova in Francia.",
+  "nota": "concetto da ripassare (domanda 26)",
+  "id": 210
+ },
+ {
+  "it": "E il Monastero di San Gallo dove si trova?",
+  "nota": "domanda 27",
+  "id": 211
+ },
+ {
+  "it": "In Svizzera, tra le montagne!",
+  "nota": "l'Abate dopo una risposta giusta alla domanda 27",
+  "id": 212
+ },
+ {
+  "it": "San Gallo è in SVIZZERA!",
+  "nota": "l'Abate dopo una risposta sbagliata alla domanda 27",
+  "id": 213
+ },
+ {
+  "it": "Il Monastero di San Gallo si trova in Svizzera.",
+  "nota": "concetto da ripassare (domanda 27)",
+  "id": 214
+ },
+ {
+  "it": "SALVI!",
+  "nota": "titolo del finale",
+  "id": 215
+ },
+ {
+  "it": "Ottimo lavoro! Abbiamo salvato gli inni, così li potrete studiare in classe tra 1000 anni!",
+  "nota": "l'Abate nel finale",
+  "id": 216
+ },
+ {
+  "it": "QUASI SALVI!",
+  "nota": "titolo del finale",
+  "id": 217
+ },
+ {
+  "it": "Non male, miei novizi... ma si può sempre migliorare!",
+  "nota": "l'Abate nel finale",
+  "id": 218
+ },
+ {
+  "it": "Avete lasciato che i soldati incendiassero tutti i nostri inni!",
+  "nota": "l'Abate nel finale",
+  "id": 219
+ }
+]

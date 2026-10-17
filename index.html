@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/stile.css?v=26">
+  <link rel="stylesheet" href="css/stile.css?v=27">
 </head>
 <body>
   <div id="schermo">
@@ -38,9 +38,16 @@
     <div id="titolo" class="pannello-pieno">
       <div class="anno">1239</div>
       <h1>MONTECASSINO<br>ESCAPE</h1>
-      <p class="trama">Un gioco di ripasso sul Canto Gregoriano.<br>
-        Rispondete alle domande dell'Abate e aiutatelo a sfuggire ai soldati!</p>
+      <p class="trama"><span id="trama-1">Un gioco di ripasso sul Canto Gregoriano.</span>
+        <span id="trama-2">Rispondete alle domande dell'Abate e aiutatelo a sfuggire ai soldati!</span></p>
       <button id="btn-inizia" class="grande">▶ INIZIA</button>
+      <div id="scelta-lingua" role="group" aria-label="Lingua">
+        <span class="etichetta">🌍 Lingua</span>
+        <button data-lingua="">Solo italiano</button>
+        <button data-lingua="sq" lang="sq">+ Shqip</button>
+        <button data-lingua="es" lang="es">+ Español</button>
+        <button data-lingua="zh" lang="zh">+ 中文</button>
+      </div>
       <p class="nota">Si gioca con il mouse, con il dito o con la tastiera (A, B, C · Invio)</p>
     </div>
 
@@ -49,7 +56,7 @@
     <button id="btn-salta" class="nascosto">SALTA ▶▶</button>
 
     <!-- Banner (tappe, esiti) -->
-    <div id="banner" class="nascosto"><div id="banner-piccolo"></div><div id="banner-grande"></div></div>
+    <div id="banner" class="nascosto"><div id="banner-piccolo"></div><div id="banner-grande"></div><div id="banner-trad"></div></div>
 
     <!-- Pergamena: dialoghi e domande -->
     <div id="pergamena" class="nascosto">
@@ -79,7 +86,7 @@
     <!-- Riepilogo finale: i concetti delle domande sbagliate -->
     <div id="ripasso" class="nascosto">
       <div class="foglio">
-        <h3>Da ripassare</h3>
+        <h3 id="ripasso-titolo">Da ripassare</h3>
         <p class="sotto" id="ripasso-sotto"></p>
         <ul id="ripasso-lista"></ul>
         <button id="btn-chiudi-ripasso" class="grande">OK</button>
@@ -93,8 +100,9 @@
     <p>Ruota il dispositivo in orizzontale per giocare</p>
   </div>
 
-  <script src="js/domande.js?v=26"></script>
-  <script src="js/sfondi.js?v=26"></script>
-  <script src="js/gioco.js?v=26"></script>
+  <script src="js/domande.js?v=27"></script>
+  <script src="js/traduzioni.js?v=27"></script>
+  <script src="js/sfondi.js?v=27"></script>
+  <script src="js/gioco.js?v=27"></script>
 </body>
 </html>

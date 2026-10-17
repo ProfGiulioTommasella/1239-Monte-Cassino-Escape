@@ -509,3 +509,57 @@ button {
 @media (orientation: portrait) and (max-width: 900px) {
   #ruota { display: flex; }
 }
+
+/* ---------- Versione bilingue: traduzione sotto l'italiano ---------- */
+:root { --trad: "Alegreya", Georgia, serif; }
+.trad {
+  display: block;
+  font-family: var(--trad);
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.25;
+  margin-top: 4px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.trad:lang(zh) {
+  font-family: "Noto Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-style: normal;
+}
+#titolo .trama > span { display: block; }
+#titolo .trama .trad { font-size: 0.85em; color: #ffd98a; }
+#scelta-lingua { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 22px; }
+#scelta-lingua .etichetta { font-size: 19px; margin-right: 4px; text-shadow: 1px 1px 2px #000; }
+#scelta-lingua button {
+  font-family: var(--libro);
+  font-size: 19px;
+  font-weight: 700;
+  padding: 7px 16px;
+  color: #fff3d6;
+  background: rgba(30, 16, 8, 0.7);
+  border: 2px solid rgba(232, 178, 58, 0.7);
+  border-radius: 22px;
+}
+#scelta-lingua button:lang(zh) { font-family: var(--libro), "Noto Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; }
+#scelta-lingua button.scelta { background: var(--oro); color: var(--inchiostro); border-color: #000; }
+.grande .trad { font-size: 16px; margin-top: 8px; font-style: normal; }
+#banner-grande { text-transform: uppercase; }
+#banner-trad { font-family: var(--trad); font-size: 28px; font-weight: 700; margin-top: 12px; color: #fff3d6; text-shadow: 2px 2px 0 #000, 0 0 8px #000; }
+#banner-trad:lang(zh) { font-family: "Noto Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; }
+#didascalia .trad { font-size: 25px; color: #ffd98a; margin-top: 8px; }
+#intestazione .trad { display: inline; margin-left: 14px; font-size: 16px; }
+#testo .trad { font-size: 0.74em; color: #7a3b10; margin-top: 6px; }
+#testo .giusta-era .trad { color: var(--verde); }
+.opzione .testi { display: flex; flex-direction: column; }
+.opzione .trad { font-size: 0.74em; color: #7a3b10; margin-top: 2px; }
+.avanti .trad { font-size: 15px; margin-top: 6px; color: #f3e3bf; font-style: normal; }
+#finale h2 .trad { font-size: 26px; color: #ffe7a8; text-shadow: 2px 2px 0 #000; margin-top: 6px; }
+#finale p .trad { font-size: 22px; }
+#ripasso h3 .trad { font-size: 20px; color: var(--rosso); }
+#ripasso li .trad { font-size: 0.8em; color: #7a3b10; font-weight: 600; }
+/* in versione bilingue i testi della pergamena sono un po' più piccoli */
+body.bilingue #testo { font-size: 26px; }
+body.bilingue .opzione { font-size: 22px; min-height: 64px; }
+body.bilingue #ripasso li { font-size: 20px; padding: 6px 0 6px 40px; }
+body.bilingue #ripasso li::before { top: 4px; }
+body.bilingue #ripasso ul.tante li { font-size: 17px; padding: 3px 0 3px 40px; }

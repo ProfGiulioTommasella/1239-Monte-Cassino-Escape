@@ -45,6 +45,19 @@ Dopo una modifica ai file in `js/` o `css/`, aumenta di uno il numero `?v=` nell
 di `index.html` che li caricano: così i browser scaricano subito la versione nuova
 invece di usare quella vecchia in memoria.
 
+## Versione bilingue
+
+Nella schermata del titolo si sceglie la lingua: solo italiano, oppure italiano con
+albanese (Shqip), spagnolo (Español) o cinese semplificato (中文). In versione bilingue
+ogni testo resta in italiano e la traduzione compare subito sotto: domande e risposte,
+dialoghi dell'Abate, minigiochi, finali e riepilogo. La scelta resta per le partite successive.
+
+Le traduzioni stanno in `strumenti/traduzioni/sq.json`, `es.json` e `zh.json` (una voce per
+ogni testo di `testi-italiani.json`). Dopo averle modificate si rigenera `js/traduzioni.js` con
+`node strumenti/traduzioni/genera.js`. Se si cambiano o aggiungono testi in `js/domande.js`,
+prima si aggiorna l'elenco con `node strumenti/traduzioni/estrai.js` e poi si traducono le voci nuove:
+un testo senza traduzione compare solo in italiano.
+
 ## Modificare domande e testi
 
 Tutti i contenuti stanno in [`js/domande.js`](js/domande.js): domande, opzioni,

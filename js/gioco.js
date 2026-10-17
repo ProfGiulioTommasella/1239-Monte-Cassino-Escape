@@ -152,6 +152,62 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     aggiornaPulsantiAudio();
   });
   aggiornaPulsantiAudio();
+
+  // ---------------------------------------------------------------
+  //  Versione bilingue: l'italiano resta sempre, la traduzione va sotto
+  // ---------------------------------------------------------------
+  const LINGUE = { sq: "Shqip", es: "Español", zh: "中文" };
+  let lingua = "";
+  try { lingua = localStorage.getItem("mce-lingua") || ""; } catch (e) { /* niente */ }
+  if (!LINGUE[lingua] || typeof TRADUZIONI === "undefined") lingua = "";
+  // riempie i segnaposto {n}, {tot}... di un testo
+  const riempi = (testo, val = {}) => testo.replace(/\{(\w+)\}/g, (_, k) => (k in val ? val[k] : ""));
+  // traduzione di un testo italiano nella lingua scelta ("" se non c'è o se si gioca solo in italiano)
+  function tr(it, val = {}) {
+    if (!lingua || !it) return "";
+    const t = TRADUZIONI[lingua][it];
+    if (!t) return "";
+    // i valori testuali (per esempio una risposta) si traducono a loro volta
+    const v = {};
+    for (const k in val) v[k] = typeof val[k] === "string" ? tr(val[k]) || val[k] : val[k];
+    return riempi(t, v);
+  }
+  // scrive in un elemento il testo italiano e, sotto, la traduzione
+  function scriviTesto(el, it, val = {}) {
+    el.textContent = riempi(it, val);
+    const t = tr(it, val);
+    if (t) {
+      const sp = document.createElement("span");
+      sp.className = "trad";
+      sp.lang = lingua;
+      sp.textContent = t;
+      el.appendChild(sp);
+    }
+  }
+  function impostaLingua(l) {
+    lingua = LINGUE[l] ? l : "";
+    try { localStorage.setItem("mce-lingua", lingua); } catch (e) { /* niente */ }
+    document.body.classList.toggle("bilingue", !!lingua);
+    document.querySelectorAll("#scelta-lingua button").forEach((b) => b.classList.toggle("scelta", b.dataset.lingua === lingua));
+    scriviTesto($("trama-1"), "Un gioco di ripasso sul Canto Gregoriano.");
+    scriviTesto($("trama-2"), "Rispondete alle domande dell'Abate e aiutatelo a sfuggire ai soldati!");
+    for (const [id, it] of [["btn-ripasso", "DA RIPASSARE"], ["btn-rigioca", "GIOCA ANCORA"], ["btn-chiudi-ripasso", "OK"]]) {
+      const b = $(id);
+      b.querySelector(".trad")?.remove();
+      const t = tr(it);
+      if (t) { const sp = document.createElement("span"); sp.className = "trad"; sp.lang = lingua; sp.textContent = t; b.appendChild(sp); }
+    }
+    etichettaInizia();
+  }
+  function etichettaInizia() {
+    const b = $("btn-inizia");
+    if (b.disabled) return;
+    b.textContent = "▶ INIZIA";
+    const t = tr("INIZIA");
+    if (t) { const sp = document.createElement("span"); sp.className = "trad"; sp.lang = lingua; sp.textContent = t; b.appendChild(sp); }
+  }
+  document.querySelectorAll("#scelta-lingua button").forEach((b) => b.addEventListener("click", () => impostaLingua(b.dataset.lingua)));
+
   $("btn-schermo").addEventListener("click", () => {
     const d = document;
     if (d.fullscreenElement || d.webkitFullscreenElement) {
@@ -1445,11 +1501,21 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     for (const riga of righe) {
       if (saltato) break;
       box.textContent = "";
+      const it = document.createElement("span");
+      box.appendChild(it);
       for (let i = 1; i <= riga.length && !saltato; i++) {
-        box.textContent = riga.slice(0, i);
+        it.textContent = riga.slice(0, i);
         await Promise.race([attendi(30), salta]);
       }
-      await Promise.race([attendi(1800 + riga.length * 22), salta]);
+      const t = tr(riga);
+      if (t) {
+        const sp = document.createElement("span");
+        sp.className = "trad";
+        sp.lang = lingua;
+        sp.textContent = t;
+        box.appendChild(sp);
+      }
+      await Promise.race([attendi(1800 + riga.length * (t ? 40 : 22)), salta]);
     }
     box.classList.add("nascosto");
     $("btn-salta").classList.add("nascosto");
@@ -1642,12 +1708,19 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     $("n-libri").textContent = mondo.libri;
   }
 
+  // piccolo e grande sono testi oppure [modello, valori], per esempio ["TAPPA {n}", { n: 2 }]
   function banner(piccolo, grande, colore = "") {
     const b = $("banner");
     b.className = "nascosto";
     void b.offsetWidth;
-    $("banner-piccolo").textContent = piccolo;
-    $("banner-grande").textContent = grande;
+    const [pIt, pVal] = Array.isArray(piccolo) ? piccolo : [piccolo, {}];
+    const [gIt, gVal] = Array.isArray(grande) ? grande : [grande, {}];
+    $("banner-piccolo").textContent = riempi(pIt, pVal);
+    $("banner-grande").textContent = riempi(gIt, gVal);
+    const t = [tr(pIt, pVal), tr(gIt, gVal)].filter(Boolean).join(" · ");
+    const bt = $("banner-trad");
+    bt.textContent = t;
+    bt.lang = lingua;
     b.className = colore ? colore + " esito" : "";
   }
 
@@ -1666,13 +1739,18 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     r.className = umore === "normale" ? "" : umore;
     if (umoreRitratto !== umore) cambioUmore = mondo.t;
     umoreRitratto = umore;
-    $("intestazione").textContent = opz.intestazione || "Abate Stefano II";
+    const [iIt, iVal] = opz.intestazione || ["Abate Stefano II", {}];
+    const int = $("intestazione");
+    int.textContent = riempi(iIt, iVal);
+    const iTr = tr(iIt, iVal);
+    if (iTr) { const sp = document.createElement("span"); sp.className = "trad"; sp.lang = lingua; sp.textContent = iTr; int.appendChild(sp); }
     const t = $("testo");
-    t.textContent = testo;
+    scriviTesto(t, testo);
     if (opz.nota) {
+      // opz.nota = [modello, valori], per esempio ["Risposta giusta: {r}", { r: "Latino" }]
       const n = document.createElement("span");
       n.className = "giusta-era";
-      n.textContent = opz.nota;
+      scriviTesto(n, opz.nota[0], opz.nota[1]);
       t.appendChild(n);
     }
     const box = $("opzioni");
@@ -1687,10 +1765,15 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
           l.className = "lettera";
           l.textContent = LETTERE[i];
           b.appendChild(l);
-          b.appendChild(document.createTextNode(etichetta));
+          const testi = document.createElement("span");
+          testi.className = "testi";
+          scriviTesto(testi, etichetta);
+          b.appendChild(testi);
         } else {
           b.className = "avanti";
           b.textContent = etichetta;
+          const t = tr(etichetta.replace(/\s*▶$/, ""));
+          if (t) { const sp = document.createElement("span"); sp.className = "trad"; sp.lang = lingua; sp.textContent = t; b.appendChild(sp); }
         }
         b.addEventListener("click", () => {
           if (!scelte.length) return;
@@ -1745,7 +1828,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     mondo.dissolvenza = 0;
     mondo.scrollTappa = mondo.scroll;
     musica("tappa" + n);
-    banner("TAPPA " + n, TAPPE[n - 1].nome.toUpperCase());
+    banner(["TAPPA {n}", { n }], TAPPE[n - 1].nome);
   }
 
   // A ogni partita le risposte cambiano posto rispetto alla partita precedente
@@ -1792,7 +1875,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
           banner("", "PERFETTO!", "verde");
           for (let s = 0; s < 14; s++) particella(posizioni().gx - 80 + Math.random() * 120, SUOLO - 60, "stella");
         } else {
-          banner("", `EVITATI ${m.evitati} SU ${m.quanti}`, m.evitati >= m.quanti / 2 ? "verde" : "rosso");
+          banner("", ["EVITATI {n} SU {tot}", { n: m.evitati, tot: m.quanti }], m.evitati >= m.quanti / 2 ? "verde" : "rosso");
         }
         await attendi(1800);
         mondo.mini = null;
@@ -1862,7 +1945,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     await velo(0, 400);
     mondo.grido = 2.2;
     mondo.testoGrido = "PRENDETELI!";
-    banner("TAPPA " + mondo.tappa, TAPPE[mondo.tappa - 1].nome.toUpperCase());
+    banner(["TAPPA {n}", { n: mondo.tappa }], TAPPE[mondo.tappa - 1].nome);
     await attendi(2000);
     await dialogo(ISTRUZIONI_CORSA, "normale", ["Via! ▶"]);
     chiudiPergamena();
@@ -1883,7 +1966,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       const { opzioni, giustaOra } = mescola(q);
       const scelta = await dialogo(q.testo, "normale", opzioni, {
         risposte: true,
-        intestazione: `Domanda ${i + 1} di ${DOMANDE.length}`,
+        intestazione: ["Domanda {n} di {tot}", { n: i + 1, tot: DOMANDE.length }],
       });
       mondo.inseguimento = false;
       const bottoni = $("opzioni").querySelectorAll("button");
@@ -1916,7 +1999,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
         await dialogo(q.bravo, "felice", ["Avanti ▶"]);
       } else {
         const fine = dialogo(q.sbagliato, "arrabbiato", ["Avanti ▶"], {
-          nota: "Risposta giusta: " + q.opzioni[q.giusta],
+          nota: ["Risposta giusta: {r}", { r: q.opzioni[q.giusta] }],
         });
         if (q.suono) { await attendi(1200); suona(q.suono); }
         await fine;
@@ -1973,10 +2056,9 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     suona(fin.tipo === "vittoria" ? "vittoria" : fin.tipo === "quasi" ? "magia" : "esplosione");
     const umore = fin.tipo === "vittoria" ? "felice" : fin.tipo === "quasi" ? "normale" : "arrabbiato";
     dialogo(fin.testo, umore, []);
-    $("finale-titolo").textContent = fin.titolo;
-    $("finale-punteggio").textContent = presi
-      ? `Vi hanno raggiunto alla domanda ${c + mondo.sbagliate} di ${DOMANDE.length}`
-      : `Inni salvati: ${c} su ${DOMANDE.length}`;
+    scriviTesto($("finale-titolo"), fin.titolo);
+    if (presi) scriviTesto($("finale-punteggio"), "Vi hanno raggiunto alla domanda {n} di {tot}", { n: c + mondo.sbagliate, tot: DOMANDE.length });
+    else scriviTesto($("finale-punteggio"), "Inni salvati: {n} su {tot}", { n: c, tot: DOMANDE.length });
     preparaRipasso();
     $("finale").classList.remove("nascosto");
   }
@@ -1985,15 +2067,15 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   function preparaRipasso() {
     const sbagliate = mondo.daRipassare;
     $("btn-ripasso").classList.toggle("nascosto", sbagliate.length === 0);
-    $("ripasso-sotto").textContent = sbagliate.length === 1
-      ? "Avete sbagliato una domanda. Ecco il concetto da ripassare:"
-      : `Avete sbagliato ${sbagliate.length} domande. Ecco i concetti da ripassare:`;
+    scriviTesto($("ripasso-titolo"), "Da ripassare");
+    if (sbagliate.length === 1) scriviTesto($("ripasso-sotto"), "Avete sbagliato una domanda. Ecco il concetto da ripassare:");
+    else scriviTesto($("ripasso-sotto"), "Avete sbagliato {n} domande. Ecco i concetti da ripassare:", { n: sbagliate.length });
     const lista = $("ripasso-lista");
     lista.innerHTML = "";
     lista.classList.toggle("tante", sbagliate.length > 8);
     for (const q of sbagliate) {
       const li = document.createElement("li");
-      li.textContent = q.ripasso || q.testo;
+      scriviTesto(li, q.ripasso || q.testo);
       lista.appendChild(li);
     }
   }
@@ -2006,8 +2088,9 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   btnInizia.textContent = "CARICAMENTO...";
   Promise.all(caricamenti).then(() => {
     btnInizia.disabled = false;
-    btnInizia.textContent = "▶ INIZIA";
+    etichettaInizia();
   });
+  impostaLingua(lingua);
 
   btnInizia.addEventListener("click", () => {
     if (btnInizia.disabled) return;
@@ -2032,5 +2115,6 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
 
   // Modalità di prova per l'insegnante: index.html?prova=finale-vittoria
   window.__mondo = mondo;
+  window.__prova = { dialogo, chiudiPergamena, impostaLingua };
   window.__musica = () => (musicaCorrente ? musicaCorrente.src.split("/").pop() + (musicaCorrente.paused ? " (ferma)" : "") : "nessuna");
 })();
