@@ -205,7 +205,7 @@ const BANCA_DOMANDE = [
     ripasso: "Le melodie del Canto gregoriano sono semplici e senza salti.",
     opzioni: ["Vero", "Falso"],
     giusta: 0,
-    bravo: "Semplici e senza salti, come piace al Signore!",
+    bravo: "Semplici e senza salti, come piace al Papa!",
     sbagliato: "E invece è Vero! Melodie semplici e senza salti, niente acrobazie!",
   },
   {
