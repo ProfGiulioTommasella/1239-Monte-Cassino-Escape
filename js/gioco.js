@@ -156,7 +156,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   // ---------------------------------------------------------------
   //  Versione bilingue: l'italiano resta sempre, la traduzione va sotto
   // ---------------------------------------------------------------
-  const LINGUE = { sq: "Shqip", es: "Español", zh: "中文" };
+  const LINGUE = { sq: "Shqip", es: "Español", zh: "中文", wo: "Wolof" };
   let lingua = "";
   try { lingua = localStorage.getItem("mce-lingua") || ""; } catch (e) { /* niente */ }
   if (!LINGUE[lingua] || typeof TRADUZIONI === "undefined") lingua = "";

@@ -48,11 +48,11 @@ invece di usare quella vecchia in memoria.
 ## Versione bilingue
 
 Nella schermata del titolo si sceglie la lingua: solo italiano, oppure italiano con
-albanese (Shqip), spagnolo (Español) o cinese semplificato (中文). In versione bilingue
+albanese (Shqip), spagnolo (Español), cinese semplificato (中文) o wolof. In versione bilingue
 ogni testo resta in italiano e la traduzione compare subito sotto: domande e risposte,
 dialoghi dell'Abate, minigiochi, finali e riepilogo. La scelta resta per le partite successive.
 
-Le traduzioni stanno in `strumenti/traduzioni/sq.json`, `es.json` e `zh.json` (una voce per
+Le traduzioni stanno in `strumenti/traduzioni/sq.json`, `es.json`, `zh.json` e `wo.json` (una voce per
 ogni testo di `testi-italiani.json`). Dopo averle modificate si rigenera `js/traduzioni.js` con
 `node strumenti/traduzioni/genera.js`. Se si cambiano o aggiungono testi in `js/domande.js`,
 prima si aggiorna l'elenco con `node strumenti/traduzioni/estrai.js` e poi si traducono le voci nuove:

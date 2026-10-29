@@ -1,9 +1,9 @@
-// Crea js/traduzioni.js dai file sq.json, es.json, zh.json: node strumenti/traduzioni/genera.js
+// Crea js/traduzioni.js dai file sq.json, es.json, zh.json, wo.json: node strumenti/traduzioni/genera.js
 const fs = require("fs");
 const path = require("path");
 const testi = JSON.parse(fs.readFileSync(path.join(__dirname, "testi-italiani.json"), "utf8"));
 const out = {};
-for (const l of ["sq", "es", "zh"]) {
+for (const l of ["sq", "es", "zh", "wo"]) {
   const tr = JSON.parse(fs.readFileSync(path.join(__dirname, l + ".json"), "utf8"));
   out[l] = {};
   for (const t of testi) if (tr[t.id]) out[l][t.it] = tr[t.id];
