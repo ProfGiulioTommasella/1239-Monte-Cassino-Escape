@@ -361,3 +361,15 @@ const FINALI = [
     testo: "Avete lasciato che i soldati incendiassero tutti i nostri inni!",
   },
 ];
+
+// Livello bonus: solo per chi risponde giusto a tutte le domande.
+// L'Abate sale sulle mura dell'abbazia di arrivo e tira ai soldati i 12 libri salvati.
+const BONUS = {
+  soldati: 8,
+  piccolo: "LIVELLO BONUS",
+  grande: "DIFENDETE L'ABBAZIA!",
+  istruzioni:
+    "Siamo arrivati, ma i soldati non si arrendono! Salgo sulle mura: cliccate o toccate i soldati per tirargli in testa i 12 libri che abbiamo salvato. Attenti, camminano: mirate un po' davanti a loro!",
+  tutti: "Li abbiamo respinti tutti!!! Domattina raccogliamo i libri: un po' ammaccati, ma salvi!",
+  alcuni: "Qualcuno è arrivato fino al portone, ma è robusto e non cederà! Domattina raccogliamo i libri.",
+};

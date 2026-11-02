@@ -1093,5 +1093,45 @@
   "it": "Avete lasciato che i soldati incendiassero tutti i nostri inni!",
   "nota": "l'Abate nel finale",
   "id": 219
+ },
+ {
+  "it": "LIVELLO BONUS",
+  "nota": "banner del livello bonus",
+  "id": 220
+ },
+ {
+  "it": "DIFENDETE L'ABBAZIA!",
+  "nota": "banner del livello bonus",
+  "id": 221
+ },
+ {
+  "it": "Siamo arrivati, ma i soldati non si arrendono! Salgo sulle mura: cliccate o toccate i soldati per tirargli in testa i 12 libri che abbiamo salvato. Attenti, camminano: mirate un po' davanti a loro!",
+  "nota": "l'Abate nel livello bonus",
+  "id": 222
+ },
+ {
+  "it": "Li abbiamo respinti tutti!!! Domattina raccogliamo i libri: un po' ammaccati, ma salvi!",
+  "nota": "l'Abate nel livello bonus",
+  "id": 223
+ },
+ {
+  "it": "Qualcuno è arrivato fino al portone, ma è robusto e non cederà! Domattina raccogliamo i libri.",
+  "nota": "l'Abate nel livello bonus",
+  "id": 224
+ },
+ {
+  "it": "TRIONFO!",
+  "nota": "banner, tutti i soldati respinti",
+  "id": 225
+ },
+ {
+  "it": "RESPINTI {n} SU {tot}",
+  "nota": "banner, soldati respinti",
+  "id": 226
+ },
+ {
+  "it": "Inni salvati: {n} su {tot} · Soldati respinti: {r} su {s}",
+  "nota": "finale dopo il livello bonus",
+  "id": 227
  }
 ]

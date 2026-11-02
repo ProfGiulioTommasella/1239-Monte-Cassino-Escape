@@ -220,7 +220,15 @@ const TRADUZIONI = {
   "Ottimo lavoro! Abbiamo salvato gli inni, così li potrete studiare in classe tra 1000 anni!": "Punë e shkëlqyer! I shpëtuam himnet, kështu do t'i mësoni në klasë pas 1000 vjetësh!",
   "QUASI SALVI!": "POTHUAJSE TË SHPËTUAR!",
   "Non male, miei novizi... ma si può sempre migliorare!": "Jo keq, novicët e mi... por gjithmonë mund të bëhet më mirë!",
-  "Avete lasciato che i soldati incendiassero tutti i nostri inni!": "I latë ushtarët t'i djegin të gjitha himnet tona!"
+  "Avete lasciato che i soldati incendiassero tutti i nostri inni!": "I latë ushtarët t'i djegin të gjitha himnet tona!",
+  "LIVELLO BONUS": "NIVEL BONUS",
+  "DIFENDETE L'ABBAZIA!": "MBROJENI ABACINË!",
+  "Siamo arrivati, ma i soldati non si arrendono! Salgo sulle mura: cliccate o toccate i soldati per tirargli in testa i 12 libri che abbiamo salvato. Attenti, camminano: mirate un po' davanti a loro!": "Arritëm, por ushtarët nuk dorëzohen! Po ngjitem mbi mure: klikoni ose prekni ushtarët për t'u hedhur në kokë 12 librat që shpëtuam. Kujdes, ata ecin: synoni pak para tyre!",
+  "Li abbiamo respinti tutti!!! Domattina raccogliamo i libri: un po' ammaccati, ma salvi!": "I zmbrapsëm të gjithë!!! Nesër në mëngjes i mbledhim librat: pak të dëmtuar, por të shpëtuar!",
+  "Qualcuno è arrivato fino al portone, ma è robusto e non cederà! Domattina raccogliamo i libri.": "Disa arritën deri te porta, por ajo është e fortë dhe nuk do të thyhet! Nesër në mëngjes i mbledhim librat.",
+  "TRIONFO!": "TRIUMF!",
+  "RESPINTI {n} SU {tot}": "TË ZMBRAPSUR {n} NGA {tot}",
+  "Inni salvati: {n} su {tot} · Soldati respinti: {r} su {s}": "Himne të shpëtuara: {n} nga {tot} · Ushtarë të zmbrapsur: {r} nga {s}"
  },
  "es": {
   "3": "3",
@@ -441,7 +449,15 @@ const TRADUZIONI = {
   "Ottimo lavoro! Abbiamo salvato gli inni, così li potrete studiare in classe tra 1000 anni!": "¡Excelente trabajo! ¡Hemos salvado los himnos, así podrán estudiarlos en clase dentro de 1000 años!",
   "QUASI SALVI!": "¡CASI A SALVO!",
   "Non male, miei novizi... ma si può sempre migliorare!": "No está mal, mis novicios... ¡pero siempre se puede mejorar!",
-  "Avete lasciato che i soldati incendiassero tutti i nostri inni!": "¡Han dejado que los soldados quemaran todos nuestros himnos!"
+  "Avete lasciato che i soldati incendiassero tutti i nostri inni!": "¡Han dejado que los soldados quemaran todos nuestros himnos!",
+  "LIVELLO BONUS": "NIVEL EXTRA",
+  "DIFENDETE L'ABBAZIA!": "¡DEFIENDAN LA ABADÍA!",
+  "Siamo arrivati, ma i soldati non si arrendono! Salgo sulle mura: cliccate o toccate i soldati per tirargli in testa i 12 libri che abbiamo salvato. Attenti, camminano: mirate un po' davanti a loro!": "¡Hemos llegado, pero los soldados no se rinden! Subo a los muros: hagan clic o toquen a los soldados para tirarles a la cabeza los 12 libros que hemos salvado. Cuidado, caminan: ¡apunten un poco por delante de ellos!",
+  "Li abbiamo respinti tutti!!! Domattina raccogliamo i libri: un po' ammaccati, ma salvi!": "¡¡¡Los hemos rechazado a todos!!! Mañana por la mañana recogemos los libros: ¡un poco abollados, pero a salvo!",
+  "Qualcuno è arrivato fino al portone, ma è robusto e non cederà! Domattina raccogliamo i libri.": "¡Algunos han llegado hasta el portón, pero es robusto y no cederá! Mañana por la mañana recogemos los libros.",
+  "TRIONFO!": "¡TRIUNFO!",
+  "RESPINTI {n} SU {tot}": "RECHAZADOS: {n} DE {tot}",
+  "Inni salvati: {n} su {tot} · Soldati respinti: {r} su {s}": "Himnos salvados: {n} de {tot} · Soldados rechazados: {r} de {s}"
  },
  "zh": {
   "3": "3",
@@ -662,7 +678,15 @@ const TRADUZIONI = {
   "Ottimo lavoro! Abbiamo salvato gli inni, così li potrete studiare in classe tra 1000 anni!": "干得好！我们救下了圣咏，这样1000年后你们就能在课堂上学习它们了！",
   "QUASI SALVI!": "差点得救！",
   "Non male, miei novizi... ma si può sempre migliorare!": "还不错，我的见习修士们……不过总能做得更好！",
-  "Avete lasciato che i soldati incendiassero tutti i nostri inni!": "你们让士兵把我们所有的圣咏都烧掉了！"
+  "Avete lasciato che i soldati incendiassero tutti i nostri inni!": "你们让士兵把我们所有的圣咏都烧掉了！",
+  "LIVELLO BONUS": "奖励关卡",
+  "DIFENDETE L'ABBAZIA!": "保卫修道院！",
+  "Siamo arrivati, ma i soldati non si arrendono! Salgo sulle mura: cliccate o toccate i soldati per tirargli in testa i 12 libri che abbiamo salvato. Attenti, camminano: mirate un po' davanti a loro!": "我们到了，可士兵们还不肯罢休！我爬上围墙：点击或点按士兵，把我们救下的12本书砸到他们头上。小心，他们在走动：要瞄准他们前面一点！",
+  "Li abbiamo respinti tutti!!! Domattina raccogliamo i libri: un po' ammaccati, ma salvi!": "我们把他们全都打退了！！！明天早上我们去把书捡回来：虽然有点磕坏了，但都保住了！",
+  "Qualcuno è arrivato fino al portone, ma è robusto e non cederà! Domattina raccogliamo i libri.": "有几个士兵冲到了大门前，不过大门很结实，不会被攻破的！明天早上我们去把书捡回来。",
+  "TRIONFO!": "大获全胜！",
+  "RESPINTI {n} SU {tot}": "打退{n}/{tot}",
+  "Inni salvati: {n} su {tot} · Soldati respinti: {r} su {s}": "救下的圣咏：{n}/{tot} · 打退的士兵：{r}/{s}"
  },
  "wo": {
   "3": "3",
@@ -883,6 +907,14 @@ const TRADUZIONI = {
   "Ottimo lavoro! Abbiamo salvato gli inni, così li potrete studiare in classe tra 1000 anni!": "Liggéey bu baax! Musal nanu woy yi, kon dingeen leen mën a jàng ci klaas, 1000 at ci kanam!",
   "QUASI SALVI!": "DES NA TUUTI NU MUCC!",
   "Non male, miei novizi... ma si può sempre migliorare!": "Bonul, samay taalibe... waaye mën nanu gën a baax!",
-  "Avete lasciato che i soldati incendiassero tutti i nostri inni!": "Bàyyi ngeen soldaar yi ñu lakk sunu woy yépp!"
+  "Avete lasciato che i soldati incendiassero tutti i nostri inni!": "Bàyyi ngeen soldaar yi ñu lakk sunu woy yépp!",
+  "LIVELLO BONUS": "PO BU DOLLI (BONUS)",
+  "DIFENDETE L'ABBAZIA!": "AARLEEN ABBAAY BI!",
+  "Siamo arrivati, ma i soldati non si arrendono! Salgo sulle mura: cliccate o toccate i soldati per tirargli in testa i 12 libri che abbiamo salvato. Attenti, camminano: mirate un po' davanti a loro!": "Agsi nanu, waaye soldaar yi bàyyiwuñu! Maa ngi yéeg ci kaw miir yi: bësleen (klik) walla laalleen soldaar yi ngir sànni ci seen bopp 12 téere yi nu musal. Moytuleen, dañuy dox: jubluleen tuuti ci seen kanam!",
+  "Li abbiamo respinti tutti!!! Domattina raccogliamo i libri: un po' ammaccati, ma salvi!": "Dàq nanu leen ñépp!!! Ëllëg suba dinanu dajale téere yi: yàqu nañu tuuti, waaye mucc nañu!",
+  "Qualcuno è arrivato fino al portone, ma è robusto e non cederà! Domattina raccogliamo i libri.": "Ñenn ñi agsi nañu ba ci buntu bu mag bi, waaye dëgër na te du dammu! Ëllëg suba dinanu dajale téere yi.",
+  "TRIONFO!": "NDAM LU MAG!",
+  "RESPINTI {n} SU {tot}": "DÀQ: {n} CI {tot}",
+  "Inni salvati: {n} su {tot} · Soldati respinti: {r} su {s}": "Woy yu ñu musal: {n} ci {tot} · Soldaar yu ñu dàq: {r} ci {s}"
  }
 };

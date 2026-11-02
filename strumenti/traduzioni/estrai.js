@@ -2,7 +2,7 @@
 const fs = require("fs");
 const path = require("path");
 const radice = path.join(__dirname, "..", "..");
-eval(fs.readFileSync(path.join(radice, "js", "domande.js"), "utf8") + "\nglobal.C = { TAPPE, DIDASCALIE, INTRO, DOMANDA_INIZIALE, RISPOSTA_SI, RISPOSTA_NO, ISTRUZIONI_CORSA, MINIGIOCHI, MINIGIOCO_PRESI, BANCA_DOMANDE, FINALI };");
+eval(fs.readFileSync(path.join(radice, "js", "domande.js"), "utf8") + "\nglobal.C = { TAPPE, DIDASCALIE, INTRO, DOMANDA_INIZIALE, RISPOSTA_SI, RISPOSTA_NO, ISTRUZIONI_CORSA, MINIGIOCHI, MINIGIOCO_PRESI, BANCA_DOMANDE, FINALI, BONUS };");
 const testi = [];
 const aggiungi = (t, nota) => { if (t && !testi.some((x) => x.it === t)) testi.push(nota ? { it: t, nota } : { it: t }); };
 // interfaccia (con segnaposto tra graffe)
@@ -36,6 +36,11 @@ C.BANCA_DOMANDE.forEach((q, i) => {
   aggiungi(q.ripasso, `concetto da ripassare (domanda ${i + 1})`);
 });
 C.FINALI.forEach((f) => { aggiungi(f.titolo, "titolo del finale"); aggiungi(f.testo, "l'Abate nel finale"); });
+// livello bonus (in fondo, così i numeri delle voci precedenti non cambiano)
+aggiungi(C.BONUS.piccolo, "banner del livello bonus"); aggiungi(C.BONUS.grande, "banner del livello bonus");
+[C.BONUS.istruzioni, C.BONUS.tutti, C.BONUS.alcuni].forEach((t) => aggiungi(t, "l'Abate nel livello bonus"));
+[["TRIONFO!", "banner, tutti i soldati respinti"], ["RESPINTI {n} SU {tot}", "banner, soldati respinti"],
+  ["Inni salvati: {n} su {tot} · Soldati respinti: {r} su {s}", "finale dopo il livello bonus"]].forEach(([t, n]) => aggiungi(t, n));
 testi.forEach((t, i) => { t.id = i + 1; });
 fs.writeFileSync(path.join(__dirname, "testi-italiani.json"), JSON.stringify(testi, null, 1));
 console.log(testi.length + " testi");

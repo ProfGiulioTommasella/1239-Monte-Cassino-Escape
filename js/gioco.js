@@ -255,6 +255,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     corrette: 0,
     sbagliate: 0,
     mini: null, // minigioco in corso
+    bonus: null, // livello bonus in corso
     salto: 0, // altezza del salto del carretto
     vSalto: 0,
     incl: 0, // inclinazione del carretto in aria
@@ -270,7 +271,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
       libriVolanti: [], particelle: [], uscita: 0, cattura: false,
       inseguimento: false, prossimaRimonta: 9, scatto: 0, passoSoldati: 0,
       lampo: 0, grido: 0, finale: null, corrette: 0, sbagliate: 0, daRipassare: [],
-      mini: null, salto: 0, vSalto: 0, incl: 0, chino: 0, abbassaFino: 0, urto: 0,
+      mini: null, bonus: null, salto: 0, vSalto: 0, incl: 0, chino: 0, abbassaFino: 0, urto: 0,
     });
   }
 
@@ -1672,6 +1673,206 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   //  Ciclo principale
   // ---------------------------------------------------------------
   let ultimo = performance.now();
+  // ---------------------------------------------------------------
+  //  Livello bonus (solo con tutte le risposte giuste): dalle mura
+  //  dell'abbazia di arrivo l'Abate tira ai soldati i libri salvati
+  // ---------------------------------------------------------------
+  const MURA_Y = 400; // piedi dell'Abate sul cammino di ronda (come in sfondi.js)
+  const ABATE_X = 1105;
+  const PORTONE_STOP = 985; // fin dove arrivano i soldati
+  const GRAVITA_LIBRO = 1500;
+
+  function iniziaBonus() {
+    const soldati = [];
+    let parte = 0.8;
+    for (let i = 0; i < BONUS.soldati; i++) {
+      soldati.push({
+        x: -90, parte, v: 72 + Math.random() * 50 + i * 4, s: 0.92 + Math.random() * 0.1,
+        tipo: ["spada", "lancia", "torcia", "stendardo"][i % 4], stato: "attesa", fase: Math.random() * 6, tempo: 0,
+      });
+      parte += 1.1 + Math.random() * 1.5;
+    }
+    mondo.bonus = {
+      attivo: false, t: 0, soldati, libri: Math.min(12, mondo.libri), volo: [], aTerra: [],
+      respinti: 0, arrivati: 0, tot: BONUS.soldati, ricarica: 0, tiro: 0, gioia: 0, mira: null,
+    };
+  }
+
+  // il libro parte dalle mani dell'Abate e arriva nel punto indicato (un po' sopra la strada)
+  function tiraLibro(tx, ty) {
+    const b = mondo.bonus;
+    if (!b || !b.attivo || b.ricarica > 0 || b.libri <= 0) return;
+    const x0 = ABATE_X - 40, y0 = MURA_Y - 100;
+    tx = Math.min(tx, PORTONE_STOP + 30);
+    ty = Math.max(SUOLO - 150, Math.min(SUOLO - 20, ty));
+    const dx = tx - x0, dy = ty - y0;
+    const T = 0.45 + Math.hypot(dx, dy) / 1700;
+    b.volo.push({ x: x0, y: y0, vx: dx / T, vy: dy / T - 0.5 * GRAVITA_LIBRO * T, r: 0, vr: -9 - Math.random() * 4 });
+    b.libri--;
+    b.ricarica = 0.35;
+    b.tiro = 0.3;
+    suona("lancia", 0.5);
+  }
+
+  function aggiornaBonus(dt) {
+    const b = mondo.bonus;
+    if (b.attivo) b.t += dt;
+    b.ricarica -= dt; b.tiro -= dt; b.gioia -= dt;
+    for (const s of b.soldati) {
+      s.tempo += dt;
+      if (s.stato === "attesa") {
+        if (b.attivo && b.t >= s.parte) s.stato = "marcia";
+      } else if (s.stato === "marcia") {
+        s.x += s.v * dt;
+        s.fase += (dt * s.v) / 14;
+        // chi arriva si ferma davanti al portone, accanto a chi c'è già
+        if (s.x >= PORTONE_STOP - b.arrivati * 46) { s.stato = "portone"; s.tempo = 0; b.arrivati++; }
+      } else if (s.stato === "portone") {
+        if (s.tempo > 0.9) {
+          s.tempo = 0;
+          suona("colpo", 0.35);
+          for (let i = 0; i < 4; i++) particella(s.x + 40, SUOLO - 60 - Math.random() * 60, "polvere");
+        }
+      } else if (s.stato === "colpito") {
+        s.x += s.vx * dt;
+        s.vx *= Math.pow(0.02, dt);
+        if (s.tempo > 0.6) s.stato = "fuga";
+      } else if (s.stato === "fuga") {
+        s.x -= 300 * dt;
+        s.fase += dt * 22;
+      }
+    }
+    for (const l of b.volo) {
+      l.vy += GRAVITA_LIBRO * dt;
+      l.x += l.vx * dt;
+      l.y += l.vy * dt;
+      l.r += l.vr * dt;
+      if (!l.colpito) {
+        for (const s of b.soldati) {
+          if (s.stato !== "marcia" && s.stato !== "portone") continue;
+          if (Math.abs(l.x - (s.x + 4)) < 34 && l.y > SUOLO - 165 * s.s && l.y < SUOLO - 5) {
+            if (s.stato === "portone") b.arrivati--;
+            s.stato = "colpito"; s.tempo = 0; s.vx = -320;
+            b.respinti++;
+            b.gioia = 1.2;
+            l.colpito = true;
+            l.vx *= -0.25; l.vy = -320;
+            suona("colpo", 0.8);
+            for (let k = 0; k < 10; k++) particella(s.x + 6, SUOLO - 150, "stella");
+            break;
+          }
+        }
+      }
+      if (l.y >= SUOLO - 10) { l.a_terra = true; b.aTerra.push({ x: l.x, r: (hash(l.x) - 0.5) * 0.5 }); }
+    }
+    b.volo = b.volo.filter((l) => !l.a_terra);
+    aggiornaParticelle(dt, 0);
+  }
+
+  function elmetto(x, y, colore) {
+    poligono([[x - 11, y + 7], [x + 11, y + 7], [x, y - 12]], colore, "#24160c", 2.5);
+  }
+
+  function disegnaBonus() {
+    const b = mondo.bonus;
+    sfondi.difesa(mondo.t);
+    const libroOk = img.libro && img.libro.naturalWidth;
+    // libri caduti sulla strada
+    if (libroOk) for (const l of b.aTerra) {
+      ctx.save(); ctx.translate(l.x, SUOLO - 4); ctx.rotate(l.r); ctx.drawImage(img.libro, -20, -30, 40, 34); ctx.restore();
+    }
+    // soldati
+    for (const s of b.soldati) {
+      if (s.stato === "attesa" || s.x < -160) continue;
+      if (s.stato === "fuga") {
+        specchia(s.x, () => disegnaSoldato(s.x, SUOLO, s.s, s.fase, s.tipo));
+      } else if (s.stato === "colpito") {
+        ctx.save();
+        ctx.translate(s.x, SUOLO); ctx.rotate(-0.4 * Math.max(0, 1 - s.tempo / 0.6)); ctx.translate(-s.x, -SUOLO);
+        disegnaSoldato(s.x, SUOLO, s.s, s.fase, s.tipo);
+        ctx.restore();
+      } else {
+        disegnaSoldato(s.x, SUOLO, s.s, s.stato === "portone" ? Math.sin(s.tempo * 7) * 0.3 : s.fase, s.tipo);
+      }
+      // stelline che girano sopra la testa di chi è stato colpito
+      if (s.stato === "colpito" || s.stato === "fuga") {
+        for (let k = 0; k < 3; k++) {
+          const a = mondo.t * 6 + (k * Math.PI * 2) / 3;
+          ctx.fillStyle = "#ffe066";
+          ctx.beginPath(); ctx.arc(s.x + 4 + Math.cos(a) * 18, SUOLO - 172 * s.s + Math.sin(a) * 5, 4, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
+    // l'Abate sulle mura, girato verso i soldati
+    const umore = b.gioia > 0 ? "felice"
+      : b.soldati.some((s) => s.stato === "portone" || (s.stato === "marcia" && s.x > 760)) ? "paura" : "normale";
+    ctx.save();
+    ctx.translate(0, MURA_Y - SUOLO);
+    specchia(ABATE_X, () => disegnaMonaco(ABATE_X, 0, umore, b.tiro > 0 || b.libri === 0 ? "vuote" : "porta", true));
+    ctx.restore();
+    sfondi.difesaParapetto();
+    // libri in volo
+    if (libroOk) for (const l of b.volo) {
+      ctx.save(); ctx.translate(l.x, l.y); ctx.rotate(l.r); ctx.drawImage(img.libro, -22, -18, 44, 37); ctx.restore();
+    }
+    // mirino sotto il puntatore
+    if (b.attivo && b.mira && b.libri > 0 && b.mira.x < PORTONE_STOP + 60) {
+      ctx.save();
+      ctx.strokeStyle = "rgba(255,240,200,0.9)"; ctx.lineWidth = 3; ctx.setLineDash([6, 5]);
+      ctx.beginPath(); ctx.arc(b.mira.x, b.mira.y, 22, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
+    disegnaParticelle();
+    // in alto a sinistra: libri rimasti e soldati (grigio = in arrivo, stella = respinto, rosso = al portone)
+    ctx.fillStyle = "rgba(20,12,8,0.6)";
+    ctx.fillRect(18, 18, 420, 96);
+    for (let i = 0; i < 12; i++) {
+      ctx.globalAlpha = i < b.libri ? 1 : 0.22;
+      if (libroOk) ctx.drawImage(img.libro, 30 + i * 33, 28, 30, 25);
+      ctx.globalAlpha = 1;
+    }
+    b.soldati.forEach((s, i) => {
+      const x = 44 + i * 42, y = 88;
+      if (s.stato === "colpito" || s.stato === "fuga") {
+        ctx.fillStyle = "#ffe066"; ctx.font = "bold 28px sans-serif"; ctx.textAlign = "center"; ctx.fillText("★", x, y + 10);
+      } else elmetto(x, y, s.stato === "portone" ? "#d9412b" : "#a7adb5");
+    });
+  }
+
+  async function livelloBonus() {
+    iniziaBonus();
+    await velo(1, 700);
+    musica("tappa3");
+    mondo.particelle = [];
+    mondo.stato = "bonus";
+    await velo(0, 600);
+    banner(BONUS.piccolo, BONUS.grande, "verde");
+    await attendi(2200);
+    await dialogo(BONUS.istruzioni, "felice", ["Pronti! ▶"]);
+    chiudiPergamena();
+    const b = mondo.bonus;
+    b.attivo = true;
+    const finito = () => b.volo.length === 0 &&
+      (b.libri === 0 || b.soldati.every((s) => s.stato !== "attesa" && s.stato !== "marcia"));
+    while (!finito()) await attendi(100);
+    b.attivo = false;
+    b.mira = null;
+    await attendi(1200);
+    const tutti = b.respinti === b.tot;
+    if (tutti) {
+      suona("vittoria");
+      banner("", "TRIONFO!", "verde");
+      for (let s = 0; s < 30; s++) particella(200 + Math.random() * 700, SUOLO - 100, "stella");
+    } else {
+      suona(b.respinti >= b.tot / 2 ? "giusto" : "sbagliato");
+      banner("", ["RESPINTI {n} SU {tot}", { n: b.respinti, tot: b.tot }], b.respinti >= b.tot / 2 ? "verde" : "rosso");
+    }
+    await attendi(2200);
+    await dialogo(tutti ? BONUS.tutti : BONUS.alcuni, tutti ? "felice" : "normale", ["Avanti ▶"]);
+    chiudiPergamena();
+    return { n: b.respinti, tot: b.tot };
+  }
+
   function ciclo(ora) {
     const dt = Math.min(0.05, (ora - ultimo) / 1000);
     ultimo = ora;
@@ -1684,6 +1885,9 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     } else if (mondo.stato === "scena") {
       aggiornaScena(dt);
       disegnaScena();
+    } else if (mondo.stato === "bonus") {
+      aggiornaBonus(dt);
+      disegnaBonus();
     } else {
       disegnaFissaAnimata(dt);
     }
@@ -2046,6 +2250,8 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
         corri();
       });
     }
+    // chi ha risposto giusto a tutte le domande difende l'abbazia
+    const bonus = fin.tipo === "vittoria" && typeof BONUS !== "undefined" ? await livelloBonus() : null;
 
     await velo(1, 700);
     musica(null);
@@ -2059,6 +2265,7 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     dialogo(fin.testo, umore, []);
     scriviTesto($("finale-titolo"), fin.titolo);
     if (presi) scriviTesto($("finale-punteggio"), "Vi hanno raggiunto alla domanda {n} di {tot}", { n: c + mondo.sbagliate, tot: DOMANDE.length });
+    else if (bonus) scriviTesto($("finale-punteggio"), "Inni salvati: {n} su {tot} · Soldati respinti: {r} su {s}", { n: c, tot: DOMANDE.length, r: bonus.n, s: bonus.tot });
     else scriviTesto($("finale-punteggio"), "Inni salvati: {n} su {tot}", { n: c, tot: DOMANDE.length });
     preparaRipasso();
     $("finale").classList.remove("nascosto");
@@ -2100,7 +2307,23 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
     partita();
   });
   // sul tablet basta toccare lo schermo (o il pulsante) per saltare o abbassarsi
+  // nel livello bonus si tira il libro dove si tocca (o si clicca)
+  function puntoScena(e) {
+    const r = $("scena").getBoundingClientRect();
+    return { x: ((e.clientX - r.left) * W) / r.width, y: ((e.clientY - r.top) * H) / r.height };
+  }
+  $("schermo").addEventListener("pointermove", (e) => {
+    if (mondo.bonus && mondo.bonus.attivo) mondo.bonus.mira = puntoScena(e);
+  });
   $("schermo").addEventListener("pointerdown", (e) => {
+    if (mondo.bonus && mondo.bonus.attivo && mondo.stato === "bonus") {
+      if (e.target.closest("#comandi")) return;
+      e.preventDefault();
+      const p = puntoScena(e);
+      mondo.bonus.mira = p;
+      tiraLibro(p.x, p.y);
+      return;
+    }
     if (!mondo.mini || !mondo.mini.attivo) return;
     if (e.target.closest("#comandi")) return;
     e.preventDefault();
@@ -2116,6 +2339,6 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
 
   // Modalità di prova per l'insegnante: index.html?prova=finale-vittoria
   window.__mondo = mondo;
-  window.__prova = { dialogo, chiudiPergamena, impostaLingua };
+  window.__prova = { dialogo, chiudiPergamena, impostaLingua, tiraLibro, livelloBonus };
   window.__musica = () => (musicaCorrente ? musicaCorrente.src.split("/").pop() + (musicaCorrente.paused ? " (ferma)" : "") : "nessuna");
 })();

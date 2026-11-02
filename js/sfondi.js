@@ -479,6 +479,72 @@ function creaSfondi(ctx, W, hash) {
     ctx.fillStyle = "#2c2a30"; ctx.fillRect(0, 640, W, 80);
   }
 
+  // Livello bonus: al tramonto, davanti alle mura dell'abbazia di arrivo.
+  // L'Abate sta sul cammino di ronda (y = MURA_Y); il parapetto davanti a lui lo disegna difesaParapetto().
+  const MURA_X = 940, MURA_Y = 400;
+  function difesa(t) {
+    cielo([[0, "#2d3a6b"], [0.45, "#c0627a"], [0.8, "#f2a65a"], [1, "#ffd98a"]], 0, 640);
+    ctx.fillRect(0, 600, W, 120);
+    // sole basso dietro le colline
+    const g = ctx.createRadialGradient(420, 470, 20, 420, 470, 420);
+    g.addColorStop(0, "rgba(255,240,180,0.85)"); g.addColorStop(0.25, "rgba(255,200,120,0.35)"); g.addColorStop(1, "rgba(255,200,120,0)");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, 720);
+    ctx.beginPath(); ctx.arc(420, 470, 52, 0, Math.PI * 2); contorno("#ffe7a0", 0);
+    // nuvole lunghe
+    ctx.fillStyle = "rgba(255,214,190,0.55)";
+    for (const [x, y, w] of [[160, 150, 220], [560, 110, 300], [300, 260, 180]]) {
+      const dx = (t * 6) % (W + 400);
+      ctx.beginPath(); ctx.ellipse(((x + dx) % (W + 400)) - 200, y, w / 2, 12, 0, 0, Math.PI * 2); ctx.fill();
+    }
+    profilo(0, 520, 50, 200, "#7a4a5e", 0, 720);
+    profilo(300, 565, 30, 150, "#5b3a4c", 3, 720);
+    // cipressi lungo la strada
+    for (const [x, h] of [[90, 120], [130, 96], [520, 110], [560, 90], [760, 104]]) {
+      ctx.beginPath(); ctx.moveTo(x, 600 - h); ctx.quadraticCurveTo(x + 15, 600 - h * 0.4, x + 8, 600); ctx.lineTo(x - 8, 600); ctx.quadraticCurveTo(x - 15, 600 - h * 0.4, x, 600 - h);
+      contorno("#2f4a2a", 2.5);
+    }
+    // strada
+    ctx.fillStyle = "#8a6a4a"; ctx.fillRect(0, 600, W, 120);
+    ctx.fillStyle = "#9c7a55"; ctx.fillRect(0, 600, W, 10);
+    for (let i = 0; i < 22; i++) {
+      ctx.fillStyle = "#7a5c3e";
+      ctx.beginPath(); ctx.ellipse(hash(i * 3.3) * 900, 650 + hash(i * 1.7) * 60, 6 + hash(i) * 8, 3, 0, 0, Math.PI * 2); ctx.fill();
+    }
+    // chiesa e campanile dietro le mura
+    abbazia(1130, MURA_Y + 40, 0.7, { muro: "#d8c4a2", ombra: "#b39b78", tetto: "#a4522f" });
+    // mura con il portone
+    poli([[MURA_X, 640], [MURA_X, MURA_Y], [W + 10, MURA_Y], [W + 10, 640]], "#a8916f");
+    ctx.save();
+    ctx.beginPath(); ctx.rect(MURA_X, MURA_Y, W - MURA_X + 10, 240); ctx.clip();
+    for (let r = 0; r < 7; r++) for (let c = -1; c < 9; c++) {
+      ctx.fillStyle = `hsl(32, 22%, ${52 + hash(r * 11 + c + 5) * 10}%)`;
+      ctx.fillRect(MURA_X + 3 + c * 46 + (r % 2) * 23, MURA_Y + 6 + r * 34, 42, 30);
+    }
+    ctx.restore();
+    // torre d'angolo
+    poli([[MURA_X - 30, 640], [MURA_X - 30, MURA_Y - 40], [MURA_X + 40, MURA_Y - 40], [MURA_X + 40, 640]], "#b9a07c");
+    for (let i = 0; i < 3; i++) poli([[MURA_X - 34 + i * 26, MURA_Y - 40], [MURA_X - 34 + i * 26, MURA_Y - 64], [MURA_X - 16 + i * 26, MURA_Y - 64], [MURA_X - 16 + i * 26, MURA_Y - 40]], "#b9a07c", 2.5);
+    poli([[MURA_X - 2, MURA_Y + 30], [MURA_X - 2, MURA_Y - 4], [MURA_X + 12, MURA_Y - 4], [MURA_X + 12, MURA_Y + 30]], "#3a2a20", 2);
+    // portone ad arco
+    const PX = 1010, PW = 120;
+    ctx.beginPath(); ctx.moveTo(PX - 10, 640); ctx.lineTo(PX - 10, 540); ctx.arc(PX + PW / 2, 540, PW / 2 + 10, Math.PI, 0); ctx.lineTo(PX + PW + 10, 640); ctx.closePath(); contorno("#cdb893", 3);
+    ctx.beginPath(); ctx.moveTo(PX, 640); ctx.lineTo(PX, 545); ctx.arc(PX + PW / 2, 545, PW / 2, Math.PI, 0); ctx.lineTo(PX + PW, 640); ctx.closePath(); contorno("#6e4320", 3);
+    ctx.strokeStyle = "#3d2410"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(PX + PW / 2, 486); ctx.lineTo(PX + PW / 2, 640); ctx.stroke();
+    ctx.fillStyle = "#2b2b2b"; ctx.fillRect(PX, 560, PW, 9); ctx.fillRect(PX, 610, PW, 9);
+    for (const x of [PX + PW / 2 - 14, PX + PW / 2 + 14]) { ctx.beginPath(); ctx.arc(x, 590, 7, 0, Math.PI * 2); ctx.strokeStyle = "#c9a227"; ctx.lineWidth = 3; ctx.stroke(); }
+    // cammino di ronda (la parte dietro il parapetto)
+    ctx.fillStyle = "#8f7a5c"; ctx.fillRect(MURA_X + 40, MURA_Y - 6, W - MURA_X, 8);
+  }
+  // parapetto merlato davanti all'Abate
+  function difesaParapetto() {
+    poli([[MURA_X + 40, MURA_Y + 4], [MURA_X + 40, MURA_Y - 36], [W + 10, MURA_Y - 36], [W + 10, MURA_Y + 4]], "#b9a07c");
+    for (let x = MURA_X + 52; x < W; x += 58) {
+      if (x > 1060 && x < 1150) continue; // varco da cui tira l'Abate
+      poli([[x, MURA_Y - 36], [x, MURA_Y - 66], [x + 32, MURA_Y - 66], [x + 32, MURA_Y - 36]], "#b9a07c", 2.5);
+    }
+  }
+
   function fiamme(t) {
     // sfondo del finale peggiore: notte rossa e abbazia lontana in fiamme
     cielo([[0, "#14080a"], [0.6, "#5e1a10"], [1, "#a8381a"]], 0, 720);
@@ -633,5 +699,5 @@ function creaSfondi(ctx, W, hash) {
     ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
   }
 
-  return { tappe: [tappa1, tappa2, tappa3], inizio, cortile, vittoria, quasi, fiamme, fiamma };
+  return { tappe: [tappa1, tappa2, tappa3], inizio, cortile, vittoria, quasi, fiamme, fiamma, difesa, difesaParapetto };
 }
