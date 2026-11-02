@@ -1791,7 +1791,8 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
   const TASTI_AZIONE = [" ", "ArrowUp", "ArrowDown", "w", "s", "W", "S"];
   document.addEventListener("keydown", (e) => {
     if (mondo.mini && mondo.mini.attivo) {
-      if (TASTI_AZIONE.includes(e.key)) { e.preventDefault(); azione(); }
+      // tenendo premuto il tasto non si resta chinati (o non si salta di continuo): bisogna ripremerlo
+      if (TASTI_AZIONE.includes(e.key)) { e.preventDefault(); if (!e.repeat) azione(); }
       return;
     }
     if (!scelte.length) {
