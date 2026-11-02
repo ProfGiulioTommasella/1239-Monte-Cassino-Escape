@@ -932,7 +932,9 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
           const attesa = Math.max(0.4 + Math.random() * 0.9, inAttesa.length ? Math.max(...inAttesa) + 0.45 : 0);
           mondo.grido = 1.1;
           mondo.testoGrido = ["LANCIA!", "PRENDI!", "ECCO!", "ORA!"][Math.floor(Math.random() * 4)];
-          m.oggetti.push({ attesa, vel: 620 + Math.random() * 280, x: 0, y: 0, vx: 0, vy: 0, r: 0, stato: "pronta", colpito: false, superato: false });
+          // alcune lance volano piano, altre molto più rapide
+          const vel = Math.random() < 0.4 ? 980 + Math.random() * 200 : 580 + Math.random() * 180;
+          m.oggetti.push({ attesa, vel, x: 0, y: 0, vx: 0, vy: 0, r: 0, stato: "pronta", colpito: false, superato: false });
         }
       }
     }
@@ -2084,6 +2086,15 @@ const GRIDA_RIMONTA = ["ALL'ATTACCO!", "PIÙ VELOCI!", "NON SCAPPERETE!", "DI CO
         }
         await attendi(1800);
         mondo.mini = null;
+        // dopo la prova i soldati si rifanno sotto: la distanza si dimezza, anche per chi sta andando benissimo
+        const meta = Math.max(pavimento(), Math.round(mondo.D / 2));
+        if (meta < mondo.D) {
+          mondo.D = meta;
+          mondo.scatto = 1.5;
+          mondo.grido = 1.8;
+          mondo.testoGrido = GRIDA_RIMONTA[Math.floor(Math.random() * GRIDA_RIMONTA.length)];
+          await attendi(1200);
+        }
         return;
       }
       // troppi colpi: i soldati raggiungono il carretto e si ripete solo il minigioco
